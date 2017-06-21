@@ -6,13 +6,11 @@ use CasperBounty\ProjectsBundle\Entity\Projects;
 use CasperBounty\ProjectsBundle\Form\AddProject;
 //use CasperBounty\TargetsBundle\Form\addTargetsForm;
 use CasperBounty\ProjectsBundle\Form\addTargetsForm;
-use CasperBounty\ProjectsBundle\Service\Testservice1;
 use CasperBounty\TargetsBundle\Entity\Targets;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use CasperBounty\TargetsBundle\Form\FirstForm;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -65,19 +63,12 @@ class DefaultController extends Controller
     public function addTargetsAction($projectId){
         $target=new Targets();
         $form=$this->createFormBuilder($target);
-        $form2=$this->createForm(
-            'CasperBounty\TargetsBundle\Form\FirstForm',
-            null,
-            array(
-                'action'=>$this->generateUrl(
-                    'casper_bounty_projects_targetsToProjectFromList', array('projectId'=>$projectId))
-            )
-        );
-        //$form2->
 
         $em = $this->getDoctrine()->getRepository('CasperBountyTargetsBundle:Targets');
         $qwe=$em->createQueryBuilder('t')->select('t')->leftJoin('t.projectid','p')->where('p.projectid is null')->getQuery();
-
+        //echo $qwe;
+        //$qwe1=$qwe->getResult();
+        //echo $qwe->getSql();
         $allTargets=$qwe->getResult();
         $hosts=array();
 
@@ -105,93 +96,37 @@ class DefaultController extends Controller
 //                'by_reference' => false,
 //            ))
             ->getForm();
-        $messageGenerator=$this->get('testservice');
-        $message = $messageGenerator->getHappyMessage();
 
-        //return $this->redirectToRoute('casper_bounty_projects_id',array('projectId'=>$projectId));
-
-        return $this->render('@CasperBountyProjects/addTargets.html.twig',
-            array('projectId'=>$projectId,
-                'hosts'=>$hosts,
-                'form'=>$form->createView(),
-                'form2'=>$form2->createView(),
-                'mess'=>$message
-            )
-        );
+        return $this->render('@CasperBountyProjects/addTargets.html.twig',array('projectId'=>$projectId,'hosts'=>$hosts,'form'=>$form->createView()));
     }
 
-    //обработка пост запроса к роуту /addtargeets
     public function targetsToProjectAction(Request $request){
         $formData=$request->get('form');
-        print_r($request->get('form'));
-
         $targetsArr=$formData['targetid'];
         $projectId=$formData['projectId'];
+        print_r($targetsArr);
+        print_r($projectId);
+
+        //$test=new Targets();
+        //$test->addProjectid($projectId);
+
 
         $em = $this->getDoctrine()->getManager();
         $project=$em->getRepository('CasperBountyProjectsBundle:Projects')->find($projectId);
         $targets=$em->getRepository('CasperBountyTargetsBundle:Targets')->findBy(array('targetid' => $targetsArr));
+        //$targets[]=$em->getRepository('CasperBountyTargetsBundle:Targets')->find($targetsArr[1]);
+        //echo count($targets);
 
-
-        foreach ($targets as $target)
+        foreach ($targets as $target) {
             $project->addTargetid($target);
+        }
 
         $em->flush();
-
+        //print_r($project);
+    //die();
     return $this->redirectToRoute('casper_bounty_projects_addTargets',array('projectId'=>$projectId));
     }
 
-    public function targetsToProjectFromListAction(Request $request){
-        $successAdded=array();
-        $formData=$request->get('first_form');
-        $hostsString=$formData['host'];
-        //print_r($hosts);
-
-        $projectId=$formData['projectId'];
-        $fmVal=new Targets();
-
-            // $form->getData() holds the submitted values
-            // but, the original `$task` variable has also been updated
-            //$task = $form->getData();
-
-            $em = $this->getDoctrine()->getManager();
-            //$hostsSting = $form['host']->getData();
-            $hostsArray=explode("\r\n",$hostsString);
-            //var_dump($hostsArray);
-            //die();
-            foreach ($hostsArray as $host) {
-                $existHost = $em->getRepository('CasperBountyTargetsBundle:Targets')->findOneBy(array('host' => $host));
-                //$existHost = $em->getRepository('CasperBountyTargetsBundle:Targets')
-                 //   ->createQueryBuilder('t')->andWhere('t.host not in (:hosts)')->setParameter('hosts',$hostsSting);
-                if (!$existHost) {
-                    $target=new Targets();
-                    $target->setType('domain');
-                    $target->setHost($host);
-                    $em->persist($target);
-                    $successAdded[]=$host;
-                }
-
-// else {
-//                //throw new Exception\NotFoundHttpException('No product found for id ' . $host);
-////                throw $this->ex(
-////                    'No product found for id ' . $host
-////                );
-//                //$this->createException();
-//                throw new Exception\HttpException(404,$host);
-//
-//            }
-            $em->flush();
-
-            //return $this->redirectToRoute('casper_bounty_targets_homepage');
-//            return $this->render('CasperBountyTargetsBundle:Default:index.html.twig',
-//                array(
-//                    'success'=>$successAdded,
-//                    'form' => $form->createView())
-//            );
-                return $this->redirectToRoute('casper_bounty_projects_targetsToProject',array('projectId'=>$projectId));
-
-        }
-    }
 
     public function createAction(){
 

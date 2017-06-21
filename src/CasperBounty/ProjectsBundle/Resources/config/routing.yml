@@ -26,10 +26,3 @@ casper_bounty_projects_targetsToProject:
       id: '\d+'
       targetid: '\w+'
     methods: [POST]
-casper_bounty_projects_targetsToProjectFromList:
-    path:     /projects/{projectId}/addtargets/fromList
-    defaults: { _controller: CasperBountyProjectsBundle:Default:targetsToProjectFromList }
-    requirements:
-      id: '\d+'
-      targetid: '\w+'
-    methods: [POST]
