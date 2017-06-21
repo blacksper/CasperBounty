@@ -1,0 +1,28 @@
+{% extends '@CasperBountyProjects/sin.html.twig' %}
+{% block targets%}
+    <table>
+    <thead>
+    <tr>
+        <th>one</th>
+        <th>two</th>
+        <th>three</th>
+    </tr></thead>
+        <tbody>
+
+
+{%  for target in targets%}
+    <tr>
+        <td>{{target.hostName}}</td>
+        <td>{{target.id}}</td>
+        <td>
+
+            <!--<button type="button" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
+            -->
+            <button type="button" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+        </td>
+    </tr>
+{% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+

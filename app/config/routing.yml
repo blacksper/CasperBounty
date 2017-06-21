@@ -1,0 +1,41 @@
+casper_bounty_front:
+    resource: "@CasperBountyFrontBundle/Resources/config/routing.yml"
+    prefix:   /
+
+casper_bounty_conditions:
+    resource: "@CasperBountyConditionsBundle/Resources/config/routing.yml"
+    prefix:   /
+
+regexp:
+    resource: "@CasperBountyRegexpBundle/Resources/config/routing.yml"
+    prefix:   /
+
+tasklist:
+    resource: "@CasperBountyTasklistBundle/Resources/config/routing.yml"
+    prefix:   /
+
+casper_bounty_tools:
+    resource: "@CasperBountyToolsBundle/Resources/config/routing.yml"
+    prefix:   /
+
+casper_bounty_templates:
+    resource: "@CasperBountyTemplatesBundle/Resources/config/routing.yml"
+    prefix:   /
+
+casper_bounty_results:
+    resource: "@CasperBountyResultsBundle/Resources/config/routing.yml"
+    prefix:   /
+
+casper_bounty_groups:
+    resource: "@CasperBountyGroupsBundle/Resources/config/routing.yml"
+    prefix:   /
+
+casper_bounty_targets:
+    resource: "@CasperBountyTargetsBundle/Resources/config/routing.yml"
+    prefix:   /
+
+casper_bounty_projects:
+    resource: "@CasperBountyProjectsBundle/Resources/config/routing.yml"
+    prefix:   /
+
+

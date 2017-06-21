@@ -1,0 +1,3 @@
+casper_bounty_groups_homepage:
+    path:     /
+    defaults: { _controller: CasperBountyGroupsBundle:Default:index }

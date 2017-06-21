@@ -1,0 +1,39 @@
+CasperBounty\TasklistBundle\Entity\Tasklist:
+    type: entity
+    table: tasklist
+    id:
+        taskid:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: taskId
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+    manyToMany:
+        profileid:
+            targetEntity: Profiles
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: taskid
+            joinTable:
+                name: tasktoprofile
+                joinColumns:
+                    -
+                        name: taskId
+                        referencedColumnName: taskId
+                inverseJoinColumns:
+                    -
+                        name: profileId
+                        referencedColumnName: profileId
+            orderBy: null
+    lifecycleCallbacks: {  }

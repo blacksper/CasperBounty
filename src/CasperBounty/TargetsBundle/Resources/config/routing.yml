@@ -1,0 +1,6 @@
+casper_bounty_targets_homepage:
+    path:     /targets
+    defaults: { _controller: CasperBountyTargetsBundle:Default:index }
+    methods: [POST, GET]
+
+

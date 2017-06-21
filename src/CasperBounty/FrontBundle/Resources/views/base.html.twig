@@ -1,0 +1,60 @@
+<html>
+<head>
+    {% javascripts filter="?jsqueeze" output="js/app.js"
+    'assets/vendor/jquery/dist/jquery.js'
+    'assets/vendor/bootstrap/dist/js/bootstrap.js'
+    '@CasperBountyFrontBundle/Resources/public/js/*'
+    %}
+    <script src="{{ asset_url }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#form_targetid').multiselect({
+                enableFiltering: true,
+                maxHeight: 400,
+                buttonWidth: '150px',
+                nonSelectedText: 'Select targets',
+                includeSelectAllOption: true,
+            });
+        });
+    </script>
+    {% endjavascripts %}
+
+    {% stylesheets filter="scssphp" output="css/app.css"
+
+    "@CasperBountyFrontBundle/Resources/public/scss/*"
+    "@CasperBountyFrontBundle/Resources/public/css/*"
+    "assets/vendor/bootstrap/dist/css/bootstrap.css"
+    "assets/vendor/bootstrap/dist/css/bootstrap-theme.css"
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+
+{% block pageTitle %}{% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="{% if app.request.attributes.get('_route') == 'casper_bounty_projects_id_get_targets' %}active{% endif %}"><a href="{{ path('casper_bounty_projects_id_get_targets',{'projectId':projectId}) }}">Targets</a></li>
+                <li class="{% if app.request.attributes.get('_route') == 'casper_bounty_projects_addTargets' %}active{% endif %}"><a href="{{ path('casper_bounty_projects_addTargets',{'projectId':projectId}) }}">Add Targets</a></li>
+                <li class="{% if app.request.attributes.get('_route') == 'qwerka' %}active{% endif %}"><a href="#contact">Contact</a></li>
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+{% block body %}{% endblock %}
+</body>
+<footer>
+
+</footer>
+</html>

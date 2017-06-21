@@ -1,0 +1,45 @@
+CasperBounty\ToolsBundle\Entity\Tools:
+    type: entity
+    table: tools
+    id:
+        toolid:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: toolId
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        cmdpath:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+    manyToMany:
+        templateid:
+            targetEntity: Templates
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: toolid
+            joinTable:
+                name: toolstotemplate
+                joinColumns:
+                    -
+                        name: toolId
+                        referencedColumnName: toolId
+                inverseJoinColumns:
+                    -
+                        name: templateId
+                        referencedColumnName: templateId
+            orderBy: null
+    lifecycleCallbacks: {  }

@@ -1,0 +1,39 @@
+{% extends '@CasperBountyFront/base.html.twig' %}
+
+
+{% block pageTitle %}<title>targets list</title>{% endblock %}
+
+{% block body %}
+{{ mess }}
+
+    <div class="container">
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#targetsFromExists">Targets from exists</a></li>
+            <li><a data-toggle="tab" href="#targetsFromList">Targets from list</a></li>
+            <li><a data-toggle="tab" href="#targetsFromFile">Targets from file</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div id="targetsFromExists" class="tab-pane fade in active">
+                <h3>Targets from exists</h3>
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+                {{ form_end(form) }}
+            </div>
+            <div id="targetsFromList" class="tab-pane fade">
+                <h3>Targets from list</h3>
+                {{ form_start(form2) }}
+                {{ form_widget(form2) }}
+                {{ form_end(form2) }}
+            </div>
+            <div id="targetsFromFile" class="tab-pane fade">
+                <h3>Targets from file</h3>
+                tut budet forma
+            </div>
+        </div>
+
+
+
+
+    </div>
+{% endblock %}

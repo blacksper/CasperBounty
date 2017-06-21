@@ -1,0 +1,49 @@
+CasperBounty\ResultsBundle\Entity\Results:
+    type: entity
+    table: results
+    indexes:
+        fk_results_profiles_1:
+            columns:
+                - profileId
+        fk_results_Targets_1:
+            columns:
+                - targetId
+    id:
+        resultid:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: resultId
+            generator:
+                strategy: IDENTITY
+    fields:
+        result:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+    manyToOne:
+        targetid:
+            targetEntity: Targets
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                targetId:
+                    referencedColumnName: targetId
+            orphanRemoval: false
+        profileid:
+            targetEntity: Profiles
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                profileId:
+                    referencedColumnName: profileId
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

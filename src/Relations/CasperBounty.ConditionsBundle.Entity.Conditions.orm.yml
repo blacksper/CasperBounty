@@ -1,0 +1,20 @@
+CasperBounty\ConditionsBundle\Entity\Conditions:
+    type: entity
+    table: conditions
+    id:
+        conditid:
+            id: true
+            type: integer
+            options:
+                unsigned: false
+            column: conditId
+            generator:
+                strategy: IDENTITY
+    fields:
+        condition:
+            type: string
+            length: 255
+            options:
+                fixed: false
+            nullable: false
+    lifecycleCallbacks: {  }

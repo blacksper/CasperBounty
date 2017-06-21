@@ -1,0 +1,61 @@
+CasperBounty\TargetsBundle\Entity\Targets:
+    type: entity
+    table: targets
+    id:
+        targetid:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: targetId
+            generator:
+                strategy: IDENTITY
+    fields:
+        host:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+        type:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+    manyToMany:
+        groupid:
+            targetEntity: CasperBounty\GroupsBundle\Entity\Groups
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: targetid
+            inversedBy: null
+            joinTable: null
+            orderBy: null
+        ipid:
+            targetEntity: Targets
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: domainid
+            joinTable:
+                name: ipdomainrelation
+                joinColumns:
+                    -
+                        name: domainId
+                        referencedColumnName: targetId
+                inverseJoinColumns:
+                    -
+                        name: ipId
+                        referencedColumnName: targetId
+            orderBy: null
+        projectid:
+            targetEntity: CasperBounty\ProjectsBundle\Entity\Projects
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: targetid
+            inversedBy: null
+            joinTable: null
+            orderBy: null
+    lifecycleCallbacks: {  }

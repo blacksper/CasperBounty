@@ -1,0 +1,46 @@
+CasperBounty\TemplatesBundle\Entity\Templates:
+    type: entity
+    table: templates
+    id:
+        templateid:
+            id: true
+            type: integer
+            options:
+                unsigned: false
+            column: templateId
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+            length: 255
+            options:
+                fixed: false
+            nullable: false
+    manyToMany:
+        regexpcolumnid:
+            targetEntity: CasperBounty\TemplatesBundle\Entity\Regexpcolumns
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: templateid
+            joinTable:
+                name: templatetoregexpcolumns
+                joinColumns:
+                    -
+                        referencedColumnName: templateId
+                        name: templateId
+                inverseJoinColumns:
+                    -
+                        referencedColumnName: regexpColumnId
+                        name: regexpColumnId
+            orderBy: null
+        toolid:
+            targetEntity: CasperBounty\TemplatesBundle\Entity\Tools
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: templateid
+            inversedBy: null
+            joinTable: null
+            orderBy: null
+    lifecycleCallbacks: {  }

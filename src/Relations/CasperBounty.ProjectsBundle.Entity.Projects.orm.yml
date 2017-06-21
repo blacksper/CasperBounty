@@ -1,0 +1,38 @@
+CasperBounty\ProjectsBundle\Entity\Projects:
+    type: entity
+    table: projects
+    id:
+        projectid:
+            id: true
+            type: integer
+            options:
+                unsigned: false
+            column: projectId
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+            length: 255
+            options:
+                fixed: false
+            nullable: false
+    manyToMany:
+        targetid:
+            targetEntity: CasperBounty\ProjectsBundle\Entity\Targets
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: projectid
+            joinTable:
+                name: projecttargets
+                joinColumns:
+                    -
+                        referencedColumnName: projectId
+                        name: projectId
+                inverseJoinColumns:
+                    -
+                        referencedColumnName: targetId
+                        name: targetId
+            orderBy: null
+    lifecycleCallbacks: {  }

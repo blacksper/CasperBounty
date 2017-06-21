@@ -1,0 +1,49 @@
+CasperBounty\RegexpBundle\Entity\Regexpresult:
+    type: entity
+    table: regexpresult
+    indexes:
+        fk_regexpResult_regexp_1:
+            columns:
+                - regexpId
+        fk_regexpResult_results_1:
+            columns:
+                - resultId
+    id:
+        regexpresultid:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: regexpResultId
+            generator:
+                strategy: IDENTITY
+    fields:
+        result:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+    manyToOne:
+        regexpid:
+            targetEntity: Regexp
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                regexpId:
+                    referencedColumnName: regexpId
+            orphanRemoval: false
+        resultid:
+            targetEntity: Results
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                resultId:
+                    referencedColumnName: resultId
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

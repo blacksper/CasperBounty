@@ -1,0 +1,26 @@
+CasperBounty\RegexpBundle\Entity\Regexp:
+    type: entity
+    table: regexp
+    id:
+        regexpid:
+            id: true
+            type: integer
+            options:
+                unsigned: false
+            column: regexpId
+            generator:
+                strategy: IDENTITY
+    fields:
+        regexp:
+            type: string
+            length: 255
+            options:
+                fixed: false
+            nullable: false
+        name:
+            type: string
+            length: 255
+            options:
+                fixed: false
+            nullable: false
+    lifecycleCallbacks: {  }

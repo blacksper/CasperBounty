@@ -1,0 +1,39 @@
+CasperBounty\GroupsBundle\Entity\Groups:
+    type: entity
+    table: groups
+    id:
+        groupid:
+            id: true
+            type: integer
+            options:
+                unsigned: false
+            column: groupId
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+            length: 255
+            options:
+                fixed: false
+                comment: ip/domain
+            nullable: false
+    manyToMany:
+        targetid:
+            targetEntity: CasperBounty\GroupsBundle\Entity\Targets
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: groupid
+            joinTable:
+                name: groupstotarget
+                joinColumns:
+                    -
+                        referencedColumnName: groupId
+                        name: groupId
+                inverseJoinColumns:
+                    -
+                        referencedColumnName: targetId
+                        name: targetId
+            orderBy: null
+    lifecycleCallbacks: {  }
