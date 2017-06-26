@@ -6,11 +6,13 @@ use CasperBounty\ProjectsBundle\Entity\Projects;
 use CasperBounty\ProjectsBundle\Form\AddProject;
 //use CasperBounty\TargetsBundle\Form\addTargetsForm;
 use CasperBounty\ProjectsBundle\Form\addTargetsForm;
+use CasperBounty\ProjectsBundle\Service\Testservice1;
 use CasperBounty\TargetsBundle\Entity\Targets;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use CasperBounty\TargetsBundle\Form\FirstForm;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -21,7 +23,7 @@ class DefaultController extends Controller
 {
     public function indexAction(Request $request)
     {
-        $form=$this->createForm(AddProject::class);
+        $form = $this->createForm(AddProject::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -30,63 +32,75 @@ class DefaultController extends Controller
 
             $em->persist($projectName);
             $em->flush();
-            $id=$projectName->getProjectid();
+            $id = $projectName->getProjectid();
 
-            return $this->redirectToRoute('casper_bounty_projects_id',array('projectId'=>$id));
+            //return $this->redirectToRoute('casper_bounty_projects_id',array('projectId'=>$id));
         }
+        $em = $this->getDoctrine()->getRepository('CasperBountyProjectsBundle:Projects');
+        $projects = $em->findAll();
 
-
-        return $this->render('CasperBountyProjectsBundle:Default:index.html.twig',array(
-            'form'=>$form->createView()
+        return $this->render('CasperBountyProjectsBundle:Default:index.html.twig', array(
+            'form' => $form->createView(),
+            'projects' => $projects
         ));
     }
 
-    public function showTargetsAction($projectId){
+    public function showTargetsAction($projectId)
+    {
         $em = $this->getDoctrine()->getManager();
-        $rep=$em->getRepository('CasperBountyTargetsBundle:Targets');
-        $query=$rep->createQueryBuilder('t')->leftJoin('t.projectid','p')->where('p.projectid=:pid')->setParameter('pid',$projectId)->getQuery();
-        $targets=$query->getResult();
-        $targetsRes=array();
-        foreach ($targets as $target){
-            $targetsRes[]=array('id'=>$target->getTargetid(),'hostName'=>$target->getHost());
+        $rep = $em->getRepository('CasperBountyTargetsBundle:Targets');
+        $query = $rep->createQueryBuilder('t')->leftJoin('t.projectid', 'p')->where('p.projectid=:pid')->setParameter('pid', $projectId)->getQuery();
+        $targets = $query->getResult();
+        $targetsRes = array();
+        foreach ($targets as $target) {
+            $targetsRes[] = array('id' => $target->getTargetid(), 'hostName' => $target->getHost());
         }
 
 
-        return $this->render('@CasperBountyProjects/showTargets.html.twig',array('targets'=>$targetsRes,'projectId'=>$projectId));
+        return $this->render('@CasperBountyProjects/showTargets.html.twig', array('targets' => $targetsRes, 'projectId' => $projectId));
 
     }
 
-    public function showAction($projectId){
-        return $this->render('@CasperBountyProjects/sin.html.twig',array('projectId'=>$projectId));
+    public function showAction($projectId)
+    {
+        return $this->render('@CasperBountyProjects/sin.html.twig', array('projectId' => $projectId));
     }
 
-    public function addTargetsAction($projectId){
-        $target=new Targets();
-        $form=$this->createFormBuilder($target);
+    public function addTargetsAction($projectId)
+    {
+        $target = new Targets();
+        $form = $this->createFormBuilder($target);
+        $form2 = $this->createForm(
+            'CasperBounty\TargetsBundle\Form\FirstForm',
+            null,
+            array(
+                'action' => $this->generateUrl(
+                    'casper_bounty_projects_targetsToProjectFromList', array('projectId' => $projectId))
+            )
+        );
+        //$form2->
 
         $em = $this->getDoctrine()->getRepository('CasperBountyTargetsBundle:Targets');
-        $qwe=$em->createQueryBuilder('t')->select('t')->leftJoin('t.projectid','p')->where('p.projectid is null')->getQuery();
-        //echo $qwe;
-        //$qwe1=$qwe->getResult();
-        //echo $qwe->getSql();
-        $allTargets=$qwe->getResult();
-        $hosts=array();
+        $qwe = $em->createQueryBuilder('t')->select('t')->leftJoin('t.projectid', 'p')->where('p.projectid is null')->getQuery();
+
+        $allTargets = $qwe->getResult();
+        $hosts = array();
 
         foreach ($allTargets as $host)
-            $hosts[$host->getHost()]=$host->getTargetid();
+            $hosts[$host->getHost()] = $host->getTargetid();
 
-        $form=$form
+        $form = $form
             ->add('targetid', ChoiceType::class, array(
-            'choices'  => $hosts,
-            'multiple'=>true,
-            'label' => false,
-            //'attr'=>array('id'=>'example-getting-started')
+                'choices' => $hosts,
+                'multiple' => true,
+                'label' => false,
+                //'attr'=>array('id'=>'example-getting-started')
             ))
-            ->add('save',SubmitType::class,array(
-                'label'  => 'Select',
-                'attr'=>array('class'=>'btn btn-sm btn-success')))
-            ->add('projectId',HiddenType::class,array(
-                'data'=>$projectId))
+            ->add('save', SubmitType::class, array(
+                'label' => 'Select',
+                'attr' => array('class' => 'btn btn-sm btn-success')))
+            ->add('projectId', HiddenType::class, array(
+                'data' => $projectId))
 //            ->add('name')
 //            ->add('tags', 'collection', array(
 //                'type' => new TagType(),
@@ -96,40 +110,89 @@ class DefaultController extends Controller
 //                'by_reference' => false,
 //            ))
             ->getForm();
+        $messageGenerator = $this->get('casper_bounty_projects.testservice');
+        $message = $messageGenerator->getHappyMessage();
 
-        return $this->render('@CasperBountyProjects/addTargets.html.twig',array('projectId'=>$projectId,'hosts'=>$hosts,'form'=>$form->createView()));
+        //return $this->redirectToRoute('casper_bounty_projects_id',array('projectId'=>$projectId));
+
+        return $this->render('@CasperBountyProjects/addTargets.html.twig',
+            array('projectId' => $projectId,
+                'hosts' => $hosts,
+                'form' => $form->createView(),
+                'form2' => $form2->createView(),
+                'mess' => $message
+            )
+        );
     }
 
-    public function targetsToProjectAction(Request $request){
-        $formData=$request->get('form');
-        $targetsArr=$formData['targetid'];
-        $projectId=$formData['projectId'];
-        print_r($targetsArr);
-        print_r($projectId);
+    //обработка пост запроса к роуту /addtargeets
+    public function targetsToProjectAction(Request $request)
+    {
+        $formData = $request->get('form');
+        print_r($request->get('form'));
+        $targetsToProject = $this->get('casper_bounty_projects.testservice');
+        $targetsArr = $formData['targetid'];
+        $projectId = $formData['projectId'];
 
-        //$test=new Targets();
-        //$test->addProjectid($projectId);
+        $message = $targetsToProject->addTargetsToProject($projectId, $targetsArr);
+
+        return $this->redirectToRoute('casper_bounty_projects_addTargets', array('projectId' => $projectId));
+    }
+
+    public function targetsToProjectFromListAction(Request $request)
+    {
+        $successAdded = array();
+        $formData = $request->get('first_form');
+        $hostsString = $formData['host'];
+        //print_r($hosts);
+
+        $projectId = 1;
 
 
         $em = $this->getDoctrine()->getManager();
-        $project=$em->getRepository('CasperBountyProjectsBundle:Projects')->find($projectId);
-        $targets=$em->getRepository('CasperBountyTargetsBundle:Targets')->findBy(array('targetid' => $targetsArr));
-        //$targets[]=$em->getRepository('CasperBountyTargetsBundle:Targets')->find($targetsArr[1]);
-        //echo count($targets);
+        //$hostsSting = $form['host']->getData();
+        $hostsArray = explode("\r\n", $hostsString);
 
-        foreach ($targets as $target) {
-            $project->addTargetid($target);
+        var_dump($hostsString);
+        var_dump($hostsArray);
+        //die();
+        $repository=$em->getRepository('CasperBountyTargetsBundle:Targets');
+        foreach ($hostsArray as $host) {
+            $existHost = $repository->findOneBy(array('host' => $host));
+
+            if (!$existHost) {
+                $target = new Targets();
+                $target->setType('domain');
+                $target->setHost($host);
+                $em->persist($target);
+                $successAdded[] = $host;
+                //echo 123;
+            }
         }
+            var_dump($successAdded);
+            $mda = $repository->createQueryBuilder('t')->select('t.targetid')->where("t.targetid in (:hosts)")->setParameter('hosts', $successAdded)->getQuery();
+            echo $mda->getSQL();
+            $mda->getResult();
 
-        $em->flush();
-        //print_r($project);
-    //die();
-    return $this->redirectToRoute('casper_bounty_projects_addTargets',array('projectId'=>$projectId));
+            $em->flush();
+
+            var_dump($successAdded);
+            $targetsToProject = $this->get('casper_bounty_projects.testservice');
+            $message = $targetsToProject->addTargetsToProject(1, $successAdded);
+
+
+            //return $this->redirectToRoute('casper_bounty_targets_homepage');
+//            return $this->render('CasperBountyTargetsBundle:Default:index.html.twig',
+//                array(
+//                    'success'=>$successAdded,
+//                    'form' => $form->createView())
+//            );
+            return $this->redirectToRoute('casper_bounty_projects_targetsToProject', array('projectId' => $projectId));
+
     }
 
-
-    public function createAction(){
-
+    public function createAction()
+    {
 
 
     }

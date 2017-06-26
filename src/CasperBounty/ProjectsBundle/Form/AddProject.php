@@ -16,9 +16,14 @@ class AddProject extends AbstractType
     {
         $builder
             ->add('name',TextType::class, array(
-                'label'  => 'Enter project name ',))
+                'label'  => 'Enter project name ',)
+            )
             ->add('save',SubmitType::class,array(
-                'label'  => 'Create project',));
+                'label'  => 'Create project',
+                    'attr'=>array('class'=>'btn btn-success')
+                    )
+
+            );
 
     }
 
