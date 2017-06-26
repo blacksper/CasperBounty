@@ -19,3 +19,21 @@ body {
 div>#form_save{
     margin-top: 10px;
 }
+
+.lg{
+    max-width: 400px;
+
+}
+.addProejctForm{
+    max-width: 400px;
+
+}
+.col-sm-4.hugo{
+    padding-left: 0;
+}
+#projectList{
+    max-width: 300px;
+}
+table.targetsTable{
+    max-width:1000px;
+}

@@ -1,5 +1,39 @@
-<h1>Add projects page</h1>
+{% extends "@CasperBountyFront/base.html.twig" %}
 
-{{ form_start(form) }}
-{{ form_widget(form) }}
-{{ form_end(form) }}
+{% block pageTitle %}<title>Add projects page</title>{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <h4>Projects list</h4>
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#projectList">Projects list</a></li>
+                <li><a data-toggle="tab" href="#menu1">add project</a></li>
+
+            </ul>
+            <div class="col-sm-4 hugo">
+            <div class="tab-content">
+
+
+                    <div id="projectList" class="tab-pane fade in active">
+
+                        <div class="list-group lg">
+                            {% for p in projects %}
+                                <a class="list-group-item" href="{{ path('casper_bounty_projects_id',{'projectId':p.projectId}) }}"> {{ p.name }}</a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div id="menu1" class="tab-pane fade">
+
+                        {{ form_start(form,{'attr':{'class':'addProejctForm'}}) }}
+                        {{ form_widget(form) }}
+                        {{ form_end(form) }}
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

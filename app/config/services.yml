@@ -3,9 +3,7 @@
 parameters:
 #    parameter_name: value
 
-services:
-    testservice:
-      class: CasperBounty\ProjectsBundle\Service\Testservice1
+
     #  public: true
   #    service_name:
 #        class: AppBundle\Directory\ClassName
