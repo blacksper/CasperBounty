@@ -173,7 +173,7 @@ class DefaultController extends Controller
             $mda = $repository->createQueryBuilder('t')->select('t.targetid')->where("t.targetid in (:hosts)")->setParameter('hosts', $successAdded)->getQuery();
             echo $mda->getSQL();
             $mda->getResult();
-        
+
             $em->flush();
 
             var_dump($successAdded);
