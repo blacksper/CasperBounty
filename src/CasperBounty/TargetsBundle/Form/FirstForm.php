@@ -18,15 +18,12 @@ class FirstForm extends AbstractType
                 'choices' => array(
                     'ip' => 'ip',
                     'domain' => 'domain'
-                ),
-                'choice_attr' => function ($val, $key, $index) {
-                    // adds a class like attending_yes, attending_no, etc
-                    return ['class' => 'attending_' . strtolower($key)];
-                },
+                )
             ))
-            ->add('save', SubmitType::class, array('label' => 'Create Post'));
+            
+            ->add('save', SubmitType::class, array('label' => 'add hosts'));
 
-        
+
     }
 
     public function configureOptions(OptionsResolver $resolver)
