@@ -20,9 +20,10 @@ class FirstForm extends AbstractType
                     'domain' => 'domain'
                 )
             ))
+            
             ->add('save', SubmitType::class, array('label' => 'add hosts'));
 
-        
+
     }
 
     public function configureOptions(OptionsResolver $resolver)
