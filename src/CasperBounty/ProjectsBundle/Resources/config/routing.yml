@@ -33,3 +33,4 @@ casper_bounty_projects_targetsToProjectFromList:
       id: '\d+'
       targetid: '\w+'
     methods: [POST]
+    
