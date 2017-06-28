@@ -27,7 +27,7 @@ CasperBounty\RegexpBundle\Entity\Regexpresult:
                 fixed: false
     manyToOne:
         regexpid:
-            targetEntity: Regexp
+            targetEntity: CasperBounty\RegexpBundle\Entity\Regexp
             cascade: {  }
             fetch: LAZY
             mappedBy: null
@@ -37,7 +37,7 @@ CasperBounty\RegexpBundle\Entity\Regexpresult:
                     referencedColumnName: regexpId
             orphanRemoval: false
         resultid:
-            targetEntity: Results
+            targetEntity: CasperBounty\ResultsBundle\Entity\Results
             cascade: {  }
             fetch: LAZY
             mappedBy: null

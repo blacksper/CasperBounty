@@ -20,7 +20,7 @@ CasperBounty\TasklistBundle\Entity\Tasklist:
                 fixed: false
     manyToMany:
         profileid:
-            targetEntity: Profiles
+            targetEntity: CasperBounty\ProfilesBundle\Entity\Profiles
             cascade: {  }
             fetch: LAZY
             mappedBy: null

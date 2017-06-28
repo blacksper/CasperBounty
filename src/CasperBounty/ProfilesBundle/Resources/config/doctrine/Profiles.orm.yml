@@ -1,43 +1,50 @@
-CasperBounty\RegexpBundle\Entity\Regexpcolumns:
+CasperBounty\ProfilesBundle\Entity\Profiles:
     type: entity
-    table: regexpcolumns
+    table: profiles
     indexes:
-        fk_regexpColumns_regexpResult_1:
+        fk_profiles_tools_1:
             columns:
-                - regexpResultId
+                - toolId
     id:
-        regexpcolumnid:
+        profileid:
             type: integer
             nullable: false
             options:
                 unsigned: false
             id: true
-            column: regexpColumnId
+            column: profileId
+            generator:
+                strategy: IDENTITY
     fields:
-        columnname:
+        name:
             type: string
             nullable: false
             length: 255
             options:
                 fixed: false
-            column: columnName
-    oneToOne:
-        regexpresultid:
-            targetEntity: CasperBounty\RegexpBundle\Entity\Regexpresult
+        cmd:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+    manyToOne:
+        toolid:
+            targetEntity: CasperBounty\ToolsBundle\Entity\Tools
             cascade: {  }
             fetch: LAZY
             mappedBy: null
             inversedBy: null
             joinColumns:
-                regexpResultId:
-                    referencedColumnName: regexpResultId
+                toolId:
+                    referencedColumnName: toolId
             orphanRemoval: false
     manyToMany:
-        templateid:
-            targetEntity: CasperBounty\TemplatesBundle\Entity\Templates
+        taskid:
+            targetEntity: CasperBounty\TasklistBundle\Entity\Tasklist
             cascade: {  }
             fetch: LAZY
-            mappedBy: regexpcolumnid
+            mappedBy: profileid
             inversedBy: null
             joinTable: null
             orderBy: null

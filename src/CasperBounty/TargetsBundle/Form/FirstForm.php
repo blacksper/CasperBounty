@@ -21,7 +21,7 @@ class FirstForm extends AbstractType
                 )
             ))
             
-            ->add('save', SubmitType::class, array('label' => 'add hosts'));
+            ->add('save', SubmitType::class, array('label' => 'add hosts','attr'=>array('class'=>'btn btn-success')));
 
 
     }

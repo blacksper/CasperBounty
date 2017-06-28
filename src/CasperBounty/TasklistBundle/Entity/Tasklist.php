@@ -67,11 +67,11 @@ class Tasklist
     /**
      * Add profileid
      *
-     * @param \CasperBounty\TasklistBundle\Entity\Profiles $profileid
+     * @param \CasperBounty\ProfilesBundle\Entity\Profiles $profileid
      *
      * @return Tasklist
      */
-    public function addProfileid(\CasperBounty\TasklistBundle\Entity\Profiles $profileid)
+    public function addProfileid(\CasperBounty\ProfilesBundle\Entity\Profiles $profileid)
     {
         $this->profileid[] = $profileid;
 
@@ -81,9 +81,9 @@ class Tasklist
     /**
      * Remove profileid
      *
-     * @param \CasperBounty\TasklistBundle\Entity\Profiles $profileid
+     * @param \CasperBounty\ProfilesBundle\Entity\Profiles $profileid
      */
-    public function removeProfileid(\CasperBounty\TasklistBundle\Entity\Profiles $profileid)
+    public function removeProfileid(\CasperBounty\ProfilesBundle\Entity\Profiles $profileid)
     {
         $this->profileid->removeElement($profileid);
     }

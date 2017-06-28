@@ -16,14 +16,14 @@ class Results
      * @var string
      */
     private $result;
-
+    
     /**
-     * @var \CasperBounty\ResultsBundle\Entity\Targets
+     * @var \CasperBounty\TargetsBundle\Entity\Targets
      */
     private $targetid;
 
     /**
-     * @var \CasperBounty\ResultsBundle\Entity\Profiles
+     * @var \CasperBounty\ProfilesBundle\Entity\Profiles
      */
     private $profileid;
 
@@ -65,11 +65,11 @@ class Results
     /**
      * Set targetid
      *
-     * @param \CasperBounty\ResultsBundle\Entity\Targets $targetid
+     * @param \CasperBounty\TargetsBundle\Entity\Targets $targetid
      *
      * @return Results
      */
-    public function setTargetid(\CasperBounty\ResultsBundle\Entity\Targets $targetid = null)
+    public function setTargetid(\CasperBounty\TargetsBundle\Entity\Targets $targetid = null)
     {
         $this->targetid = $targetid;
 
@@ -79,7 +79,7 @@ class Results
     /**
      * Get targetid
      *
-     * @return \CasperBounty\ResultsBundle\Entity\Targets
+     * @return \CasperBounty\TargetsBundle\Entity\Targets
      */
     public function getTargetid()
     {
@@ -89,11 +89,11 @@ class Results
     /**
      * Set profileid
      *
-     * @param \CasperBounty\ResultsBundle\Entity\Profiles $profileid
+     * @param \CasperBounty\ProfilesBundle\Entity\Profiles $profileid
      *
      * @return Results
      */
-    public function setProfileid(\CasperBounty\ResultsBundle\Entity\Profiles $profileid = null)
+    public function setProfileid(\CasperBounty\ProfilesBundle\Entity\Profiles $profileid = null)
     {
         $this->profileid = $profileid;
 
@@ -103,7 +103,7 @@ class Results
     /**
      * Get profileid
      *
-     * @return \CasperBounty\ResultsBundle\Entity\Profiles
+     * @return \CasperBounty\ProfilesBundle\Entity\Profiles
      */
     public function getProfileid()
     {

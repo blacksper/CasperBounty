@@ -134,60 +134,46 @@ class DefaultController extends Controller
         $targetsArr = $formData['targetid'];
         $projectId = $formData['projectId'];
 
-        $message = $targetsToProject->addTargetsToProject($projectId, $targetsArr);
+        $targetsToProject->addTargetsToProject($projectId, $targetsArr);
 
         return $this->redirectToRoute('casper_bounty_projects_addTargets', array('projectId' => $projectId));
     }
 
     public function targetsToProjectFromListAction(Request $request)
     {
-        $successAdded = array();
+
         $formData = $request->get('first_form');
         $hostsString = $formData['host'];
         //print_r($hosts);
-
         $projectId = 1;
-
-
         $em = $this->getDoctrine()->getManager();
         //$hostsSting = $form['host']->getData();
         $hostsArray = explode("\r\n", $hostsString);
 
-        var_dump($hostsString);
-        var_dump($hostsArray);
+        //var_dump($hostsString);
+        //var_dump($hostsArray);
         //die();
-        $repository=$em->getRepository('CasperBountyTargetsBundle:Targets');
-        foreach ($hostsArray as $host) {
-            $existHost = $repository->findOneBy(array('host' => $host));
+        $targetsService=$this->get('casper_bounty_targets.targetsService');
+        $successAdded=$targetsService->checkHostExists($hostsArray);
 
-            if (!$existHost) {
-                $target = new Targets();
-                $target->setType('domain');
-                $target->setHost($host);
-                $em->persist($target);
-                $successAdded[] = $host;
-                //echo 123;
-            }
-        }
-            var_dump($successAdded);
-            $mda = $repository->createQueryBuilder('t')->select('t.targetid')->where("t.targetid in (:hosts)")->setParameter('hosts', $successAdded)->getQuery();
-            echo $mda->getSQL();
-            $mda->getResult();
+        $repository = $em->getRepository('CasperBountyTargetsBundle:Targets');
 
-            $em->flush();
+        //$mda = $repository->createQueryBuilder('t')->select('t.targetid')->where("t.targetid in (:hosts)")->setParameter('hosts', $successAdded)->getQuery();
+        //echo $mda->getSQL();
+        //$mda->getResult();
+        //$em->flush();
 
-            var_dump($successAdded);
-            $targetsToProject = $this->get('casper_bounty_projects.testservice');
-            $message = $targetsToProject->addTargetsToProject(1, $successAdded);
+        $targetsToProject = $this->get('casper_bounty_projects.testservice');
+        $targetsToProject->addTargetsToProject(1, $successAdded);
 
 
-            //return $this->redirectToRoute('casper_bounty_targets_homepage');
+        //return $this->redirectToRoute('casper_bounty_targets_homepage');
 //            return $this->render('CasperBountyTargetsBundle:Default:index.html.twig',
 //                array(
 //                    'success'=>$successAdded,
 //                    'form' => $form->createView())
 //            );
-            return $this->redirectToRoute('casper_bounty_projects_targetsToProject', array('projectId' => $projectId));
+        return $this->redirectToRoute('casper_bounty_projects_targetsToProject', array('projectId' => $projectId));
 
     }
 

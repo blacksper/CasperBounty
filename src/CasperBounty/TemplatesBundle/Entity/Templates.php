@@ -73,11 +73,11 @@ class Templates
     /**
      * Add regexpcolumnid
      *
-     * @param \CasperBounty\TemplatesBundle\Entity\Regexpcolumns $regexpcolumnid
+     * @param \CasperBounty\RegexpBundle\Entity\Regexpcolumns $regexpcolumnid
      *
      * @return Templates
      */
-    public function addRegexpcolumnid(\CasperBounty\TemplatesBundle\Entity\Regexpcolumns $regexpcolumnid)
+    public function addRegexpcolumnid(\CasperBounty\RegexpBundle\Entity\Regexpcolumns $regexpcolumnid)
     {
         $this->regexpcolumnid[] = $regexpcolumnid;
 
@@ -87,9 +87,9 @@ class Templates
     /**
      * Remove regexpcolumnid
      *
-     * @param \CasperBounty\TemplatesBundle\Entity\Regexpcolumns $regexpcolumnid
+     * @param \CasperBounty\RegexpBundle\Entity\Regexpcolumns $regexpcolumnid
      */
-    public function removeRegexpcolumnid(\CasperBounty\TemplatesBundle\Entity\Regexpcolumns $regexpcolumnid)
+    public function removeRegexpcolumnid(\CasperBounty\RegexpBundle\Entity\Regexpcolumns $regexpcolumnid)
     {
         $this->regexpcolumnid->removeElement($regexpcolumnid);
     }
@@ -107,11 +107,11 @@ class Templates
     /**
      * Add toolid
      *
-     * @param \CasperBounty\TemplatesBundle\Entity\Tools $toolid
+     * @param \CasperBounty\ToolsBundle\Entity\Tools $toolid
      *
      * @return Templates
      */
-    public function addToolid(\CasperBounty\TemplatesBundle\Entity\Tools $toolid)
+    public function addToolid(\CasperBounty\ToolsBundle\Entity\Tools $toolid)
     {
         $this->toolid[] = $toolid;
 
@@ -121,9 +121,9 @@ class Templates
     /**
      * Remove toolid
      *
-     * @param \CasperBounty\TemplatesBundle\Entity\Tools $toolid
+     * @param \CasperBounty\ToolsBundle\Entity\Tools $toolid
      */
-    public function removeToolid(\CasperBounty\TemplatesBundle\Entity\Tools $toolid)
+    public function removeToolid(\CasperBounty\ToolsBundle\Entity\Tools $toolid)
     {
         $this->toolid->removeElement($toolid);
     }

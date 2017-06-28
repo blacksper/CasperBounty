@@ -20,7 +20,7 @@ CasperBounty\TemplatesBundle\Entity\Templates:
                 fixed: false
     manyToMany:
         regexpcolumnid:
-            targetEntity: Regexpcolumns
+            targetEntity: CasperBounty\RegexpBundle\Entity\Regexpcolumns
             cascade: {  }
             fetch: LAZY
             mappedBy: null
@@ -37,7 +37,7 @@ CasperBounty\TemplatesBundle\Entity\Templates:
                         referencedColumnName: regexpColumnId
             orderBy: null
         toolid:
-            targetEntity: Tools
+            targetEntity: CasperBounty\ToolsBundle\Entity\Tools
             cascade: {  }
             fetch: LAZY
             mappedBy: templateid

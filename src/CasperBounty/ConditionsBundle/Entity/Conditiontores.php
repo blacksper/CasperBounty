@@ -13,12 +13,12 @@ class Conditiontores
     private $conditionid;
 
     /**
-     * @var \CasperBounty\ConditionsBundle\Entity\Profiles
+     * @var \CasperBounty\ProfilesBundle\Entity\Profiles
      */
     private $profileid;
 
     /**
-     * @var \CasperBounty\ConditionsBundle\Entity\Results
+     * @var \CasperBounty\ResultsBundle\Entity\Results
      */
     private $resultid;
 
@@ -50,11 +50,11 @@ class Conditiontores
     /**
      * Set profileid
      *
-     * @param \CasperBounty\ConditionsBundle\Entity\Profiles $profileid
+     * @param \CasperBounty\ProfilesBundle\Entity\Profiles $profileid
      *
      * @return Conditiontores
      */
-    public function setProfileid(\CasperBounty\ConditionsBundle\Entity\Profiles $profileid = null)
+    public function setProfileid(\CasperBounty\ProfilesBundle\Entity\Profiles $profileid = null)
     {
         $this->profileid = $profileid;
 
@@ -64,7 +64,7 @@ class Conditiontores
     /**
      * Get profileid
      *
-     * @return \CasperBounty\ConditionsBundle\Entity\Profiles
+     * @return \CasperBounty\ProfilesBundle\Entity\Profiles
      */
     public function getProfileid()
     {
@@ -74,11 +74,11 @@ class Conditiontores
     /**
      * Set resultid
      *
-     * @param \CasperBounty\ConditionsBundle\Entity\Results $resultid
+     * @param \CasperBounty\ResultsBundle\Entity\Results $resultid
      *
      * @return Conditiontores
      */
-    public function setResultid(\CasperBounty\ConditionsBundle\Entity\Results $resultid = null)
+    public function setResultid(\CasperBounty\ResultsBundle\Entity\Results $resultid = null)
     {
         $this->resultid = $resultid;
 
@@ -88,7 +88,7 @@ class Conditiontores
     /**
      * Get resultid
      *
-     * @return \CasperBounty\ConditionsBundle\Entity\Results
+     * @return \CasperBounty\ResultsBundle\Entity\Results
      */
     public function getResultid()
     {

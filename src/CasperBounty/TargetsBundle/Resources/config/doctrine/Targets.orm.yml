@@ -34,7 +34,7 @@ CasperBounty\TargetsBundle\Entity\Targets:
             joinTable: null
             orderBy: null
         ipid:
-            targetEntity: Targets
+            targetEntity: CasperBounty\TargetsBundle\Entity\Targets
             cascade: {  }
             fetch: LAZY
             mappedBy: null

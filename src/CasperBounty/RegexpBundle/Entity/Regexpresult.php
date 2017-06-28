@@ -23,7 +23,7 @@ class Regexpresult
     private $regexpid;
 
     /**
-     * @var \CasperBounty\RegexpBundle\Entity\Results
+     * @var \CasperBounty\ResultsBundle\Entity\Results
      */
     private $resultid;
 
@@ -89,11 +89,11 @@ class Regexpresult
     /**
      * Set resultid
      *
-     * @param \CasperBounty\RegexpBundle\Entity\Results $resultid
+     * @param \CasperBounty\ResultsBundle\Entity\Results $resultid
      *
      * @return Regexpresult
      */
-    public function setResultid(\CasperBounty\RegexpBundle\Entity\Results $resultid = null)
+    public function setResultid(\CasperBounty\ResultsBundle\Entity\Results $resultid = null)
     {
         $this->resultid = $resultid;
 
@@ -103,7 +103,7 @@ class Regexpresult
     /**
      * Get resultid
      *
-     * @return \CasperBounty\RegexpBundle\Entity\Results
+     * @return \CasperBounty\ResultsBundle\Entity\Results
      */
     public function getResultid()
     {

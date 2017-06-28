@@ -110,11 +110,11 @@ class Regexpcolumns
     /**
      * Add templateid
      *
-     * @param \CasperBounty\RegexpBundle\Entity\Templates $templateid
+     * @param \CasperBounty\TemplatesBundle\Entity\Templates $templateid
      *
      * @return Regexpcolumns
      */
-    public function addTemplateid(\CasperBounty\RegexpBundle\Entity\Templates $templateid)
+    public function addTemplateid(\CasperBounty\TemplatesBundle\Entity\Templates $templateid)
     {
         $this->templateid[] = $templateid;
 
@@ -124,9 +124,9 @@ class Regexpcolumns
     /**
      * Remove templateid
      *
-     * @param \CasperBounty\RegexpBundle\Entity\Templates $templateid
+     * @param \CasperBounty\TemplatesBundle\Entity\Templates $templateid
      */
-    public function removeTemplateid(\CasperBounty\RegexpBundle\Entity\Templates $templateid)
+    public function removeTemplateid(\CasperBounty\TemplatesBundle\Entity\Templates $templateid)
     {
         $this->templateid->removeElement($templateid);
     }

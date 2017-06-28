@@ -14,7 +14,7 @@ CasperBounty\ConditionsBundle\Entity\Conditiontores:
     id: {  }
     oneToOne:
         conditionid:
-            targetEntity: Conditions
+            targetEntity: CasperBounty\ConditionsBundle\Entity\Conditions
             cascade: {  }
             fetch: LAZY
             mappedBy: null
@@ -34,7 +34,7 @@ CasperBounty\ConditionsBundle\Entity\Conditiontores:
                     referencedColumnName: profileId
             orphanRemoval: false
         resultid:
-            targetEntity: Results
+            targetEntity: CasperBounty\ResultsBundle\Entity\Results
             cascade: {  }
             fetch: LAZY
             mappedBy: null

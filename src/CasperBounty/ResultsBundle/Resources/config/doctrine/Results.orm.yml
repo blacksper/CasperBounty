@@ -27,7 +27,7 @@ CasperBounty\ResultsBundle\Entity\Results:
                 fixed: false
     manyToOne:
         targetid:
-            targetEntity: Targets
+            targetEntity: CasperBounty\TargetsBundle\Entity\Targets
             cascade: {  }
             fetch: LAZY
             mappedBy: null
@@ -37,7 +37,7 @@ CasperBounty\ResultsBundle\Entity\Results:
                     referencedColumnName: targetId
             orphanRemoval: false
         profileid:
-            targetEntity: Profiles
+            targetEntity: CasperBounty\ProfilesBundle\Entity\Profiles
             cascade: {  }
             fetch: LAZY
             mappedBy: null

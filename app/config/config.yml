@@ -58,9 +58,11 @@ doctrine:
         #path:     "%database_path%"
 
     orm:
-        auto_generate_proxy_classes: "%kernel.debug%"
-        naming_strategy: doctrine.orm.naming_strategy.underscore
-        auto_mapping: true
+      metadata_cache_driver: apc
+      naming_strategy: doctrine.orm.naming_strategy.underscore
+      auto_generate_proxy_classes: "%kernel.debug%"
+      auto_mapping: true
+
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -73,11 +75,14 @@ assetic:
     debug:          '%kernel.debug%'
     use_controller: '%kernel.debug%'
     filters:
-        scssphp:
-            formatter: 'Leafo\ScssPhp\Formatter\Compressed'
-            cssrewrite: ~
-            jsqueeze: ~
+      scssphp:
+        formatter: 'Leafo\ScssPhp\Formatter\Compressed'
+        cssrewrite: ~
+      jsqueeze: ~
     assets:
+      jQuery:
+        inputs:
+          - 'assets/vendor/jquery/dist/jquery.js'
       bootstrap_fonts_woff:
           inputs:
               - 'assets/vendor/bootstrap/fonts/glyphicons-halflings-regular.woff'

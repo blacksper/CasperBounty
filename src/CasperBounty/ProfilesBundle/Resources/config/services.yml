@@ -1,0 +1,4 @@
+services:
+#    casper_bounty_profiles.example:
+#        class: CasperBounty\ProfilesBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

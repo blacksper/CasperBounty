@@ -96,11 +96,11 @@ class Tools
     /**
      * Add templateid
      *
-     * @param \CasperBounty\ToolsBundle\Entity\Templates $templateid
+     * @param \CasperBounty\TemplatesBundle\Entity\Templates $templateid
      *
      * @return Tools
      */
-    public function addTemplateid(\CasperBounty\ToolsBundle\Entity\Templates $templateid)
+    public function addTemplateid(\CasperBounty\TemplatesBundle\Entity\Templates $templateid)
     {
         $this->templateid[] = $templateid;
 
@@ -110,9 +110,9 @@ class Tools
     /**
      * Remove templateid
      *
-     * @param \CasperBounty\ToolsBundle\Entity\Templates $templateid
+     * @param \CasperBounty\TemplatesBundle\Entity\Templates $templateid
      */
-    public function removeTemplateid(\CasperBounty\ToolsBundle\Entity\Templates $templateid)
+    public function removeTemplateid(\CasperBounty\TemplatesBundle\Entity\Templates $templateid)
     {
         $this->templateid->removeElement($templateid);
     }
