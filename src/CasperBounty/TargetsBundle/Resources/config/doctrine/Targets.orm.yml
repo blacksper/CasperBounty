@@ -3,27 +3,27 @@ CasperBounty\TargetsBundle\Entity\Targets:
     table: targets
     id:
         targetid:
+            id: true
             type: integer
-            nullable: false
             options:
                 unsigned: false
-            id: true
             column: targetId
             generator:
                 strategy: IDENTITY
+
     fields:
         host:
             type: string
-            nullable: false
             length: 255
             options:
                 fixed: false
+            nullable: false
         type:
             type: string
-            nullable: false
             length: 255
             options:
                 fixed: false
+            nullable: false
     manyToMany:
         groupid:
             targetEntity: CasperBounty\GroupsBundle\Entity\Groups
@@ -33,23 +33,23 @@ CasperBounty\TargetsBundle\Entity\Targets:
             inversedBy: null
             joinTable: null
             orderBy: null
+
         ipid:
             targetEntity: CasperBounty\TargetsBundle\Entity\Targets
             cascade: {  }
             fetch: LAZY
-            mappedBy: null
-            inversedBy: domainid
             joinTable:
                 name: ipdomainrelation
                 joinColumns:
                     -
-                        name: domainId
                         referencedColumnName: targetId
+                        name: domainId
                 inverseJoinColumns:
                     -
-                        name: ipId
                         referencedColumnName: targetId
+                        name: ipId
             orderBy: null
+
         projectid:
             targetEntity: CasperBounty\ProjectsBundle\Entity\Projects
             cascade: {  }

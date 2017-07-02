@@ -36,4 +36,9 @@ div>#form_save{
 }
 table.targetsTable{
     max-width:1000px;
+    font-size: 10px;
+
+}
+.table-condensed{
+
 }

@@ -14,12 +14,7 @@ class FirstForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder ->add('host', TextareaType::class)
-            ->add('type', ChoiceType::class, array(
-                'choices' => array(
-                    'ip' => 'ip',
-                    'domain' => 'domain'
-                )
-            ))
+
             
             ->add('save', SubmitType::class, array('label' => 'add hosts','attr'=>array('class'=>'btn btn-success')));
 

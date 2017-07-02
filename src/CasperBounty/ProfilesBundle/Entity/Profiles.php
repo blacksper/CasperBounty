@@ -105,7 +105,7 @@ class Profiles
      *
      * @return Profiles
      */
-    public function setToolid(\CasperBounty\ProfilesBundle\Entity\Tools $toolid = null)
+    public function setToolid(\CasperBounty\ToolsBundle\Entity\Tools $toolid = null)
     {
         $this->toolid = $toolid;
 

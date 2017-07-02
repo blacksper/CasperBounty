@@ -1,6 +1,13 @@
 CasperBounty\ConditionsBundle\Entity\Conditiontores:
     type: entity
     table: conditiontores
+    id:
+      resultid:
+        associationKey: true
+      profileid:
+        associationKey: true
+      conditionid:
+        associationKey: true
     indexes:
         fk_conditionToRes_results_1:
             columns:
@@ -11,7 +18,7 @@ CasperBounty\ConditionsBundle\Entity\Conditiontores:
         IDX_C0177027128AE9F0:
             columns:
                 - conditionId
-    id: {  }
+
     oneToOne:
         conditionid:
             targetEntity: CasperBounty\ConditionsBundle\Entity\Conditions
@@ -24,7 +31,7 @@ CasperBounty\ConditionsBundle\Entity\Conditiontores:
                     referencedColumnName: conditId
             orphanRemoval: false
         profileid:
-            targetEntity: Profiles
+            targetEntity: CasperBounty\ProfilesBundle\Entity\Profiles
             cascade: {  }
             fetch: LAZY
             mappedBy: null

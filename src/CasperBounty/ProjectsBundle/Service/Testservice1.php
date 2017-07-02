@@ -39,14 +39,19 @@ class Testservice1
         //$this->em->getRepository('');
         //$em = $this->em->getDoctrine()->getManager();
 
-        //var_dump($this);
-        //$em=$this->entityManager;
-        $project=$this->entityManager->getRepository('CasperBountyProjectsBundle:Projects')->find($projectId);
-        $targets=$this->entityManager->getRepository('CasperBountyTargetsBundle:Targets')->findBy(array('targetid' => $targetsArr));
+        var_dump($targetsArr);
+        //die();
+        $em=$this->entityManager;
+        $repositoryProjects=$em->getRepository('CasperBountyProjectsBundle:Projects');
+        $repositoryTargets=$em->getRepository('CasperBountyTargetsBundle:Targets');
 
+        $project=$repositoryProjects->find($projectId);
+        $targets=$repositoryTargets->findBy(array('targetid' => $targetsArr));
+        echo count($targets);
+        //die();
         foreach ($targets as $target)
             $project->addTargetid($target);
 
-        $this->entityManager->flush();
+        $em->flush();
     }
 }
