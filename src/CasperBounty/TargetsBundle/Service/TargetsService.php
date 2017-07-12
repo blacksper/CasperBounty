@@ -6,6 +6,8 @@ namespace CasperBounty\TargetsBundle\Service;
 use CasperBounty\TargetsBundle\Entity\Targets;
 use Doctrine\ORM\EntityManager;
 
+
+
 class TargetsService
 {
     public function __construct(EntityManager $entityManager)
@@ -13,32 +15,38 @@ class TargetsService
         $this->em = $entityManager;
     }
 
+    /** set hosts type */
     public function setHostType($hosts)
     {
         $hostWithType = array();
         foreach ($hosts as $host) {
             $type = "";
-            //$valid = filter_var($host, FILTER_VALIDATE_IP);
-            //var_dump(filter_var('2001:0db8:0000:85a3:0000:0000:ac1f:8001', FILTER_VALIDATE_IP, FILTER_FLAG_IPV4));
-            //var_dump(filter_var('mandrill._domainkey.mailchimp.com', FILTER_VALIDATE_DOMAIN));
             if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
                 $type = 'ipv4';
             } elseif(filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
                 $type = 'ipv6';
             }elseif(filter_var($host, FILTER_VALIDATE_DOMAIN)){
                 $type='domain';
+                preg_match("#(.*)\.([\w\d\-]*\.\w{2,10})#",$host,$m);
+                if(empty($m))
+                    $type="maindomain";
+            }else{
+                continue;
             }
             //echo $type;
-            $hostWithType[]=array('host'=>$host,'type'=>$type);
+            //TODO проверку на дубликаты входных доменов
+            $hostWithType[$type][]=$host;
         }
         //print_r($hostWithType);
         return $hostWithType;
     }
 
+    /** check hosts for exists in db */
+
     public function checkHostExists($hostsArray)
     {
-        $successAdded=array();
-        $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+
+        $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');//TODO уточнить необходимость создания репозитория второй раз
         $existHost = $repository->createQueryBuilder('t')->select('t.host')->where('t.host in (:har)')->setParameter('har', $hostsArray)->getQuery();
         $rere = $existHost->getResult();
         //print_r($rere);
@@ -48,33 +56,51 @@ class TargetsService
         }
 
         $nonExistsHosts = array_diff($hostsArray, $tmparr);
-        //print_r($result);
-        $nonExistsHosts=$this->setHostType($nonExistsHosts);
-        //die();
+        return $nonExistsHosts;
+    }
 
-        foreach ($nonExistsHosts as $host) {
-            //$existHost = $repository->findOneBy(array('host' => $host));
-            //$existHostr = $repository->createQueryBuilder('t')->where('t.host in (:har)')->setParameter('har',$hostsArray)->getQuery()->getResult();
-            //$existHossq = $repository->createQueryBuilder('t')->where('t.host in (:har)')->setParameter('har',$hostsArray)->getQuery()->getSQL();
-            //$existHost = $repository->createQueryBuilder('t')->where('t.targetid in (:har)')->setParameter('har',$hostsArray)->;
-            $target = new Targets();
-            $target->setType($host['type']);
-            $target->setHost($host['host']);
-            $this->em->persist($target);
+    /**
+     * add hosts to db
+     */
 
-            $this->em->flush();
-            $this->em->refresh($target);
-            $successAdded[] = $target->getTargetid();
+    public function addHosts($hostsArr)
+    {
+        $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+        $uniqueHosts=$this->checkHostExists($hostsArr);
+        if(empty($uniqueHosts))
+            return 0;
+
+        $hostTypeArr=$this->setHostType($uniqueHosts);
+
+        $successAdded=array();
+        foreach ($hostTypeArr as $type=>$val) {
+            foreach ($val as $host) {
+                //$existHost = $repository->findOneBy(array('host' => $host));
+                //$existHostr = $repository->createQueryBuilder('t')->where('t.host in (:har)')->setParameter('har',$hostsArray)->getQuery()->getResult();
+                //$existHossq = $repository->createQueryBuilder('t')->where('t.host in (:har)')->setParameter('har',$hostsArray)->getQuery()->getSQL();
+                //$existHost = $repository->createQueryBuilder('t')->where('t.targetid in (:har)')->setParameter('har',$hostsArray)->;
+                $target = new Targets();
+                $target->setType($type);
+                $target->setHost($host);
+                $this->em->persist($target);
+
+                $this->em->flush();
+                $this->em->refresh($target);
+                $successAdded[] = $target->getTargetid();
+            }
         }
 
         $repository->clear();
-
-
         return $successAdded;
     }
 
-    public function addHosts($notExtistsHostsArray)
-    {
+    public function isMainDomain($hosts){
+        //$repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+        foreach ($hosts as $host) {
+            preg_match("#(.*)\.([\w\d\-]*\.\w{2,10})#",$host,$m);
+            print_r($m);
+        }
+        die();
 
     }
 

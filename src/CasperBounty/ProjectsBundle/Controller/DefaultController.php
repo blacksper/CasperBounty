@@ -134,22 +134,21 @@ class DefaultController extends Controller
 
         $formData = $request->get('first_form');
         $hostsString = $formData['host'];
-
         $projectId = 1;
-
         $hostsArray = explode("\r\n", $hostsString);
-
-
+        
         $targetsService=$this->get('casper_bounty_targets.targetsService');
-        $successAdded=$targetsService->checkHostExists($hostsArray);
+        //$targetsService->isMainDomain($hostsArray);
+
+
+        $successAdded=$targetsService->addHosts($hostsArray);
 
 
         $targetsToProject = $this->get('casper_bounty_projects.testservice');
         $targetsToProject->addTargetsToProject(1, $successAdded);
 
 
-        return $this->redirectToRoute('casper_bounty_projects_targetsToProject', array('projectId' => $projectId));
-
+        return $this->redirectToRoute('casper_bounty_projects_id_get_targets', array('projectId' => $projectId));
     }
 
     public function createAction()
