@@ -2,5 +2,9 @@ casper_bounty_targets_homepage:
     path:     /targets
     defaults: { _controller: CasperBountyTargetsBundle:Default:index }
     methods: [POST, GET]
+casper_bounty_targets_targetid:
+    path:     /projects/{projectId}/targets/{targetId}
+    defaults: { _controller: CasperBountyTargetsBundle:Default:getTargetInfo }
+    methods: [POST, GET]
 
 

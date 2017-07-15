@@ -53,7 +53,7 @@ class DefaultController extends Controller
         $targets = $query->getResult();
         $targetsRes = array();
         foreach ($targets as $target) {
-            $targetsRes[] = array('id' => $target->getTargetid(), 'hostName' => $target->getHost());
+            $targetsRes[] = array('id' => $target->getTargetid(),'type'=>$target->getType(), 'hostName' => $target->getHost());
         }
 
 
@@ -119,7 +119,7 @@ class DefaultController extends Controller
     public function targetsToProjectAction(Request $request)
     {
         $formData = $request->get('form');
-        print_r($request->get('form'));
+        //print_r($request->get('form'));
         $targetsToProject = $this->get('casper_bounty_projects.testservice');
         $targetsArr = $formData['targetid'];
         $projectId = $formData['projectId'];
@@ -131,19 +131,13 @@ class DefaultController extends Controller
 
     public function targetsToProjectFromListAction(Request $request)
     {
-
         $formData = $request->get('first_form');
         $hostsString = $formData['host'];
         $projectId = 1;
         $hostsArray = explode("\r\n", $hostsString);
-        
         $targetsService=$this->get('casper_bounty_targets.targetsService');
         //$targetsService->isMainDomain($hostsArray);
-
-
         $successAdded=$targetsService->addHosts($hostsArray);
-
-
         $targetsToProject = $this->get('casper_bounty_projects.testservice');
         $targetsToProject->addTargetsToProject(1, $successAdded);
 

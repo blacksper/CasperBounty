@@ -36,11 +36,7 @@ class Testservice1
     
     public function addTargetsToProject($projectId,$targetsArr){
 
-        //$this->em->getRepository('');
-        //$em = $this->em->getDoctrine()->getManager();
 
-        var_dump($targetsArr);
-        //die();
         $em=$this->entityManager;
         $repositoryProjects=$em->getRepository('CasperBountyProjectsBundle:Projects');
         $repositoryTargets=$em->getRepository('CasperBountyTargetsBundle:Targets');
@@ -49,9 +45,13 @@ class Testservice1
         $targets=$repositoryTargets->findBy(array('targetid' => $targetsArr));
         echo count($targets);
         //die();
-        foreach ($targets as $target)
+        foreach ($targets as $target) {
             $project->addTargetid($target);
 
+        }
         $em->flush();
+       // die();
+
+
     }
 }

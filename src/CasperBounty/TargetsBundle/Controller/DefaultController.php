@@ -73,4 +73,11 @@ class DefaultController extends Controller
     {
 
     }
+
+    public function getTargetInfoAction($projectId,$targetId){
+        $messageGenerator = $this->get('casper_bounty_targets.targetsservice');
+        $subTargets = $messageGenerator->getSubtargets($targetId);
+        $targetInfo['subtargets']=$subTargets;
+        return $this->render('@CasperBountyTargets/targetInfo.html.twig',array('projectId'=>$projectId,'targetId'=>$targetId,'targetInfo'=>$targetInfo));
+    }
 }

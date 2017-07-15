@@ -104,4 +104,24 @@ class TargetsService
 
     }
 
+    public function getSubtargets($targetId){
+        $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+        $targetInfotest=$repository->find($targetId);
+        if($targetInfotest->getType()=='maindomain') {
+
+            $subTargets = $this->em->createQuery('
+                select t from CasperBountyTargetsBundle:Targets t 
+                WHERE t.host 
+                like :maindomainHost and t.type!=\'maindomain\'')
+                ->setParameter('maindomainHost','%'.$targetInfotest->getHost())
+                ->getResult();
+
+        }else{
+            $subTargets=0;
+        }
+
+
+        return $subTargets;
+    }
+
 }

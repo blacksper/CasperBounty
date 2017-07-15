@@ -1,5 +1,7 @@
-{% extends '@CasperBountyProjects/sin.html.twig' %}
-{% block targets %}
+{% extends '@CasperBountyFront/base.html.twig' %}
+
+{% block body %}
+    <div class="container">
     <table class="table table-condensed targetsTable">
         <thead>
         <tr>
@@ -10,20 +12,19 @@
         </thead>
 
         <tbody>
-        {% for target in targets %}
+        {% for target in targetInfo.subtargets %}
             <tr class="{%   if target.type=='maindomain' %}success{% endif %}">
-                <td class="col-md-4">{{ target.hostName }}</td>
+                <td class="col-md-4">{{ target.host }}</td>
                 <td>{{ target.type }}</td>
                 <td>
 
                     <!--<button type="button" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
                     -->
-                    <button type="button" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"
-                                                                              aria-hidden="true"></span></button>
+                    <button type="button" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></button>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+    </div>
 {% endblock %}
-
