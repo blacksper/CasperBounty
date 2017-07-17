@@ -27,7 +27,7 @@ class TargetsService
                 $type = 'ipv6';
             }elseif(filter_var($host, FILTER_VALIDATE_DOMAIN)){
                 $type='domain';
-                preg_match("#(.*)\.([\w\d\-]*\.\w{2,10})#",$host,$m);
+                preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#",$host,$m);
                 if(empty($m))
                     $type="maindomain";
             }else{
@@ -113,7 +113,7 @@ class TargetsService
                 select t from CasperBountyTargetsBundle:Targets t 
                 WHERE t.host 
                 like :maindomainHost and t.type!=\'maindomain\'')
-                ->setParameter('maindomainHost','%'.$targetInfotest->getHost())
+                ->setParameter('maindomainHost','%.'.$targetInfotest->getHost())
                 ->getResult();
 
         }else{
