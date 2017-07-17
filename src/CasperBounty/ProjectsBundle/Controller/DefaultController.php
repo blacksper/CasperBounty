@@ -49,7 +49,9 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $rep = $em->getRepository('CasperBountyTargetsBundle:Targets');
-        $query = $rep->createQueryBuilder('t')->leftJoin('t.projectid', 'p')->where('p.projectid=:pid')->setParameter('pid', $projectId)->getQuery();
+        $query = $rep->createQueryBuilder('t')->leftJoin('t.projectid', 'p')->where('p.projectid=:pid and t.type=\'maindomain\'')->setParameter('pid', $projectId)->getQuery();
+        $sq=$query->getSQL();
+        echo $sq;
         $targets = $query->getResult();
         $targetsRes = array();
         foreach ($targets as $target) {

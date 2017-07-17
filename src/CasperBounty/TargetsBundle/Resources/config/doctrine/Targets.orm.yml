@@ -24,6 +24,17 @@ CasperBounty\TargetsBundle\Entity\Targets:
             options:
                 fixed: false
             nullable: false
+    manyToOne:
+        parentid:
+            targetEntity: CasperBounty\TargetsBundle\Entity\Targets
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                parentid:
+                    referencedColumnName: targetId
+            orphanRemoval: false
     manyToMany:
         groupid:
             targetEntity: CasperBounty\GroupsBundle\Entity\Groups

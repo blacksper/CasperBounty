@@ -206,5 +206,33 @@ class Targets
     {
         return $this->projectid;
     }
-}
+    /**
+     * @var \CasperBounty\TargetsBundle\Entity\Targets
+     */
+    private $parentid;
 
+
+    /**
+     * Set parentid
+     *
+     * @param \CasperBounty\TargetsBundle\Entity\Targets $parentid
+     *
+     * @return Targets
+     */
+    public function setParentid(\CasperBounty\TargetsBundle\Entity\Targets $parentid = null)
+    {
+        $this->parentid = $parentid;
+
+        return $this;
+    }
+
+    /**
+     * Get parentid
+     *
+     * @return \CasperBounty\TargetsBundle\Entity\Targets
+     */
+    public function getParentid()
+    {
+        return $this->parentid;
+    }
+}
