@@ -7,7 +7,6 @@ use CasperBounty\TargetsBundle\Entity\Targets;
 use Doctrine\ORM\EntityManager;
 
 
-
 class TargetsService
 {
     public function __construct(EntityManager $entityManager)
@@ -23,20 +22,25 @@ class TargetsService
             $type = "";
             if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
                 $type = 'ipv4';
-            } elseif(filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            } elseif (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
                 $type = 'ipv6';
-            }elseif(filter_var($host, FILTER_VALIDATE_DOMAIN)){
-                $type='domain';
-                preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#",$host,$m);
-                if(empty($m))
-                    $type="maindomain";
-            }else{
+            } elseif (filter_var($host, FILTER_VALIDATE_DOMAIN)) {
+                $type = 'domain';
+
+                preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#", $host, $m);
+                //print_r($m);
+                if (!isset($m[2]) && !isset($m[1])) {
+                    $type = "maindomain";
+                }
+
+            } else {
                 continue;
             }
             //echo $type;
             //TODO проверку на дубликаты входных доменов
-            $hostWithType[$type][]=$host;
+            $hostWithType[$type][] = $host;
         }
+        //die();
         //print_r($hostWithType);
         return $hostWithType;
     }
@@ -66,14 +70,14 @@ class TargetsService
     public function addHosts($hostsArr)
     {
         $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
-        $uniqueHosts=$this->checkHostExists($hostsArr);
-        if(empty($uniqueHosts))
+        $uniqueHosts = $this->checkHostExists($hostsArr);
+        if (empty($uniqueHosts))
             return 0;
 
-        $hostTypeArr=$this->setHostType($uniqueHosts);
+        $hostTypeArr = $this->setHostType($uniqueHosts);
 
-        $successAdded=array();
-        foreach ($hostTypeArr as $type=>$val) {
+        $successAdded = array();
+        foreach ($hostTypeArr as $type => $val) {
             foreach ($val as $host) {
                 //$existHost = $repository->findOneBy(array('host' => $host));
                 //$existHostr = $repository->createQueryBuilder('t')->where('t.host in (:har)')->setParameter('har',$hostsArray)->getQuery()->getResult();
@@ -94,30 +98,37 @@ class TargetsService
         return $successAdded;
     }
 
-    public function isMainDomain($hosts){
+    public function isMainDomain($hosts)
+    {
         //$repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
         foreach ($hosts as $host) {
-            preg_match("#(.*)\.([\w\d\-]*\.\w{2,10})#",$host,$m);
+            preg_match("#(.*)\.([\w\d\-]*\.\w{2,10})#", $host, $m);
             print_r($m);
         }
         die();
 
     }
 
-    public function getSubtargets($targetId){
+    public function getSubtargets($targetId)
+    {
         $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
-        $targetInfotest=$repository->find($targetId);
-        if($targetInfotest->getType()=='maindomain') {
+        $targetInfotest = $repository->find($targetId);
+        $projectId = $targetInfotest->getProjectid(); //maindomain projectid
 
-            $subTargets = $this->em->createQuery('
-                select t from CasperBountyTargetsBundle:Targets t 
+        if ($targetInfotest->getType() == 'maindomain') {
+
+            $query = $this->em->createQuery('
+                select t from CasperBountyTargetsBundle:Targets t
+                JOIN t.projectid pid
                 WHERE t.host 
-                like :maindomainHost and t.type!=\'maindomain\'')
-                ->setParameter('maindomainHost','%.'.$targetInfotest->getHost())
-                ->getResult();
-
-        }else{
-            $subTargets=0;
+                like :maindomainHost and t.type!=\'maindomain\' and pid=:projectId')
+                ->setParameters(array('maindomainHost' => '%.' . $targetInfotest->getHost(),
+                    'projectId' => $projectId));
+           // echo $query->getSQL();
+            $subTargets=$query->getResult();
+            //echo count($subTargets);
+        } else {
+            $subTargets = 0;
         }
 
 
