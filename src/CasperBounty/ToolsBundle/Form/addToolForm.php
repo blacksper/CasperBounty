@@ -17,7 +17,7 @@ class addToolForm extends AbstractType
             ->add('cmdpath', TextType::class)
             ->add('save',SubmitType::class,array(
                 'label'  => 'Add tool',
-                'attr'=>array('class'=>'btn btn-success')
+                'attr'=>array('class'=>'btn btn-success addHostButton')
             ));
 
 

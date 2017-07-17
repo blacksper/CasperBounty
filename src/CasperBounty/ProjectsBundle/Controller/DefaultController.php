@@ -32,7 +32,7 @@ class DefaultController extends Controller
 
             $em->persist($projectName);
             $em->flush();
-            $id = $projectName->getProjectid();
+            $id = $projectName->getProjectid(); //TODO рассмиотреть надо ли оно вообще тут
 
             //return $this->redirectToRoute('casper_bounty_projects_id',array('projectId'=>$id));
         }

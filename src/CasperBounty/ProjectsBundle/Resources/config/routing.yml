@@ -4,7 +4,7 @@ casper_bounty_projects_homepage:
 
 casper_bounty_projects_id:
     path:     /projects/{projectId}
-    defaults: { _controller: CasperBountyProjectsBundle:Default:show }
+    defaults: { _controller: CasperBountyProjectsBundle:Default:showTargets }
     requirements:
       projectId: '\d+'
 

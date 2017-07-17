@@ -1,5 +1,6 @@
-{% extends '@CasperBountyProjects/sin.html.twig' %}
-{% block targets %}
+{% extends '@CasperBountyTools/toolsPage.html.twig' %}
+
+{% block toolsTable %}
     <table class="table table-condensed targetsTable">
         <thead>
         <tr>
@@ -10,10 +11,10 @@
         </thead>
 
         <tbody>
-        {% for target in targets %}
-            <tr class="{%   if target.type=='maindomain' %}success{% endif %}">
-                <td class="col-md-4"><a href="{{ path('casper_bounty_targets_targetid',{'targetId':target.id,'projectId':projectId}) }}">{{ target.hostName }}</a></td>
-                <td>{{ target.type }}</td>
+        {% for tool in toolsArr %}
+            <tr class="{%   if tool.name=='maindomain' %}success{% endif %}">
+                <td class="col-md-4">{{ tool.name }}</td>
+                <td>{{ tool.cmdpath }}</td>
                 <td>
 
                     <!--<button type="button" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
@@ -26,4 +27,3 @@
         </tbody>
     </table>
 {% endblock %}
-
