@@ -1,11 +1,12 @@
 {% extends '@CasperBountyProjects/sin.html.twig' %}
 {% block targets %}
-    <table class="table table-condensed targetsTable">
+    <table class="table table-condensed targetsTable col-md-2">
         <thead>
         <tr>
-            <th>host</th>
-            <th>id</th>
-            <th></th>
+            <th>main domain</th>
+            <th>subdomains</th>
+            <th>scans</th>
+            <th>btns</th>
         </tr>
         </thead>
 
@@ -14,6 +15,7 @@
             <tr class="{%   if target.type=='maindomain' %}success{% endif %}">
                 <td class="col-md-4"><a href="{{ path('casper_bounty_targets_targetid',{'targetId':target.id,'projectId':projectId}) }}">{{ target.hostName }}</a></td>
                 <td>{{ target.type }}</td>
+                <td>-</td>
                 <td>
 
                     <!--<button type="button" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
@@ -26,4 +28,31 @@
         </tbody>
     </table>
 {% endblock %}
+{% block notifications %}
 
+    <table class="table table-condensed notifTable col-md-2">
+        <thead>
+        <tr>
+            <th>target</th>
+            <th>title</th>
+            <th>priority</th>
+            <th>btns</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for target in targets %}
+            <tr class="{%   if target.type=='maindomain' %}success{% endif %}">
+                <td class="col-md-4"><a href="{{ path('casper_bounty_targets_targetid',{'targetId':target.id,'projectId':projectId}) }}">{{ target.hostName }}</a></td>
+                <td>{{ target.type }}</td>
+                <td>-</td>
+                <td>
+                    <button type="button" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"
+                                                                              aria-hidden="true"></span></button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

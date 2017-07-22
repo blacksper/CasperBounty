@@ -16,29 +16,87 @@ body {
 .theme-showcase .navbar .container {
     width: auto;
 }
-div>#form_save{
+
+div > #form_save {
     margin-top: 10px;
 }
 
-.lg{
+.lg {
     max-width: 400px;
 
 }
-.addProejctForm{
+
+.addProejctForm {
     max-width: 400px;
 
 }
-.col-sm-4.hugo{
+
+.col-sm-4.hugo {
     padding-left: 0;
 }
-#projectList{
+
+#projectList {
     max-width: 300px;
 }
-table.targetsTable{
-    max-width:1000px;
-    font-size: 10px;
 
+table.targetsTable, table.notifTable {
+    max-width: 400px;
+    font-size: 12px;
+    margin-left: 5px;
 }
-.addHostButton{
-padding-top: 5px;
+table.toolsTable{
+    max-width: 750px;
+    font-size: 12px;
+}
+
+.targetsTable {
+    margin-right: 5px;
+}
+
+.notifTable {
+    margin-left: 5px;
+}
+
+.targetsTable > thead > tr > th {
+    font-size: 14px;
+}
+
+.notifTable > thead > tr > th {
+    font-size: 14px;
+}
+
+.addHostButton {
+    padding-top: 5px;
+    border-radius: 1px;
+}
+
+.navbar-inner {
+    background-color: #5DB6F7; /* background color will be black for all browsers */
+    background-image: none;
+    background-repeat: no-repeat;
+    filter: none;
+}
+
+.navbar .nav > li > a:focus,
+.navbar .nav > li > a:hover {
+    color: white;
+    text-decoration: none;
+    #background-color: transparent;
+    background-color: #7a43b6;
+}
+
+.navbar .nav {
+    font-size: 14px;
+    color: red;
+}
+
+.navbar .nav > li > a {
+    color: white;
+    float: none;
+    text-decoration: none;
+    text-shadow: 0 0px 0 #ffffff;
+}
+
+.addToolForm.row{
+margin-left: 0px;
 }

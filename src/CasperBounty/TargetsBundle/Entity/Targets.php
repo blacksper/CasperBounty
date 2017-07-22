@@ -45,6 +45,7 @@ class Targets
         $this->groupid = new \Doctrine\Common\Collections\ArrayCollection();
         $this->ipid = new \Doctrine\Common\Collections\ArrayCollection();
         $this->projectid = new \Doctrine\Common\Collections\ArrayCollection();
+
     }
 
     /**

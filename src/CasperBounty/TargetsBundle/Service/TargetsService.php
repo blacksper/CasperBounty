@@ -14,6 +14,8 @@ class TargetsService
         $this->em = $entityManager;
     }
 
+    var $projectId;
+
     /** set hosts type */
     public function setHostType($hosts)
     {
@@ -29,9 +31,12 @@ class TargetsService
 
                 preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#", $host, $m);
                 //print_r($m);
-                if (!isset($m[2]) && !isset($m[1])) {
+                if (empty($m[2]) && empty($m[1])) {
                     $type = "maindomain";
                 }
+                //echo $type;
+                //print_r($m);
+                //die();
 
             } else {
                 continue;
@@ -79,13 +84,20 @@ class TargetsService
         $successAdded = array();
         foreach ($hostTypeArr as $type => $val) {
             foreach ($val as $host) {
+                //$parent=null;
                 //$existHost = $repository->findOneBy(array('host' => $host));
                 //$existHostr = $repository->createQueryBuilder('t')->where('t.host in (:har)')->setParameter('har',$hostsArray)->getQuery()->getResult();
                 //$existHossq = $repository->createQueryBuilder('t')->where('t.host in (:har)')->setParameter('har',$hostsArray)->getQuery()->getSQL();
                 //$existHost = $repository->createQueryBuilder('t')->where('t.targetid in (:har)')->setParameter('har',$hostsArray)->;
+
                 $target = new Targets();
+                if ($type == 'domain') {
+                    $parent = $this->searchMain($host);
+                    $target->setParentid($parent);
+                }
                 $target->setType($type);
                 $target->setHost($host);
+
                 $this->em->persist($target);
 
                 $this->em->flush();
@@ -117,22 +129,49 @@ class TargetsService
 
         if ($targetInfotest->getType() == 'maindomain') {
 
+//            $query = $this->em->createQuery('
+//                select t from CasperBountyTargetsBundle:Targets t
+//                JOIN t.projectid pid
+//                WHERE t.host
+//                like :maindomainHost and t.type!=\'maindomain\' and pid=:projectId')
+//                ->setParameters(array('maindomainHost' => '%.' . $targetInfotest->getHost(),
+//                    'projectId' => $projectId));
+
             $query = $this->em->createQuery('
                 select t from CasperBountyTargetsBundle:Targets t
                 JOIN t.projectid pid
-                WHERE t.host 
-                like :maindomainHost and t.type!=\'maindomain\' and pid=:projectId')
-                ->setParameters(array('maindomainHost' => '%.' . $targetInfotest->getHost(),
-                    'projectId' => $projectId));
-           // echo $query->getSQL();
-            $subTargets=$query->getResult();
+                WHERE t.parentid=:parentId and pid=:projectId')
+                ->setParameters(array('parentId'=>$targetId,'projectId'=>$projectId));
+
+            // echo $query->getSQL();
+            $subTargets = $query->getResult();
             //echo count($subTargets);
         } else {
             $subTargets = 0;
         }
 
-
         return $subTargets;
+    }
+    //return id of parent domain
+    public function searchMain($host)
+    {
+        $parent=null;
+        preg_match('#((.*)\.)?([\w\d\-]*\.\w{2,10})#', $host, $m);
+        if (isset($m[3])) { //m[3] contain hostname
+            $mainDomain = $m[3];
+            echo $mainDomain;
+            $query = $this->em->createQuery('
+                select t from CasperBountyTargetsBundle:Targets t
+                JOIN t.projectid pid
+                WHERE t.host=:maindomainHost and pid=:projectId')
+                ->setParameters(array('maindomainHost' => $mainDomain,
+                    'projectId' => $this->projectId));
+            $result=$query->getResult();
+            if(count($result)==1) {//if result is finded and count is 1
+                $parent=$result[0];
+            }
+        }
+        return $parent;
     }
 
 }

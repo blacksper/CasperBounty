@@ -1,12 +1,12 @@
 {% extends '@CasperBountyTools/toolsPage.html.twig' %}
 
 {% block toolsTable %}
-    <table class="table table-condensed targetsTable">
+    <table class="table table-condensed toolsTable ">
         <thead>
         <tr>
-            <th>host</th>
-            <th>id</th>
-            <th></th>
+            <th>tool name</th>
+            <th>path</th>
+            <th>btn</th>
         </tr>
         </thead>
 
@@ -20,7 +20,11 @@
                     <!--<button type="button" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
                     -->
                     <button type="button" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"
-                                                                              aria-hidden="true"></span></button>
+                                                                              aria-hidden="true"></span>
+                    </button>
+
+                    <button type="button" class="btn btn-xs btn-danger">create profile</button>
+                    <button type="button" class="btn btn-xs btn-danger">create view template</button>
                 </td>
             </tr>
         {% endfor %}

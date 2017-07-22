@@ -2,9 +2,13 @@
 
 {% block body %}
     <div class="container">
-    dump
+        dump
+<div class="row">
+        {% block targets %}
+        {% endblock %}
 
-    {% block targets %}
-    {% endblock %}
+        {% block notifications %}
+        {% endblock %}
+</div>
     </div>
 {% endblock %}

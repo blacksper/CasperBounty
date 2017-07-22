@@ -49,13 +49,19 @@ class DefaultController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $rep = $em->getRepository('CasperBountyTargetsBundle:Targets');
-        $query = $rep->createQueryBuilder('t')->leftJoin('t.projectid', 'p')->where('p.projectid=:pid and t.type=\'maindomain\'')->setParameter('pid', $projectId)->getQuery();
-        $sq=$query->getSQL();
-        echo $sq;
+        $query = $rep->createQueryBuilder('t')->select('t,(select count(t2.targetid) from CasperBounty\TargetsBundle\Entity\Targets t2 where t2.parentid =t.targetid)')->leftJoin('t.projectid', 'p')
+            ->where('p.projectid=:pid and t.type=\'maindomain\'')
+            ->groupBy('t.host')
+            ->setParameter('pid', $projectId)
+            ->getQuery();
+        //$sq=$query->getSQL();
+        //echo $sq;
         $targets = $query->getResult();
+        //dump($targets);
+        //echo count($targets);
         $targetsRes = array();
         foreach ($targets as $target) {
-            $targetsRes[] = array('id' => $target->getTargetid(),'type'=>$target->getType(), 'hostName' => $target->getHost());
+            $targetsRes[] = array('id' => $target[0]->getTargetid(),'type'=>$target[1], 'hostName' => $target[0]->getHost());
         }
 
 
@@ -131,14 +137,15 @@ class DefaultController extends Controller
         return $this->redirectToRoute('casper_bounty_projects_addTargets', array('projectId' => $projectId));
     }
 
-    public function targetsToProjectFromListAction(Request $request)
+    public function targetsToProjectFromListAction(Request $request,$projectId)
     {
+
         $formData = $request->get('first_form');
         $hostsString = $formData['host'];
-        $projectId = 1;
         $hostsArray = explode("\r\n", $hostsString);
         $targetsService=$this->get('casper_bounty_targets.targetsService');
-        //$targetsService->isMainDomain($hostsArray);
+        $targetsService->projectId=$projectId;
+
         $successAdded=$targetsService->addHosts($hostsArray);
         $targetsToProject = $this->get('casper_bounty_projects.testservice');
         $targetsToProject->addTargetsToProject(1, $successAdded);

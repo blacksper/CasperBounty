@@ -14,13 +14,13 @@
         <tbody>
         {% for target in targetInfo.subtargets %}
             <tr class="{%   if target.type=='maindomain' %}success{% endif %}">
-                <td class="col-md-4">{{ target.host }}</td>
+                <td class="col-md-4"><a href="{{ path('casper_bounty_targets_targetid',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a> </td>
                 <td>{{ target.type }}</td>
                 <td>
 
                     <!--<button type="button" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
                     -->
-                    <button type="button" class="btn btn-xs btn-info"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></button>
+                    <button type="button" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span></button>
                 </td>
             </tr>
         {% endfor %}
