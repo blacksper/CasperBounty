@@ -1,3 +1,6 @@
 casper_bounty_tools_homepage:
     path:     /tools
     defaults: { _controller: CasperBountyToolsBundle:Default:index }
+casper_bounty_tools_runtool:
+    path:     /tools/{id}/run
+    defaults: { _controller: CasperBountyToolsBundle:Default:runTool}

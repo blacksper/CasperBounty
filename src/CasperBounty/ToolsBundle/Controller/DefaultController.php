@@ -2,10 +2,13 @@
 
 namespace CasperBounty\ToolsBundle\Controller;
 
+use CasperBounty\ProfilesBundle\Entity\Profiles;
+use CasperBounty\ProfilesBundle\Form\addProfile;
 use CasperBounty\ToolsBundle\Entity\Tools;
 use CasperBounty\ToolsBundle\Form\addToolForm;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Profiler\Profile;
 
 class DefaultController extends Controller
 {
@@ -26,14 +29,18 @@ class DefaultController extends Controller
         $em = $this->getDoctrine()->getRepository('CasperBountyToolsBundle:Tools');
         $tools = $em->findAll();
         //echo count($tools);
-
+        $profileObj=new Profiles();
+        $profileForm=$this->createForm(addProfile::class,$profileObj);
+        //die();
         return $this->render('@CasperBountyTools/tools.html.twig', array(
             'form' => $form->createView(),
-            'toolsArr' => $tools
+            'toolsArr' => $tools,
+            'addProfileForm'=>$profileForm->createView()
         ));
     }
-    public function addToolAction(Request $request){
-
+    public function runToolAction($id){
+        $ts=$this->get('casper_bounty_tools.toolssrvice');
+        $ts->runTool($id);
         
     }
 }

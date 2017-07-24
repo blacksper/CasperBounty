@@ -2,31 +2,72 @@
 {% block body %}
     <div class="container">
 
-        {{ form_start(form,{'attr':{'class':'form-group row addToolsForm col-md-10','label':'test1'}}) }}
-        <div class="form-group row">
-            <div class="col-sm-3">
-                {{ form_label(form.name, 'name') }}
-                {{ form_widget(form.name,{'attr':{'class':'form-control form-control-lg','placeholder':'dirsearch'}}) }}
+        {{ form_start(form,{'attr':{'class':'form-inline row addToolForm col-md-10','label':'test1'}}) }}
 
-            </div>
-            <div class="col-sm-3">
-                {{ form_label(form.cmdpath, 'cmdpath') }}
-                {{ form_widget(form.cmdpath,{'attr':{'class':'form-control form-control-lg','placeholder':'/home/testuser/dirsearch'}}) }}
 
-            </div>
+                {{ form_widget(form.name,{'attr':{'class':'form-control mb-2 mr-sm-2 mb-sm-0','placeholder':'name: dirsearch'}}) }}
 
-            <div class="col-sm-3">
-                <br>
+                {{ form_widget(form.cmdpath,{'attr':{'class':'form-control mb-2 mr-sm-2 mb-sm-0','placeholder':'path: /home/testuser/dirsearch'}}) }}
 
-                {{ form_row(form.save) }}
+                {{ form_widget(form.save) }}
 
-            </div>
 
-        </div>
+
         {{ form_end(form) }}
 
 
+
         {% block toolsTable %} {% endblock %}
+
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Modal Header</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        {{ form_start(addProfileForm,{'attr':{'class':'form-inline','label':'test1'}}) }}
+
+
+
+
+                                {{ form_widget(addProfileForm.name,{'attr':{'class':'form-control mb-2 mr-sm-2 mb-sm-0','placeholder':'nmap sS web'}}) }}
+
+
+
+                                {{ form_widget(addProfileForm.cmd,{'attr':{'class':'form-control mb-2 mr-sm-2 mb-sm-0','placeholder':'-v -sS -T4 -p80,443'}}) }}
+
+
+
+
+                                {{ form_widget(addProfileForm.save,{'attr':{'class':'btn btn-primary'}}) }}
+
+
+                        {{ form_end(addProfileForm) }}
+
+
+                        <select class="form-control" >
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                        </select>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
 
     </div>
 

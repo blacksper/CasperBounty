@@ -13,7 +13,7 @@
         <tbody>
         {% for tool in toolsArr %}
             <tr class="{%   if tool.name=='maindomain' %}success{% endif %}">
-                <td class="col-md-4">{{ tool.name }}</td>
+                <td class="col-md-5">{{ tool.name }}</td>
                 <td>{{ tool.cmdpath }}</td>
                 <td>
 
@@ -23,8 +23,12 @@
                                                                               aria-hidden="true"></span>
                     </button>
 
-                    <button type="button" class="btn btn-xs btn-danger">create profile</button>
+                    <button type="button" class="btn btn-xs btn-info" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-cog"></span></button>
                     <button type="button" class="btn btn-xs btn-danger">create view template</button>
+
+                        <!--<a class="btn btn-large btn-info btn-xs" href="templates/home.html"><span class="glyphicon glyphicon-cog"></span></a>
+                        -->
+
                 </td>
             </tr>
         {% endfor %}

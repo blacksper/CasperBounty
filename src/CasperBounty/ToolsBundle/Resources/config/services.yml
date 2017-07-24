@@ -1,4 +1,8 @@
 services:
-#    casper_bounty_tools.example:
-#        class: CasperBounty\ToolsBundle\Example
+  casper_bounty_tools.toolssrvice:
+    class: CasperBounty\ToolsBundle\Service\ToolsService
+    arguments: ["@doctrine.orm.entity_manager"]
+
+#    casper_bounty_projects.example:
+#        class: CasperBounty\ProjectsBundle\Example
 #        arguments: ["@service_id", "plain_value", "%parameter%"]
