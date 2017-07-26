@@ -2,29 +2,48 @@
 
 {% block body %}
     <div class="container">
-    <table class="table table-condensed targetsTable">
-        <thead>
-        <tr>
-            <th>host</th>
-            <th>id</th>
-            <th></th>
-        </tr>
-        </thead>
-
-        <tbody>
-        {% for target in targetInfo.subtargets %}
-            <tr class="{%   if target.type=='maindomain' %}success{% endif %}">
-                <td class="col-md-4"><a href="{{ path('casper_bounty_targets_targetid',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a> </td>
-                <td>{{ target.type }}</td>
-                <td>
-
-                    <!--<button type="button" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
-                    -->
-                    <button type="button" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span></button>
-                </td>
+        <table class="table table-condensed subtargetsTable">
+            <thead>
+            <tr>
+                <th>host</th>
+                <th>id</th>
+                <th>state</th>
+                <th></th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+
+            <tbody>
+            {% for target in targetInfo.subtargets %}
+                <tr class="{% if target.type=='maindomain' %}success{% endif %}">
+                    <td class="col-md-4"><a
+                                href="{{ path('casper_bounty_targets_targetid',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a>
+                        <br><em>192.168.1.1</em>
+                        <br><em>192.168.1.2</em>
+                        <br><em>192.168.1.3</em>
+                    </td>
+                    <td>{{ target.type }}</td>
+                    <td>
+
+                            <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+
+
+                    </td>
+                    <td>
+
+                        <!--<button type="button" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
+                        -->
+                        <button type="button" class="btn btn-xs btn-primary"><span
+                                    class="glyphicon glyphicon-screenshot" aria-hidden="true"></span></button>
+                        <button type="button" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-globe"
+                                                                                   aria-hidden="true"></span></button>
+                        <button type="button" class="btn btn-sm btn-primary"></button>
+
+                        <a class="btn btn-large btn-info" href="{{ path('casper_bounty_tools_getallips',{'targetid':target.targetid}) }}"><span class="glyphicon glyphicon-list-alt"
+                                                                                           aria-hidden="true"></span></a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}

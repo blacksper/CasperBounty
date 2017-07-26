@@ -147,8 +147,8 @@ class DefaultController extends Controller
         $targetsService->projectId=$projectId;
 
         $successAdded=$targetsService->addHosts($hostsArray);
-        $targetsToProject = $this->get('casper_bounty_projects.testservice');
-        $targetsToProject->addTargetsToProject(1, $successAdded);
+        //$targetsToProject = $this->get('casper_bounty_projects.testservice');
+        //$targetsToProject->addTargetsToProject(1, $successAdded);
 
 
         return $this->redirectToRoute('casper_bounty_projects_id_get_targets', array('projectId' => $projectId));

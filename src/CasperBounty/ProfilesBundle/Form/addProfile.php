@@ -19,6 +19,7 @@ class addProfile extends AbstractType
                 'label'  => 'Add profile',
                 'attr'=>array('class'=>'btn btn-primary')
             ));
+            //$builder->setAction('casper_bounty_projects_targetsToProjectFromList');
     }
 
     public function configureOptions(OptionsResolver $resolver)

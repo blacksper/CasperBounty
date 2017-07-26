@@ -75,13 +75,40 @@ class TargetsService
     public function addHosts($hostsArr)
     {
         $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+        $repositoryp = $this->em->getRepository('CasperBountyProjectsBundle:Projects');
+        $project = $repositoryp->find($this->projectId);
+        echo $this->projectId;
+
         $uniqueHosts = $this->checkHostExists($hostsArr);
         if (empty($uniqueHosts))
             return 0;
 
-        $hostTypeArr = $this->setHostType($uniqueHosts);
-
+        $hostTypeArr = $this->setHostType($uniqueHosts);//array ('domain'=>array(hosts),'maindomain'=>array(hosts))
+        print_r($hostTypeArr);
         $successAdded = array();
+        //add maindomains, add to projects, delete from array maindomain
+        foreach ($hostTypeArr['maindomain'] as $key => $host) {
+            $target = new Targets();
+
+            $target->setType('maindomain');
+            $target->setHost($host);
+
+            $project->addTargetid($target);//добавление цели к проекту
+
+            $this->em->persist($project);
+            $this->em->persist($target);
+
+            //оно тут для получения id
+            $this->em->flush();
+            $this->em->refresh($target);
+            //$this->em->refresh($project); //возможно если убрать это то будут проблемы с дубликатами
+
+            unset($hostTypeArr['maindomain'][$key]);
+            $successAdded[] = $target->getTargetid();
+        }
+
+
+        //add other targets
         foreach ($hostTypeArr as $type => $val) {
             foreach ($val as $host) {
                 //$parent=null;
@@ -89,24 +116,32 @@ class TargetsService
                 //$existHostr = $repository->createQueryBuilder('t')->where('t.host in (:har)')->setParameter('har',$hostsArray)->getQuery()->getResult();
                 //$existHossq = $repository->createQueryBuilder('t')->where('t.host in (:har)')->setParameter('har',$hostsArray)->getQuery()->getSQL();
                 //$existHost = $repository->createQueryBuilder('t')->where('t.targetid in (:har)')->setParameter('har',$hostsArray)->;
-
                 $target = new Targets();
+
                 if ($type == 'domain') {
                     $parent = $this->searchMain($host);
                     $target->setParentid($parent);
                 }
-                $target->setType($type);
-                $target->setHost($host);
 
+                $target->setHost($host);
+                $target->setType($type);
+                $project->addTargetid($target);//добавление цели к проекту
+
+                $this->em->persist($project);
                 $this->em->persist($target);
 
+                //оно тут для получения id
                 $this->em->flush();
                 $this->em->refresh($target);
+
                 $successAdded[] = $target->getTargetid();
             }
         }
 
+        //$this->em->refresh($project);
+
         $repository->clear();
+        //die();
         return $successAdded;
     }
 
@@ -141,7 +176,7 @@ class TargetsService
                 select t from CasperBountyTargetsBundle:Targets t
                 JOIN t.projectid pid
                 WHERE t.parentid=:parentId and pid=:projectId')
-                ->setParameters(array('parentId'=>$targetId,'projectId'=>$projectId));
+                ->setParameters(array('parentId' => $targetId, 'projectId' => $projectId));
 
             // echo $query->getSQL();
             $subTargets = $query->getResult();
@@ -152,23 +187,24 @@ class TargetsService
 
         return $subTargets;
     }
+
     //return id of parent domain
     public function searchMain($host)
     {
-        $parent=null;
+        $parent = null;
         preg_match('#((.*)\.)?([\w\d\-]*\.\w{2,10})#', $host, $m);
         if (isset($m[3])) { //m[3] contain hostname
             $mainDomain = $m[3];
-            echo $mainDomain;
+
             $query = $this->em->createQuery('
                 select t from CasperBountyTargetsBundle:Targets t
                 JOIN t.projectid pid
                 WHERE t.host=:maindomainHost and pid=:projectId')
                 ->setParameters(array('maindomainHost' => $mainDomain,
                     'projectId' => $this->projectId));
-            $result=$query->getResult();
-            if(count($result)==1) {//if result is finded and count is 1
-                $parent=$result[0];
+            $result = $query->getResult();
+            if (count($result) == 1) {//if result is finded and count is 1
+                $parent = $result[0];
             }
         }
         return $parent;

@@ -30,7 +30,7 @@ class DefaultController extends Controller
         $tools = $em->findAll();
         //echo count($tools);
         $profileObj=new Profiles();
-        $profileForm=$this->createForm(addProfile::class,$profileObj);
+        $profileForm=$this->createForm(addProfile::class,$profileObj,array('action'=>$this->generateUrl('casper_bounty_projects_targetsToProjectFromList',array('projectId'=>1))));
         //die();
         return $this->render('@CasperBountyTools/tools.html.twig', array(
             'form' => $form->createView(),
@@ -42,5 +42,11 @@ class DefaultController extends Controller
         $ts=$this->get('casper_bounty_tools.toolssrvice');
         $ts->runTool($id);
         
+    }
+    public function getHostsIpsAction($targetid){
+        $ts=$this->get('casper_bounty_tools.toolssrvice');
+        //$ts->runTool($id);
+        $ts->getAllIps($targetid);
+
     }
 }

@@ -28,6 +28,16 @@ class ToolsService
         //system('');
     }
 
+    public function getAllIps($targetid){
+        $repository=$this->entityManager->getRepository('CasperBountyTargetsBundle:Targets');
+        $t=$repository->find($targetid);
+        $targetHost=$t->getHost();
+        $target=sprintf('%s',$targetHost);
+        $qwe=shell_exec("node D:\\njs\\nn\\resol.js --host $target");
+        echo $qwe;
+        die();
+    }
+
 //    public function getHappyMessage()
 //    {
 //        $messages = [
