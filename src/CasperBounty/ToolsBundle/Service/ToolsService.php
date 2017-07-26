@@ -33,8 +33,15 @@ class ToolsService
         $t=$repository->find($targetid);
         $targetHost=$t->getHost();
         $target=sprintf('%s',$targetHost);
-        $qwe=shell_exec("node D:\\njs\\nn\\resol.js --host $target");
-        echo $qwe;
+        $command="node D:\\njs\\nn\\resol.js --host=$target --targetid=$targetid";
+        //$qwe=shell_exec($command);
+        //echo $qwe;
+
+        $ooo=new \COM('WScript.Shell');
+        $ooo->Run($command,0,1);
+        //dump($ooo);
+        ///$output =$rr->StdOut->ReadAll;
+        //echo $output;
         die();
     }
 

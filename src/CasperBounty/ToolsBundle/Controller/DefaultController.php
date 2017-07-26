@@ -8,6 +8,7 @@ use CasperBounty\ToolsBundle\Entity\Tools;
 use CasperBounty\ToolsBundle\Form\addToolForm;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Profiler\Profile;
 
 class DefaultController extends Controller
@@ -48,5 +49,21 @@ class DefaultController extends Controller
         //$ts->runTool($id);
         $ts->getAllIps($targetid);
 
+    }
+
+    public function addIpsAction($targetid, Request $request){
+        //dump($request);
+        $stringIpsData=$request->request->get('ipsData');
+        echo $stringIpsData;
+        //die('die mutherfucker');
+        $ipsArray=json_decode($stringIpsData);
+        print_r($ipsArray);
+        //die();
+        $targetsService=$this->get('casper_bounty_targets.targetsservice');
+        $targetsService->addIps($targetid,$ipsArray);
+        $response=new Response();
+        $response->setContent('govnocod');
+        //$response->sendContent();
+        return $response;
     }
 }

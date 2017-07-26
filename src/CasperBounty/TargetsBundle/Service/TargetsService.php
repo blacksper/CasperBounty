@@ -210,4 +210,32 @@ class TargetsService
         return $parent;
     }
 
+    public function addIps(int $targetId,array $ipsArr){
+        $rept=$this->em->getRepository('CasperBountyTargetsBundle:Targets');
+
+        $target=$rept->find($targetId);
+        $addedIpsArr=array();
+
+
+        foreach ($ipsArr as $ip){
+            $ipObj=new Targets();
+            $ipObj->setHost($ip);
+            $ipObj->setType('ip');
+
+            $this->em->persist($ipObj);
+            $this->em->flush();
+            $this->em->refresh($ipObj);
+
+            $addedIpsArr[] = $ipObj;
+        }
+
+        foreach ($addedIpsArr as $ip){
+            $target->addIpid($ip);
+        }
+
+        $this->em->persist($target);
+        $this->em->flush();
+
+    }
+
 }
