@@ -238,4 +238,12 @@ class TargetsService
 
     }
 
+    public function getTargetIps($targetId){
+        $rept=$this->em->getRepository('CasperBountyTargetsBundle:Targets');
+        $target=$rept->find(79);
+        $ips=$target->getIpid();
+        //echo count($ips[0]);
+        echo $ips[0]->getHost();
+        die();
+    }
 }

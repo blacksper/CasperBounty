@@ -99,9 +99,13 @@ table.toolsTable{
     color: white;
     float: none;
     text-decoration: none;
-    text-shadow: 0 0px 0 #ffffff;
+    text-shadow: 0 0 0 #ffffff;
 }
 
 .addToolForm.row{
 padding-bottom: 15px;
+}
+
+.toolId{
+    visibility: hidden;
 }

@@ -1,3 +1,6 @@
 casper_bounty_profiles_homepage:
     path:     /
     defaults: { _controller: CasperBountyProfilesBundle:Default:index }
+casper_bounty_profiles_addprofile:
+    path:     /tools/addProfile
+    defaults: { _controller: CasperBountyProfilesBundle:Default:addProfile }

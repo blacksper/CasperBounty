@@ -4,6 +4,7 @@
     {% javascripts output="js/compiled/main.js"
     '@CasperBountyFrontBundle/Resources/public/js/bootstrap.js'
     '@CasperBountyFrontBundle/Resources/public/js/bootstrap-multiselect.js'
+    '@CasperBountyFrontBundle/Resources/public/js/my.js'
     %}
 
     <script src="{{ asset_url }}"></script>
@@ -17,7 +18,7 @@
                 maxHeight: 400,
                 buttonWidth: '150px',
                 nonSelectedText: 'Select targets',
-                includeSelectAllOption: true,
+                includeSelectAllOption: true
             });
         });
     </script>

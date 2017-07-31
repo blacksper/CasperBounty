@@ -31,8 +31,8 @@ class DefaultController extends Controller
         $tools = $em->findAll();
         //echo count($tools);
         $profileObj=new Profiles();
-        $profileForm=$this->createForm(addProfile::class,$profileObj,array('action'=>$this->generateUrl('casper_bounty_projects_targetsToProjectFromList',array('projectId'=>1))));
-        //die();
+        $profileForm=$this->createForm(addProfile::class,$profileObj,array('action'=>$this->generateUrl('casper_bounty_profiles_addprofile')));//hardcoded id
+
         return $this->render('@CasperBountyTools/tools.html.twig', array(
             'form' => $form->createView(),
             'toolsArr' => $tools,
@@ -42,13 +42,19 @@ class DefaultController extends Controller
     public function runToolAction($id){
         $ts=$this->get('casper_bounty_tools.toolssrvice');
         $ts->runTool($id);
-        
+        $response=new Response();
+        $response->setContent('runned');
+        return $response;
     }
+
     public function getHostsIpsAction($targetid){
+        //);
+
         $ts=$this->get('casper_bounty_tools.toolssrvice');
+
         //$ts->runTool($id);
         $ts->getAllIps($targetid);
-
+        return new Response();
     }
 
     public function addIpsAction($targetid, Request $request){

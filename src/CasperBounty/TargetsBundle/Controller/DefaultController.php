@@ -26,15 +26,10 @@ class DefaultController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // $form->getData() holds the submitted values
-            // but, the original `$task` variable has also been updated
-            $task = $form->getData();
-
             $em = $this->getDoctrine()->getManager();
             $hostsSting = $form['host']->getData();
             $hostsArray=explode("\r\n",$hostsSting);
-            //var_dump($hostsArray);
-            //die();
+
             foreach ($hostsArray as $host) {
                 $existHost = $em->getRepository('CasperBountyTargetsBundle:Targets')->findOneBy(array('host' => $host));
                 if (!$existHost) {
@@ -45,15 +40,7 @@ class DefaultController extends Controller
                     $successAdded[]=$host;
                 }
             }
-// else {
-//                //throw new Exception\NotFoundHttpException('No product found for id ' . $host);
-////                throw $this->ex(
-////                    'No product found for id ' . $host
-////                );
-//                //$this->createException();
-//                throw new Exception\HttpException(404,$host);
-//
-//            }
+
             $em->flush();
 
             //return $this->redirectToRoute('casper_bounty_targets_homepage');
@@ -76,7 +63,17 @@ class DefaultController extends Controller
 
     public function getTargetInfoAction($projectId,$targetId){
         $messageGenerator = $this->get('casper_bounty_targets.targetsservice');
+        //$messageGenerator->getTargetIps(79);
+        //die();
+        $tarhost=array();
         $subTargets = $messageGenerator->getSubtargets($targetId);
+
+        foreach ($subTargets as $target){
+            $tarhost[]['target']=$target;
+            $tarhost[]['ips']=$target->getIpid();
+        }
+
+        //echo count($subTargets[0]->getIpid());
         $targetInfo['subtargets']=$subTargets;
         return $this->render('@CasperBountyTargets/targetInfo.html.twig',array('projectId'=>$projectId,'targetId'=>$targetId,'targetInfo'=>$targetInfo));
     }
