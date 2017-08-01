@@ -1,0 +1,3 @@
+casper_bounty_scenario_homepage:
+    path:     /scenario
+    defaults: { _controller: CasperBountyScenarioBundle:Default:index }
