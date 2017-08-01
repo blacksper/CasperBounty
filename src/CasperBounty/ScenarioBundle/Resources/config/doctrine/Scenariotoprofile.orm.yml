@@ -20,7 +20,7 @@ CasperBounty\ScenarioBundle\Entity\Scenariotoprofile:
                 strategy: IDENTITY
     manyToOne:
         profileid:
-            targetEntity: Profiles
+            targetEntity: CasperBounty\ProfilesBundle\Entity\Profiles
             cascade: {  }
             fetch: LAZY
             mappedBy: null
