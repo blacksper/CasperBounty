@@ -2,17 +2,9 @@
 
 namespace CasperBounty\ProjectsBundle\Controller;
 
-use CasperBounty\ProjectsBundle\Entity\Projects;
-use CasperBounty\ProjectsBundle\Form\AddProject;
-//use CasperBounty\TargetsBundle\Form\addTargetsForm;
-use CasperBounty\ProjectsBundle\Form\addTargetsForm;
-use CasperBounty\ProjectsBundle\Service\Testservice1;
-use CasperBounty\TargetsBundle\Entity\Targets;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
-use CasperBounty\TargetsBundle\Form\FirstForm;
+use CasperBounty\ProjectsBundle\Form\AddProject;
+use CasperBounty\TargetsBundle\Entity\Targets;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;

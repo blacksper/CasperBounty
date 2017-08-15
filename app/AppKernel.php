@@ -30,6 +30,7 @@ class AppKernel extends Kernel
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new CasperBounty\ProfilesBundle\CasperBountyProfilesBundle(),
             new CasperBounty\ScenarioBundle\CasperBountyScenarioBundle(),
+            new CasperBounty\ServicesBundle\CasperBountyServicesBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

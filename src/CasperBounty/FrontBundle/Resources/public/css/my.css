@@ -109,3 +109,10 @@ padding-bottom: 15px;
 .toolId{
     visibility: hidden;
 }
+.tryam{
+    max-width: 300px;
+    min-height: 250px;
+}
+.btnAddToScen{
+    margin-top:10px;
+}

@@ -11,9 +11,13 @@
         </thead>
 
         <tbody>
-        {% for scenario in scenArr %}
-            <tr >
-                <td class="col-md-5">{{ scenario.scenarioname }}</td>
+        {% for scenario in arras %}
+            <tr>
+                <td class="col-md-5">
+                    {{ scenario['self'].scenarioName }}
+                    <br>
+                    {% for pr in scenario['profiles'] %}{{ pr.scenprofid }}<br>{% endfor %}
+                </td>
                 <td>-</td>
                 <td>
 
@@ -24,7 +28,11 @@
                     </button>
 
 
-                    <button type="button" class="btn btn-xs btn-info">Add tool to scenario</button>
+
+                    <a role="button" class="btn btn-xs btn-info " href="{{ path('casper_bounty_scenario_info',{'scenarioId':scenario['self'].scenarioId}) }}">
+                        Add profile to scenario
+                    </a>
+
 
                     <!--<a class="btn btn-large btn-info btn-xs" href="templates/home.html"><span class="glyphicon glyphicon-cog"></span></a>
                     -->
@@ -34,4 +42,6 @@
         {% endfor %}
         </tbody>
     </table>
+
+
 {% endblock %}

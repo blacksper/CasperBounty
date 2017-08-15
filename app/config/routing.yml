@@ -1,3 +1,7 @@
+casper_bounty_services:
+    resource: "@CasperBountyServicesBundle/Resources/config/routing.yml"
+    prefix:   /
+
 casper_bounty_scenario:
     resource: "@CasperBountyScenarioBundle/Resources/config/routing.yml"
     prefix:   /

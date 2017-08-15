@@ -9,7 +9,7 @@ use CasperBounty\ToolsBundle\Form\addToolForm;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Profiler\Profile;
+
 
 class DefaultController extends Controller
 {
@@ -47,17 +47,23 @@ class DefaultController extends Controller
         return $response;
     }
 
-    public function getHostsIpsAction($targetid){
+    public function getHostsIpsAction(Request $request,$projectId){
         //);
+        $targetsArr=$request->get('targetsArr');
+        //dump($vardd);
+        //dump($request);
+        //die();
 
-        $ts=$this->get('casper_bounty_tools.toolssrvice');
 
-        //$ts->runTool($id);
-        $ts->getAllIps($targetid);
-        return new Response();
+            $ts = $this->get('casper_bounty_tools.toolssrvice');
+            //$ts->runTool($id);
+            $ts->getAllIps($targetsArr);
+
+        return $this->redirectToRoute('casper_bounty_projects_id_get_targets',array('projectId'=>$projectId));
     }
 
     public function addIpsAction($targetid, Request $request){
+        //TODO: добавить проверку на дубликаты
         //dump($request);
         $stringIpsData=$request->request->get('ipsData');
         echo $stringIpsData;

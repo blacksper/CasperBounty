@@ -7,12 +7,8 @@
  */
 
 namespace CasperBounty\ToolsBundle\Service;
-//use Doctrine\ORM\EntityManager;
-//use Doctrine\ORM\EntityManagerInterface;
-//use Symfony\Bridge\Doctrine
-
 use Doctrine\ORM\EntityManager;
-use Symfony\Component\Process\Process;
+
 
 class ToolsService
 {
@@ -40,15 +36,31 @@ class ToolsService
         //system('');
     }
 
-    public function getAllIps($targetid){
-        $repository=$this->entityManager->getRepository('CasperBountyTargetsBundle:Targets');
-        $t=$repository->find($targetid);
-        if(!$t)
+    public function getAllIps($targetsArr){
+        if(empty($targetsArr))
             return 0;
-        $targetHost=$t->getHost();
 
-        $target=sprintf('%s',$targetHost);
-        $command="node D:\\njs\\nn\\resol.js --host=$target --targetid=$targetid";
+        $repository=$this->entityManager->getRepository('CasperBountyTargetsBundle:Targets');
+        //$qb=$repository->findBy(array('targetid'=>$targetsArr));
+        $qb=$repository->createQueryBuilder('t');
+        $targetsEntArr=$qb->select('t')->where($qb->expr()->in('t.targetid',$targetsArr))->getQuery()->getResult();
+        //$t=$repository->find($targetid);
+        //dump($quer);
+        //die();
+        if(empty($targetsEntArr))
+            return 0;
+        $tmparr=array();
+        foreach ($targetsEntArr as $target) {
+            //$tmparr[$target->getTargetId()] = $target->getHost();
+            $tmparr[] = array('host'=>$target->getHost(),'id'=>$target->getTargetId());
+        }
+
+        $targetsArrJson=json_encode($tmparr,JSON_UNESCAPED_SLASHES);
+        $coolstr= addslashes($targetsArrJson);
+        //dump($targetsArrJson);
+        //die();
+        $targets=sprintf('%s',$coolstr);
+        $command="node D:\\njs\\nn\\resol.js --hosts=$targets";
 
 
         $ooo=new \COM('WScript.Shell');
@@ -60,7 +72,6 @@ class ToolsService
 //        else {
 //            exec($command . " > /dev/null &");
 //        }
-
 //        $process = new Process("start /B ". $command); //working
 //        $process->disableOutput();
 //        $process->run();

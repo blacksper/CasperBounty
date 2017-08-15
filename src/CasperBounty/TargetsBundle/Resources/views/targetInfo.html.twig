@@ -2,9 +2,17 @@
 
 {% block body %}
     <div class="container">
-        <table class="table table-condensed subtargetsTable">
+
+
+        <form method="post" action="{{ path('casper_bounty_tools_getips',{'projectId':projectId}) }}">
+
+            <p><button class="btn btn-info btn-sm" type="submit">Get ips</button>
+            </p>
+                <br>
+            <table class="table table-condensed subtargetsTable">
             <thead>
             <tr>
+                <td></td>
                 <th>host</th>
                 <th>id</th>
                 <th>state</th>
@@ -15,18 +23,19 @@
             <tbody>
             {% for target in targetInfo.subtargets %}
                 <tr class="{% if target.type=='maindomain' %}success{% endif %}">
+                    <td><input type="checkbox" name="targetsArr[]" value="{{ target.targetid }}"></td>
                     <td class="col-md-4"><a
                                 href="{{ path('casper_bounty_targets_targetid',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a>
 
 
                         {% for ip in target.getIpid() %}
-                        <br><em>{{ ip.host }}</em>
-                            {% endfor %}
+                            <br><em>{{ ip.host }}</em>
+                        {% endfor %}
                     </td>
                     <td>{{ target.type }}</td>
                     <td>
 
-                            <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
 
 
                     </td>
@@ -40,12 +49,12 @@
                                                                                    aria-hidden="true"></span></button>
                         <button type="button" class="btn btn-sm btn-primary"></button>
 
-                        <a class="btn btn-large btn-info" href="{{ path('casper_bounty_tools_getallips',{'targetid':target.targetid}) }}"><span class="glyphicon glyphicon-list-alt"
-                                                                                           aria-hidden="true"></span></a>
+
                     </td>
                 </tr>
             {% endfor %}
             </tbody>
         </table>
+        </form>
     </div>
 {% endblock %}

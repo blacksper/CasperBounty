@@ -1,3 +1,9 @@
 casper_bounty_scenario_homepage:
     path:     /scenario
     defaults: { _controller: CasperBountyScenarioBundle:Default:index }
+casper_bounty_scenario_info:
+    path:     /scenario/{scenarioId}
+    defaults: { _controller: CasperBountyScenarioBundle:Default:scenarioInfo}
+casper_bounty_scenario_profiletoscenario:
+    path:     /scenario/{scenarioId}/profiletoscenario
+    defaults: { _controller: CasperBountyScenarioBundle:Default:addProfileToScenario}

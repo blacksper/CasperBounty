@@ -98,4 +98,3 @@ class Tasklist
         return $this->profileid;
     }
 }
-

@@ -4,8 +4,8 @@ casper_bounty_tools_homepage:
 casper_bounty_tools_runtool:
     path:     /tools/{id}/run
     defaults: { _controller: CasperBountyToolsBundle:Default:runTool}
-casper_bounty_tools_getallips:
-    path:     /tools/{targetid}/getallips
+casper_bounty_tools_getips:
+    path:     /project/{projectId}/tools/getips
     defaults: { _controller: CasperBountyToolsBundle:Default:getHostsIps}
 casper_bounty_tools_addips:
     path:     /tools/{targetid}/addips

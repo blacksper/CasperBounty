@@ -87,6 +87,7 @@ class TargetsService
         print_r($hostTypeArr);
         $successAdded = array();
         //add maindomains, add to projects, delete from array maindomain
+        if(isset($hostTypeArr['maindomain']))
         foreach ($hostTypeArr['maindomain'] as $key => $host) {
             $target = new Targets();
 

@@ -13,7 +13,7 @@ class Scenariotoprofile
     private $scenprofid;
 
     /**
-     * @var \CasperBounty\ScenarioBundle\Entity\Profiles
+     * @var \CasperBounty\ProfilesBundle\Entity\Profiles
      */
     private $profileid;
 
@@ -36,11 +36,11 @@ class Scenariotoprofile
     /**
      * Set profileid
      *
-     * @param \CasperBounty\ScenarioBundle\Entity\Profiles $profileid
+     * @param \CasperBounty\ProfilesBundle\Entity\Profiles $profileid
      *
      * @return Scenariotoprofile
      */
-    public function setProfileid(\CasperBounty\ScenarioBundle\Entity\Profiles $profileid = null)
+    public function setProfileid(\CasperBounty\ProfilesBundle\Entity\Profiles $profileid = null)
     {
         $this->profileid = $profileid;
 
@@ -50,7 +50,7 @@ class Scenariotoprofile
     /**
      * Get profileid
      *
-     * @return \CasperBounty\ScenarioBundle\Entity\Profiles
+     * @return \CasperBounty\ProfilesBundle\Entity\Profiles
      */
     public function getProfileid()
     {
