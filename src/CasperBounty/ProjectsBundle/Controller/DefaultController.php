@@ -143,7 +143,7 @@ class DefaultController extends Controller
         //$targetsToProject->addTargetsToProject(1, $successAdded);
 
 
-        return $this->redirectToRoute('casper_bounty_projects_id_get_targets', array('projectId' => $projectId));
+        return $this->redirectToRoute('casper_bounty_projectTargets', array('projectId' => $projectId));
     }
 
     public function createAction()

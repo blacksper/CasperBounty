@@ -6,55 +6,76 @@
 
         <form method="post" action="{{ path('casper_bounty_tools_getips',{'projectId':projectId}) }}">
 
-            <p><button class="btn btn-info btn-sm" type="submit">Get ips</button>
+            <p>
+                <button class="btn btn-info btn-sm" type="submit">Get ips</button>
             </p>
-                <br>
+            <br>
             <table class="table table-condensed subtargetsTable">
-            <thead>
-            <tr>
-                <td></td>
-                <th>host</th>
-                <th>id</th>
-                <th>state</th>
-                <th></th>
-            </tr>
-            </thead>
+                <thead>
+                <tr>
+                    <td></td>
+                    <th>host</th>
+                    <th>id</th>
+                    <th>state</th>
+                    <th></th>
+                </tr>
+                </thead>
 
-            <tbody>
-            {% for target in targetInfo.subtargets %}
-                <tr class="{% if target.type=='maindomain' %}success{% endif %}">
-                    <td><input type="checkbox" name="targetsArr[]" value="{{ target.targetid }}"></td>
-                    <td class="col-md-4"><a
-                                href="{{ path('casper_bounty_targets_targetid',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a>
+                <tbody>
+                <tr class="success">
+                    <td><input type="checkbox" name="targetsArr[]" value="{{ maintarget.targetid }}"></td>
+                    <td class="col-md-4">
+                        <a href="{{ path('casper_bounty_targets_targetid',{'targetId':maintarget.targetid,'projectId':projectId}) }}">{{ maintarget.host }}</a>
 
 
-                        {% for ip in target.getIpid() %}
-                            <br><em>{{ ip.host }}</em>
+                        {% for ip in maintarget.getIpId() %}
+                            <br><em><a
+                                    href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}">{{ ip.host }}</a>
+                        </em>
                         {% endfor %}
                     </td>
-                    <td>{{ target.type }}</td>
                     <td>
-
-                        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-
-
+                        {{ maintarget.type }}
                     </td>
                     <td>
-
-                        <!--<button type="button" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
-                        -->
+                        <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                    </td>
+                    <td>
                         <button type="button" class="btn btn-xs btn-primary"><span
                                     class="glyphicon glyphicon-screenshot" aria-hidden="true"></span></button>
                         <button type="button" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-globe"
                                                                                    aria-hidden="true"></span></button>
-                        <button type="button" class="btn btn-sm btn-primary"></button>
-
-
                     </td>
                 </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+                {% for target in targetInfo.subtargets %}
+                    <tr class="{% if target.type=='maindomain' %}success{% endif %}">
+                        <td><input type="checkbox" name="targetsArr[]" value="{{ target.targetid }}"></td>
+                        <td class="col-md-4"><a
+                                    href="{{ path('casper_bounty_targets_targetid',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a>
+
+
+                            {% for ip in target.getIpid() %}
+                                <br><em><a
+                                        href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}">{{ ip.host }}</a>
+                                </em>
+                            {% endfor %}
+                        </td>
+                        <td>{{ target.type }}</td>
+                        <td>
+                            <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-xs btn-primary"><span
+                                        class="glyphicon glyphicon-screenshot" aria-hidden="true"></span></button>
+                            <button type="button" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-globe"
+                                                                                       aria-hidden="true"></span>
+                            </button>
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </form>
     </div>
 {% endblock %}

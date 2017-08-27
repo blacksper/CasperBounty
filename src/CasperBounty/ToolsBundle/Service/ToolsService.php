@@ -62,7 +62,7 @@ class ToolsService
         $targets=sprintf('%s',$coolstr);
         $command="node D:\\njs\\nn\\resol.js --hosts=$targets";
 
-
+        die($command);
         $ooo=new \COM('WScript.Shell');
         $ooo->Run($command,7,0);
 

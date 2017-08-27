@@ -8,7 +8,7 @@ casper_bounty_projects_id:
     requirements:
       projectId: '\d+'
 
-casper_bounty_projects_id_get_targets:
+casper_bounty_projectTargets:
     path:     /projects/{projectId}/targets
     defaults: { _controller: CasperBountyProjectsBundle:Default:showTargets }
     requirements:

@@ -9,10 +9,15 @@ use CasperBounty\ToolsBundle\Form\addToolForm;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 
 class DefaultController extends Controller
 {
+    /**
+     * @Route("/tools", name="casper_bounty_tools_homepage")
+     */
     public function indexAction(Request $request)
     {
         $fmVal=new Tools();
@@ -39,6 +44,10 @@ class DefaultController extends Controller
             'addProfileForm'=>$profileForm->createView()
         ));
     }
+
+    /**
+     * @Route("/tools/{id}/run", name="casper_bounty_tools_runtool")
+     */
     public function runToolAction($id){
         $ts=$this->get('casper_bounty_tools.toolssrvice');
         $ts->runTool($id);
@@ -47,6 +56,9 @@ class DefaultController extends Controller
         return $response;
     }
 
+    /**
+     * @Route("/project/{projectId}/tools/getips", name="casper_bounty_tools_getips")
+     */
     public function getHostsIpsAction(Request $request,$projectId){
         //);
         $targetsArr=$request->get('targetsArr');
@@ -59,9 +71,12 @@ class DefaultController extends Controller
             //$ts->runTool($id);
             $ts->getAllIps($targetsArr);
 
-        return $this->redirectToRoute('casper_bounty_projects_id_get_targets',array('projectId'=>$projectId));
+        return $this->redirectToRoute('casper_bounty_projectTargets',array('projectId'=>$projectId));
     }
 
+    /**
+     * @Route("/tools/{targetid}/addips", requirements={"targetid" = "\d+","methods"="POST"}, name="casper_bounty_tools_addips")
+     */
     public function addIpsAction($targetid, Request $request){
         //TODO: добавить проверку на дубликаты
         //dump($request);

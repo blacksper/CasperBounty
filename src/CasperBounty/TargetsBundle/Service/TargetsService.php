@@ -87,26 +87,26 @@ class TargetsService
         print_r($hostTypeArr);
         $successAdded = array();
         //add maindomains, add to projects, delete from array maindomain
-        if(isset($hostTypeArr['maindomain']))
-        foreach ($hostTypeArr['maindomain'] as $key => $host) {
-            $target = new Targets();
+        if (isset($hostTypeArr['maindomain']))
+            foreach ($hostTypeArr['maindomain'] as $key => $host) {
+                $target = new Targets();
 
-            $target->setType('maindomain');
-            $target->setHost($host);
+                $target->setType('maindomain');
+                $target->setHost($host);
 
-            $project->addTargetid($target);//добавление цели к проекту
+                $project->addTargetid($target);//добавление цели к проекту
 
-            $this->em->persist($project);
-            $this->em->persist($target);
+                $this->em->persist($project);
+                $this->em->persist($target);
 
-            //оно тут для получения id
-            $this->em->flush();
-            $this->em->refresh($target);
-            //$this->em->refresh($project); //возможно если убрать это то будут проблемы с дубликатами
+                //оно тут для получения id
+                $this->em->flush();
+                $this->em->refresh($target);
+                //$this->em->refresh($project); //возможно если убрать это то будут проблемы с дубликатами
 
-            unset($hostTypeArr['maindomain'][$key]);
-            $successAdded[] = $target->getTargetid();
-        }
+                unset($hostTypeArr['maindomain'][$key]);
+                $successAdded[] = $target->getTargetid();
+            }
 
 
         //add other targets
@@ -211,26 +211,41 @@ class TargetsService
         return $parent;
     }
 
-    public function addIps(int $targetId,array $ipsArr){
-        $rept=$this->em->getRepository('CasperBountyTargetsBundle:Targets');
+    public function addIps(int $targetId, array $ipsArr)
+    {
+        dump($ipsArr);
+        $rept = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
 
-        $target=$rept->find($targetId);
-        $addedIpsArr=array();
-
-
-        foreach ($ipsArr as $ip){
-            $ipObj=new Targets();
+        $target = $rept->find($targetId);
+        $projectId=$target->getProjectid()[0];//или править архитектуру чтоб цель использовадась только в 1 проекте или делать получение проджектид подругому
+        //dump($projectId[0]);
+        $addedIpsArr = array();
+        //$project=$this->em->find('CasperBountyProjectsBundle:Projects',1);
+        $repP=$this->em->getRepository('CasperBountyProjectsBundle:Projects');
+        $project=$repP->find(1);
+        //die();
+        echo 'helo';
+        foreach ($ipsArr as $ip) {
+            echo 'helo2';
+            $ce = $this->checkIpExist($ip,$projectId);
+            if ($ce!=0) {
+                $addedIpsArr[] = $ce[0];
+                continue;
+            }
+            $ipObj = new Targets();
             $ipObj->setHost($ip);
             $ipObj->setType('ip');
+
+            //$ipObj->addProjectid($project);//не работает
 
             $this->em->persist($ipObj);
             $this->em->flush();
             $this->em->refresh($ipObj);
-
+            $project->addTargetid($ipObj);
             $addedIpsArr[] = $ipObj;
         }
 
-        foreach ($addedIpsArr as $ip){
+        foreach ($addedIpsArr as $ip) {
             $target->addIpid($ip);
         }
 
@@ -239,12 +254,34 @@ class TargetsService
 
     }
 
-    public function getTargetIps($targetId){
-        $rept=$this->em->getRepository('CasperBountyTargetsBundle:Targets');
-        $target=$rept->find(79);
-        $ips=$target->getIpid();
+    public function getTargetIps($targetId)
+    {
+        $rept = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+        $target = $rept->find(79);
+        $ips = $target->getIpid();
         //echo count($ips[0]);
         echo $ips[0]->getHost();
         die();
+    }
+
+    public function checkIpExist($ip, $projectId)
+    {
+        $repT = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+        $ipExistDql = $repT->createQueryBuilder('t')
+            ->leftJoin('t.projectid','targetproject')
+            ->where('t.type=\'ip\'')
+            ->andWhere('t.host=:ip')
+            ->andWhere('targetproject.projectid=:projectid')
+            ->getDQL();
+
+        $ips=$this->em->createQuery($ipExistDql)->setParameters(array('projectid'=>$projectId,'ip'=> $ip))->getResult();
+        //$ipExist = $repT->findBy(array('host' => $ip, 'type' => 'ip'));
+        dump($ipExistDql);
+        dump($ips);
+        //die();
+        if (!empty($ips) && (count($ips) == 1))
+            return $ips;
+        else
+            return 0;
     }
 }

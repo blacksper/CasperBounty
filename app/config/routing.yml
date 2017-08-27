@@ -27,8 +27,9 @@ tasklist:
     prefix:   /
 
 casper_bounty_tools:
-    resource: "@CasperBountyToolsBundle/Resources/config/routing.yml"
+    resource: "@CasperBountyToolsBundle/Controller/DefaultController.php"
     prefix:   /
+    type: annotation
 
 casper_bounty_templates:
     resource: "@CasperBountyTemplatesBundle/Resources/config/routing.yml"
@@ -43,8 +44,9 @@ casper_bounty_groups:
     prefix:   /
 
 casper_bounty_targets:
-    resource: "@CasperBountyTargetsBundle/Resources/config/routing.yml"
-    prefix:   /
+    resource: "@CasperBountyTargetsBundle/Controller/DefaultController.php"
+    prefix:
+    type: annotation
 
 casper_bounty_projects:
     resource: "@CasperBountyProjectsBundle/Resources/config/routing.yml"
