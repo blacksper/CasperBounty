@@ -1,0 +1,59 @@
+CasperBounty\TasksBundle\Entity\Tasks:
+    type: entity
+    table: tasks
+    indexes:
+        scprofidstep_fk:
+            columns:
+                - profileId
+        taridstep_fk:
+            columns:
+                - targetId
+        FK_tasks_scenario:
+            columns:
+                - scenarioId
+    id:
+        taskid:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+            id: true
+            column: taskId
+            generator:
+                strategy: IDENTITY
+    fields:
+        status:
+            type: boolean
+            nullable: false
+    manyToOne:
+        profileid:
+            targetEntity: Profiles
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                profileId:
+                    referencedColumnName: profileId
+            orphanRemoval: false
+        scenarioid:
+            targetEntity: Scenario
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                scenarioId:
+                    referencedColumnName: scenarioId
+            orphanRemoval: false
+        targetid:
+            targetEntity: Targets
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                targetId:
+                    referencedColumnName: targetId
+            orphanRemoval: false
+    lifecycleCallbacks: {  }
