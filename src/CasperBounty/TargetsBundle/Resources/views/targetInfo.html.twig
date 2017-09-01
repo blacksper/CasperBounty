@@ -7,7 +7,19 @@
         <form method="post" action="{{ path('casper_bounty_tools_getips',{'projectId':projectId}) }}">
 
             <p>
+            <div class="btn-group">
                 <button class="btn btn-info btn-sm" type="submit">Get ips</button>
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Run profile
+                        <span class="caret"></span></button>
+                    <ul class="dropdown-menu">
+                        {% for profile in profiles %}
+                        <li><a href="#">{{ profile.name }} (<span style="color: #777777">{{ profile.toolId.name }} {{ profile.cmd }}</span>)</a></li>
+
+                        {% endfor %}
+                    </ul>
+                </div>
+                </div>
             </p>
             <br>
             <table class="table table-condensed subtargetsTable">

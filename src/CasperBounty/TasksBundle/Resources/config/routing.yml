@@ -1,0 +1,3 @@
+casper_bounty_tasks_homepage:
+    path:     /
+    defaults: { _controller: CasperBountyTasksBundle:Default:index }

@@ -69,7 +69,7 @@ class DefaultController extends Controller
      */
     public function getTargetInfoAction($projectId,$targetId){
         $messageGenerator = $this->get('casper_bounty_targets.targetsservice');
-
+        $doctr=$this->getDoctrine();
         $tarhost=array();
         $subTargets = $messageGenerator->getSubtargets($targetId);
        // $messageGenerator->checkIpExist('199.16.156.9',1);
@@ -80,14 +80,15 @@ class DefaultController extends Controller
             $tarhost[]['ips']=$target->getIpid();
         }
 
-        $maintarget=$this->getDoctrine()->getRepository('CasperBountyTargetsBundle:Targets')->createQueryBuilder('t')->where('t.targetid=:targetid')
+        $maintarget=$doctr->getRepository('CasperBountyTargetsBundle:Targets')->createQueryBuilder('t')->where('t.targetid=:targetid')
             ->setParameter('targetid',$targetId)
             ->getQuery()
             ->getResult();
         $maintarget=$maintarget[0];
 
         $targetInfo['subtargets']=$subTargets;
-        return $this->render('@CasperBountyTargets/targetInfo.html.twig',array('projectId'=>$projectId,'targetId'=>$targetId,'targetInfo'=>$targetInfo,'maintarget'=>$maintarget));
+        $profiles=$doctr->getRepository('CasperBountyProfilesBundle:Profiles')->findAll();
+        return $this->render('@CasperBountyTargets/targetInfo.html.twig',array('projectId'=>$projectId,'targetId'=>$targetId,'targetInfo'=>$targetInfo,'maintarget'=>$maintarget,'profiles'=>$profiles));
     }
 
     /**

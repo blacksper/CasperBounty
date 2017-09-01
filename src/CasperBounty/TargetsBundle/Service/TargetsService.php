@@ -211,25 +211,26 @@ class TargetsService
         return $parent;
     }
 
-    public function addIps(int $targetId, array $ipsArr)
+    public function addIps(int $targetId, array $ipsArr,$projectId)
     {
-        dump($ipsArr);
+        //dump($ipsArr);
         $rept = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
 
         $target = $rept->find($targetId);
-        $projectId=$target->getProjectid()[0];//или править архитектуру чтоб цель использовадась только в 1 проекте или делать получение проджектид подругому
+        //$projectId=$target->getProjectid()[0];//или править архитектуру чтоб цель использовадась только в 1 проекте или делать получение проджектид подругому
         //dump($projectId[0]);
         $addedIpsArr = array();
         //$project=$this->em->find('CasperBountyProjectsBundle:Projects',1);
         $repP=$this->em->getRepository('CasperBountyProjectsBundle:Projects');
-        $project=$repP->find(1);
+
+        $project=$repP->find($projectId);
         //die();
-        echo 'helo';
+        echo "projectid $projectId";
         foreach ($ipsArr as $ip) {
-            echo 'helo2';
-            $ce = $this->checkIpExist($ip,$projectId);
-            if ($ce!=0) {
-                $addedIpsArr[] = $ce[0];
+            //echo 'helo2';
+            $ipExists = $this->checkIpExist($ip,$projectId);
+            if ($ipExists!=0) {
+                $addedIpsArr[] = $ipExists[0];
                 continue;
             }
             $ipObj = new Targets();
@@ -244,8 +245,24 @@ class TargetsService
             $project->addTargetid($ipObj);
             $addedIpsArr[] = $ipObj;
         }
-
+        
+        dump($addedIpsArr);
+        $exstIps=$target->getIpid();
         foreach ($addedIpsArr as $ip) {
+
+            foreach ($exstIps as $eip){//cheching for exist relation
+                if($ip->getTargetid()==$eip->getTargetid())
+                    continue 2;
+            }
+
+            //$exst=$target->;
+            //$exst=$target->getIpid($ip)[0];
+            //$tid=$exst->getTargetId();
+            //dump($exst);
+            //if($exst) {
+           //     echo "exists<br>";
+            //    continue;
+            //}
             $target->addIpid($ip);
         }
 

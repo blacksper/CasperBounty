@@ -36,7 +36,7 @@ class ToolsService
         //system('');
     }
 
-    public function getAllIps($targetsArr){
+    public function getAllIps($targetsArr,$projectId){
         if(empty($targetsArr))
             return 0;
 
@@ -44,25 +44,27 @@ class ToolsService
         //$qb=$repository->findBy(array('targetid'=>$targetsArr));
         $qb=$repository->createQueryBuilder('t');
         $targetsEntArr=$qb->select('t')->where($qb->expr()->in('t.targetid',$targetsArr))->getQuery()->getResult();
-        //$t=$repository->find($targetid);
-        //dump($quer);
-        //die();
+
         if(empty($targetsEntArr))
             return 0;
         $tmparr=array();
+        $tmparr['hostid']=array();
+        $tmparr['projectId']=$projectId;
+       // $tmparr['hostid']=array();
+
         foreach ($targetsEntArr as $target) {
             //$tmparr[$target->getTargetId()] = $target->getHost();
-            $tmparr[] = array('host'=>$target->getHost(),'id'=>$target->getTargetId());
+            $tmparr['hostid'][] = array('host'=>$target->getHost(),'id'=>$target->getTargetId());
         }
 
         $targetsArrJson=json_encode($tmparr,JSON_UNESCAPED_SLASHES);
         $coolstr= addslashes($targetsArrJson);
-        //dump($targetsArrJson);
-        //die();
+
+
         $targets=sprintf('%s',$coolstr);
         $command="node D:\\njs\\nn\\resol.js --hosts=$targets";
 
-        die($command);
+        //die($command);
         $ooo=new \COM('WScript.Shell');
         $ooo->Run($command,7,0);
 

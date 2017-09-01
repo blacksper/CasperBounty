@@ -1,0 +1,4 @@
+services:
+#    casper_bounty_tasks.example:
+#        class: CasperBounty\TasksBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

@@ -62,14 +62,12 @@ class DefaultController extends Controller
     public function getHostsIpsAction(Request $request,$projectId){
         //);
         $targetsArr=$request->get('targetsArr');
-        //dump($vardd);
-        //dump($request);
-        //die();
+
 
 
             $ts = $this->get('casper_bounty_tools.toolssrvice');
             //$ts->runTool($id);
-            $ts->getAllIps($targetsArr);
+            $ts->getAllIps($targetsArr,$projectId);
 
         return $this->redirectToRoute('casper_bounty_projectTargets',array('projectId'=>$projectId));
     }
@@ -81,13 +79,14 @@ class DefaultController extends Controller
         //TODO: добавить проверку на дубликаты
         //dump($request);
         $stringIpsData=$request->request->get('ipsData');
-        echo $stringIpsData;
+        $projectId=$request->request->get('projectId');
+        //echo $stringIpsData;
         //die('die mutherfucker');
         $ipsArray=json_decode($stringIpsData);
         print_r($ipsArray);
         //die();
         $targetsService=$this->get('casper_bounty_targets.targetsservice');
-        $targetsService->addIps($targetid,$ipsArray);
+        $targetsService->addIps($targetid,$ipsArray,$projectId);
         $response=new Response();
         $response->setContent('govnocod');
         //$response->sendContent();
