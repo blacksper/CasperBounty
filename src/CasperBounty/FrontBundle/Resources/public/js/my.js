@@ -15,3 +15,4 @@ $(document).on("click", ".testjs", function () {
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 });
+

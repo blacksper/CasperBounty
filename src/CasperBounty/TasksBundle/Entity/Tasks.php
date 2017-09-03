@@ -18,17 +18,17 @@ class Tasks
     private $status;
 
     /**
-     * @var \CasperBounty\TasksBundle\Entity\Profiles
+     * @var \CasperBounty\ProfilesBundle\Entity\Profiles
      */
     private $profileid;
 
     /**
-     * @var \CasperBounty\TasksBundle\Entity\Scenario
+     * @var \CasperBounty\ScenarioBundle\Entity\Scenario
      */
     private $scenarioid;
 
     /**
-     * @var \CasperBounty\TasksBundle\Entity\Targets
+     * @var \CasperBounty\TargetsBundle\Entity\Targets
      */
     private $targetid;
 
@@ -70,11 +70,11 @@ class Tasks
     /**
      * Set profileid
      *
-     * @param \CasperBounty\TasksBundle\Entity\Profiles $profileid
+     * @param \CasperBounty\ProfilesBundle\Entity\Profiles $profileid
      *
      * @return Tasks
      */
-    public function setProfileid(\CasperBounty\TasksBundle\Entity\Profiles $profileid = null)
+    public function setProfileid(\CasperBounty\ProfilesBundle\Entity\Profiles $profileid = null)
     {
         $this->profileid = $profileid;
 
@@ -84,7 +84,7 @@ class Tasks
     /**
      * Get profileid
      *
-     * @return \CasperBounty\TasksBundle\Entity\Profiles
+     * @return \CasperBounty\ProfilesBundle\Entity\Profiles
      */
     public function getProfileid()
     {
@@ -94,11 +94,11 @@ class Tasks
     /**
      * Set scenarioid
      *
-     * @param \CasperBounty\TasksBundle\Entity\Scenario $scenarioid
+     * @param \CasperBounty\ScenarioBundle\Entity\Scenario $scenarioid
      *
      * @return Tasks
      */
-    public function setScenarioid(\CasperBounty\TasksBundle\Entity\Scenario $scenarioid = null)
+    public function setScenarioid(\CasperBounty\ScenarioBundle\Entity\Scenario $scenarioid = null)
     {
         $this->scenarioid = $scenarioid;
 
@@ -108,7 +108,7 @@ class Tasks
     /**
      * Get scenarioid
      *
-     * @return \CasperBounty\TasksBundle\Entity\Scenario
+     * @return \CasperBounty\ScenarioBundle\Entity\Scenario
      */
     public function getScenarioid()
     {
@@ -122,7 +122,7 @@ class Tasks
      *
      * @return Tasks
      */
-    public function setTargetid(\CasperBounty\TasksBundle\Entity\Targets $targetid = null)
+    public function setTargetid(\CasperBounty\TargetsBundle\Entity\Targets $targetid = null)
     {
         $this->targetid = $targetid;
 
@@ -132,7 +132,7 @@ class Tasks
     /**
      * Get targetid
      *
-     * @return \CasperBounty\TasksBundle\Entity\Targets
+     * @return \CasperBounty\TargetsBundle\Entity\Targets
      */
     public function getTargetid()
     {

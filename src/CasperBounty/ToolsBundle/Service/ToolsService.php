@@ -17,18 +17,28 @@ class ToolsService
         $this->entityManager = $entityManager;
     }
 
-    public function buildCommand($id){
-        $repT=$this->entityManager->getRepository('CasperBountyToolsBundle:Tools');
-        $repP=$this->entityManager->getRepository('CasperBountyProfilesBundle:Profiles');
-        $qb=$repP->find($id);
-        //$qb->select('t')
+    public function buildCommand($profileId,$targetsArr){
 
+        $repT=$this->entityManager->getRepository('CasperBountyToolsBundle:Tools');
+        $repTar=$this->entityManager->getRepository('CasperBountyTargetsBundle:Targets');
+        $repP=$this->entityManager->getRepository('CasperBountyProfilesBundle:Profiles');
+        $qb=$repP->find($profileId);
+        //$qb->select('t')
         //echo $qb->getToolid()->getCmdpath();
         //echo $qb->getCmd();
-        $targetHost='twitter.com';
+        $targetsHosts=array();
+
+        foreach ($targetsArr as $targetId){
+            $targetObj=$repTar->find($targetId);
+            array_push($targetsHosts,$targetObj->getHost());
+
+        }
+
+        $targetHost=$targetsHosts[0];
         $toolPath=$qb->getToolid()->getCmdpath();
         $toolParams=$qb->getCmd();
-        $cmd="\"$toolPath\" $toolParams ".$targetHost;
+        $toolParams=str_replace('[TARGET]', $targetHost ,$toolParams);
+        $cmd="--tool=\"$toolPath\" --parameters=\"$toolParams\" "; //
         //echo $cmd;
         //$t=$repT->find($id);
         //echo $t->getCmdpath();
@@ -84,10 +94,13 @@ class ToolsService
         return 0;
     }
 
-    public function runTool($profileId){
-
-        $cmd=$this->buildCommand($profileId);
-        //echo $cmd;die();
+    public function runTool($profileId,$targetsArr){
+        //print_r($targetsArr);
+        $interprPath="D:\\nodejs\\node.exe";
+        $execscriptPath="D:\\njs\\nn\\executtest.js";
+        $cmd=$interprPath.' '.$execscriptPath.' '.$this->buildCommand($profileId,$targetsArr);
+        echo $cmd;
+        die();
 
         $ooo=new \COM('WScript.Shell');
         $ooo->Run($cmd,0,0);

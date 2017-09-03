@@ -1,6 +1,23 @@
 {% extends '@CasperBountyFront/base.html.twig' %}
 
 {% block body %}
+    <script>
+        function runTool(profileId) {
+            var arr=[];
+            var checkedValue = $('#targets:checked').val();
+            console.log(checkedValue);
+            var cv=document.getElementById('targets').value;
+            $("#targets:checked").each(function(){
+                arr.push($(this).val());
+            });
+            console.log(arr);
+
+            $.post("/tools/"+profileId+"/run",{'targetsArr':arr.toString()}, function(data, status){
+                alert("Data: " + data + "\nStatus: " + status);
+            });
+
+        }
+    </script>
     <div class="container">
 
 
@@ -14,7 +31,7 @@
                         <span class="caret"></span></button>
                     <ul class="dropdown-menu">
                         {% for profile in profiles %}
-                        <li><a href="#">{{ profile.name }} (<span style="color: #777777">{{ profile.toolId.name }} {{ profile.cmd }}</span>)</a></li>
+                        <li><a onclick="runTool({{ profile.profileId }})" href="#">{{ profile.name }} (<span style="color: #777777">{{ profile.toolId.name }} {{ profile.cmd }}</span>)</a></li>
 
                         {% endfor %}
                     </ul>
@@ -35,7 +52,7 @@
 
                 <tbody>
                 <tr class="success">
-                    <td><input type="checkbox" name="targetsArr[]" value="{{ maintarget.targetid }}"></td>
+                    <td><input type="checkbox" id="targets" name="targetsArr[]" value="{{ maintarget.targetid }}"></td>
                     <td class="col-md-4">
                         <a href="{{ path('casper_bounty_targets_targetid',{'targetId':maintarget.targetid,'projectId':projectId}) }}">{{ maintarget.host }}</a>
 
@@ -61,7 +78,7 @@
                 </tr>
                 {% for target in targetInfo.subtargets %}
                     <tr class="{% if target.type=='maindomain' %}success{% endif %}">
-                        <td><input type="checkbox" name="targetsArr[]" value="{{ target.targetid }}"></td>
+                        <td><input type="checkbox" id="targets" name="targetsArr[]" value="{{ target.targetid }}"></td>
                         <td class="col-md-4"><a
                                     href="{{ path('casper_bounty_targets_targetid',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a>
 

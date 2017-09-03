@@ -109,5 +109,33 @@ class Results
     {
         return $this->profileid;
     }
-}
+    /**
+     * @var \CasperBounty\TasksBundle\Entity\Tasks
+     */
+    private $taskid;
 
+
+    /**
+     * Set taskid
+     *
+     * @param \CasperBounty\TasksBundle\Entity\Tasks $taskid
+     *
+     * @return Results
+     */
+    public function setTaskid(\CasperBounty\TasksBundle\Entity\Tasks $taskid = null)
+    {
+        $this->taskid = $taskid;
+
+        return $this;
+    }
+
+    /**
+     * Get taskid
+     *
+     * @return \CasperBounty\TasksBundle\Entity\Tasks
+     */
+    public function getTaskid()
+    {
+        return $this->taskid;
+    }
+}

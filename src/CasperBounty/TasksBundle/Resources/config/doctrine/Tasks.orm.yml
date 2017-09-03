@@ -27,7 +27,7 @@ CasperBounty\TasksBundle\Entity\Tasks:
             nullable: false
     manyToOne:
         profileid:
-            targetEntity: Profiles
+            targetEntity: CasperBounty\ProfilesBundle\Entity\Profiles
             cascade: {  }
             fetch: LAZY
             mappedBy: null
@@ -37,7 +37,7 @@ CasperBounty\TasksBundle\Entity\Tasks:
                     referencedColumnName: profileId
             orphanRemoval: false
         scenarioid:
-            targetEntity: Scenario
+            targetEntity: CasperBounty\ScenarioBundle\Entity\Scenario
             cascade: {  }
             fetch: LAZY
             mappedBy: null
@@ -47,7 +47,7 @@ CasperBounty\TasksBundle\Entity\Tasks:
                     referencedColumnName: scenarioId
             orphanRemoval: false
         targetid:
-            targetEntity: Targets
+            targetEntity: CasperBounty\TargetsBundle\Entity\Targets
             cascade: {  }
             fetch: LAZY
             mappedBy: null

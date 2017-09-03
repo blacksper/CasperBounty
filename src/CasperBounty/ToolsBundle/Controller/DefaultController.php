@@ -46,11 +46,13 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/tools/{id}/run", name="casper_bounty_tools_runtool")
+     * @Route("/tools/{profileId}/run", name="casper_bounty_tools_runtool")
      */
-    public function runToolAction($id){
+    public function runToolAction($profileId, Request $request){
+        $targetsJson=$request->get('targetsArr');
         $ts=$this->get('casper_bounty_tools.toolssrvice');
-        $ts->runTool($id);
+        $targetsArr=explode(',',$targetsJson);
+        $ts->runTool($profileId,$targetsArr);
         $response=new Response();
         $response->setContent('runned');
         return $response;

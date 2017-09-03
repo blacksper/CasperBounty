@@ -2,12 +2,9 @@ CasperBounty\ResultsBundle\Entity\Results:
     type: entity
     table: results
     indexes:
-        fk_results_profiles_1:
+        FK_results_tasks:
             columns:
-                - profileId
-        fk_results_Targets_1:
-            columns:
-                - targetId
+                - taskId
     id:
         resultid:
             type: integer
@@ -26,24 +23,14 @@ CasperBounty\ResultsBundle\Entity\Results:
             options:
                 fixed: false
     manyToOne:
-        targetid:
-            targetEntity: CasperBounty\TargetsBundle\Entity\Targets
+        taskid:
+            targetEntity: CasperBounty\TasksBundle\Entity\Tasks
             cascade: {  }
             fetch: LAZY
             mappedBy: null
             inversedBy: null
             joinColumns:
-                targetId:
-                    referencedColumnName: targetId
-            orphanRemoval: false
-        profileid:
-            targetEntity: CasperBounty\ProfilesBundle\Entity\Profiles
-            cascade: {  }
-            fetch: LAZY
-            mappedBy: null
-            inversedBy: null
-            joinColumns:
-                profileId:
-                    referencedColumnName: profileId
+                taskId:
+                    referencedColumnName: taskId
             orphanRemoval: false
     lifecycleCallbacks: {  }
