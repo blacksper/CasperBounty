@@ -7,6 +7,7 @@
  */
 
 namespace CasperBounty\ToolsBundle\Service;
+use CasperBounty\TasksBundle\Entity\Tasks;
 use Doctrine\ORM\EntityManager;
 
 
@@ -69,14 +70,14 @@ class ToolsService
 
         $targetsArrJson=json_encode($tmparr,JSON_UNESCAPED_SLASHES);
         $coolstr= addslashes($targetsArrJson);
-
+        //$coolstr=str_replace('\\\\','\\',$coolstr);
 
         $targets=sprintf('%s',$coolstr);
         $command="node D:\\njs\\nn\\resol.js --hosts=$targets";
 
-        //die($command);
+        die($command);
         $ooo=new \COM('WScript.Shell');
-        $ooo->Run($command,7,0);
+        $ooo->Run($command,0,false);
 
 //        if (substr(php_uname(), 0, 7) == "Windows"){//working
 //            pclose(popen("start /B ". $command, "r"));
@@ -91,13 +92,31 @@ class ToolsService
         //pclose(popen('start /B cmd /C "'.$command.' >NUL 2>NUL"', 'r'));//working
 
         echo "runned";
+        die();
         return 0;
     }
 
     public function runTool($profileId,$targetsArr){
         //print_r($targetsArr);
+        $repoProfile=$this->entityManager->getRepository('CasperBountyProfilesBundle:Profiles');
+        $repoTargets=$this->entityManager->getRepository('CasperBountyTargetsBundle:Targets');
+        $profile=$repoProfile->find($profileId);
+        //$tasks=array();
+        $targetsObjArr=array();
+        foreach ($targetsArr as $target){
+            $targetsObjArr[]=$repoTargets->find($target);
+        }
+
+        foreach ($targetsObjArr as $target) {
+            $task = new Tasks();
+            $task->setProfileid($profile)->setStatus(1)->setTargetid($target);
+            $this->entityManager->persist($task);
+        }
+        $this->entityManager->flush();
+
         $interprPath="D:\\nodejs\\node.exe";
         $execscriptPath="D:\\njs\\nn\\executtest.js";
+
         $cmd=$interprPath.' '.$execscriptPath.' '.$this->buildCommand($profileId,$targetsArr);
         echo $cmd;
         die();

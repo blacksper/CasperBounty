@@ -246,7 +246,7 @@ class TargetsService
             $addedIpsArr[] = $ipObj;
         }
         
-        dump($addedIpsArr);
+        //dump($addedIpsArr);
         $exstIps=$target->getIpid();
         foreach ($addedIpsArr as $ip) {
 
@@ -293,8 +293,8 @@ class TargetsService
 
         $ips=$this->em->createQuery($ipExistDql)->setParameters(array('projectid'=>$projectId,'ip'=> $ip))->getResult();
         //$ipExist = $repT->findBy(array('host' => $ip, 'type' => 'ip'));
-        dump($ipExistDql);
-        dump($ips);
+        //dump($ipExistDql);
+        //dump($ips);
         //die();
         if (!empty($ips) && (count($ips) == 1))
             return $ips;

@@ -75,22 +75,32 @@ class DefaultController extends Controller
     }
 
     /**
-     * @Route("/tools/{targetid}/addips", requirements={"targetid" = "\d+","methods"="POST"}, name="casper_bounty_tools_addips")
+     * @Route("/tools/addips", requirements={"targetid" = "\d+","methods"="POST"}, name="casper_bounty_tools_addips")
+     * @Method({"POST"})
      */
-    public function addIpsAction($targetid, Request $request){
-        //TODO: добавить проверку на дубликаты
-        //dump($request);
-        $stringIpsData=$request->request->get('ipsData');
-        $projectId=$request->request->get('projectId');
-        //echo $stringIpsData;
-        //die('die mutherfucker');
-        $ipsArray=json_decode($stringIpsData);
-        print_r($ipsArray);
-        //die();
+    public function addIpsAction(Request $request){
+
+        $test=$request->request->get('resultData');
+
+        $targetsArray=json_decode($test,1,2048);
         $targetsService=$this->get('casper_bounty_targets.targetsservice');
-        $targetsService->addIps($targetid,$ipsArray,$projectId);
+        
         $response=new Response();
         $response->setContent('govnocod');
+
+        if(!is_array($targetsArray))
+            return $response;
+        foreach ($targetsArray as $target) {
+            print_r( $target);
+            //$ipsArray=json_decode($target['data']['ipsData'],1);
+            $targetsService->addIps(
+                $target['targetId'],            //targetid
+                $target['data']['ipsData'],     //ip adresses list
+                $target['data']['projectId']    //project id
+            );
+
+        }
+
         //$response->sendContent();
         return $response;
     }
