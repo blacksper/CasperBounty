@@ -30,7 +30,7 @@ class TargetsService
                 $type = 'domain';
 
                 preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#", $host, $m);
-                //print_r($m);
+                dump($m);
                 if (empty($m[2]) && empty($m[1])) {
                     $type = "maindomain";
                 }
@@ -50,10 +50,27 @@ class TargetsService
         return $hostWithType;
     }
 
-    /** check hosts for exists in db */
+    /** check hosts for exists in db and return non exists */
 
     public function checkHostExists($hostsArray)
     {
+
+        $maindomains=array();
+        //set maindomains
+        foreach ($hostsArray as $host){
+            preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#", trim($host), $m);
+            //echo "<br>".$host." shit";
+
+            if(empty($m))
+                continue;
+
+            if (!array_search($m[3],$maindomains)&&!array_search($m[3],$hostsArray)) {
+                $maindomains[] = $m[3];
+            }
+        }
+
+        $hostsArray=array_unique(array_merge($hostsArray,$maindomains));
+        //dump($hostsArray);die();
 
         $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');//TODO уточнить необходимость создания репозитория второй раз
         $existHost = $repository->createQueryBuilder('t')->select('t.host')->where('t.host in (:har)')->setParameter('har', $hostsArray)->getQuery();
@@ -77,14 +94,14 @@ class TargetsService
         $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
         $repositoryp = $this->em->getRepository('CasperBountyProjectsBundle:Projects');
         $project = $repositoryp->find($this->projectId);
-        echo $this->projectId;
+        //echo $this->projectId;
 
         $uniqueHosts = $this->checkHostExists($hostsArr);
         if (empty($uniqueHosts))
             return 0;
-
         $hostTypeArr = $this->setHostType($uniqueHosts);//array ('domain'=>array(hosts),'maindomain'=>array(hosts))
-        print_r($hostTypeArr);
+        //print_r($hostTypeArr);
+        //die();
         $successAdded = array();
         //add maindomains, add to projects, delete from array maindomain
         if (isset($hostTypeArr['maindomain']))
