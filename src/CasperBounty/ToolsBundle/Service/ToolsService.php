@@ -18,7 +18,7 @@ class ToolsService
         $this->entityManager = $entityManager;
     }
 
-    public function buildCommand($profileId,$targetsArr){
+    public function buildCommand($profileId,$targetsArr,$tasksArr){
 
         $repT=$this->entityManager->getRepository('CasperBountyToolsBundle:Tools');
         $repTar=$this->entityManager->getRepository('CasperBountyTargetsBundle:Targets');
@@ -29,6 +29,7 @@ class ToolsService
         //echo $qb->getCmd();
         $targetsHosts=array();
 
+        //get targets hosts
         foreach ($targetsArr as $targetId){
             $targetObj=$repTar->find($targetId);
             array_push($targetsHosts,$targetObj->getHost());
@@ -36,10 +37,12 @@ class ToolsService
         }
 
         $targetHost=$targetsHosts[0];
+        $taskId=$tasksArr[0]->getTaskid();
+
         $toolPath=$qb->getToolid()->getCmdpath();
         $toolParams=$qb->getCmd();
         $toolParams=str_replace('[TARGET]', $targetHost ,$toolParams);
-        $cmd="--tool=\"$toolPath\" --parameters=\"$toolParams\" "; //
+        $cmd="--tool=\"$toolPath\" --parameters=\"$toolParams\" --taskid=$taskId"; //
         //echo $cmd;
         //$t=$repT->find($id);
         //echo $t->getCmdpath();
@@ -107,22 +110,26 @@ class ToolsService
             $targetsObjArr[]=$repoTargets->find($target);
         }
 
+        $tasksArr=array();
         foreach ($targetsObjArr as $target) {
             $task = new Tasks();
             $task->setProfileid($profile)->setStatus(1)->setTargetid($target);
             $this->entityManager->persist($task);
+            $this->entityManager->flush();
+            $this->entityManager->refresh($task);
+            $tasksArr[]=$task;
         }
-        $this->entityManager->flush();
+
 
         $interprPath="D:\\nodejs\\node.exe";
         $execscriptPath="D:\\njs\\nn\\executtest.js";
 
-        $cmd=$interprPath.' '.$execscriptPath.' '.$this->buildCommand($profileId,$targetsArr);
+        $cmd=$interprPath.' '.$execscriptPath.' '.$this->buildCommand($profileId,$targetsArr,$tasksArr).' ';
         echo $cmd;
-        die();
+        //die();
 
         $ooo=new \COM('WScript.Shell');
-        $ooo->Run($cmd,0,0);
+        $ooo->Run($cmd,7,0);
         return 0;
     }
 

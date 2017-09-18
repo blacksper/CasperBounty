@@ -88,7 +88,28 @@ class DefaultController extends Controller
 
         $targetInfo['subtargets']=$subTargets;
         $profiles=$doctr->getRepository('CasperBountyProfilesBundle:Profiles')->findAll();
-        return $this->render('@CasperBountyTargets/targetInfo.html.twig',array('projectId'=>$projectId,'targetId'=>$targetId,'targetInfo'=>$targetInfo,'maintarget'=>$maintarget,'profiles'=>$profiles));
+
+        $results=$doctr
+            ->getRepository('CasperBountyResultsBundle:Results')
+            ->createQueryBuilder('r')->innerJoin('r.taskid','taskid')->where('r.taskid.targetid=:targetid')
+            ->setParameter('targetid',$maintarget->getTargetid())
+            ->getQuery()
+            ->getResult();
+
+        $query=$ips->innerJoin('d.ipid','ipid')->where('ipid.targetid=:tarid')
+            ->getDQL();
+        //dump()
+        dump($results);
+        return $this->render('@CasperBountyTargets/targetInfo.html.twig',
+            array(
+                'projectId'=>$projectId,
+                'targetId'=>$targetId,
+                'targetInfo'=>$targetInfo,
+                'maintarget'=>$maintarget,
+                'profiles'=>$profiles,
+                'results'=>$results
+            ));
+
     }
 
     /**

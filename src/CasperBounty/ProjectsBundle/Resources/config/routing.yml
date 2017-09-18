@@ -1,3 +1,7 @@
+casper_bounty_main:
+    path:     /
+    defaults: { _controller: CasperBountyProjectsBundle:Default:index }
+
 casper_bounty_projects_homepage:
     path:     /projects
     defaults: { _controller: CasperBountyProjectsBundle:Default:index }

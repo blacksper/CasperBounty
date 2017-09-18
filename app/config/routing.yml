@@ -1,3 +1,6 @@
+homepage1:
+    path:   /
+    defaults:  { _controller: CasperBountyProjectsBundle:Default:index }
 casper_bounty_tasks:
     resource: "@CasperBountyTasksBundle/Resources/config/routing.yml"
     prefix:   /
@@ -40,8 +43,9 @@ casper_bounty_templates:
     prefix:   /
 
 casper_bounty_results:
-    resource: "@CasperBountyResultsBundle/Resources/config/routing.yml"
+    resource: "@CasperBountyResultsBundle/Controller/DefaultController.php"
     prefix:   /
+    type: annotation
 
 casper_bounty_groups:
     resource: "@CasperBountyGroupsBundle/Resources/config/routing.yml"
