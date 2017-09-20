@@ -91,13 +91,13 @@ class DefaultController extends Controller
 
         $results=$doctr
             ->getRepository('CasperBountyResultsBundle:Results')
-            ->createQueryBuilder('r')->innerJoin('r.taskid','taskid')->where('r.taskid.targetid=:targetid')
+            ->createQueryBuilder('r')->innerJoin('r.taskid','t')->where('t.targetid=:targetid')
             ->setParameter('targetid',$maintarget->getTargetid())
             ->getQuery()
             ->getResult();
 
-        $query=$ips->innerJoin('d.ipid','ipid')->where('ipid.targetid=:tarid')
-            ->getDQL();
+//        $query=$ips->innerJoin('d.ipid','ipid')->where('ipid.targetid=:tarid')
+//            ->getDQL();
         //dump()
         dump($results);
         return $this->render('@CasperBountyTargets/targetInfo.html.twig',

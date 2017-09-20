@@ -106,11 +106,13 @@ class ToolsService
         $profile=$repoProfile->find($profileId);
         //$tasks=array();
         $targetsObjArr=array();
+        //setting targets objects by id
         foreach ($targetsArr as $target){
             $targetsObjArr[]=$repoTargets->find($target);
         }
 
         $tasksArr=array();
+        //Creating tasks
         foreach ($targetsObjArr as $target) {
             $task = new Tasks();
             $task->setProfileid($profile)->setStatus(1)->setTargetid($target);

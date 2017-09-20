@@ -116,9 +116,11 @@
 
                     <div class="modal-body">
                         Modal body text
+
                         {% for result in results %}
-                            {{result.result}}
+                        <pre>{{result.result}}</pre>
                         {% endfor %}
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
