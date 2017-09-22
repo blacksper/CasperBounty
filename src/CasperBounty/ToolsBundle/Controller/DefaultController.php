@@ -7,6 +7,7 @@ use CasperBounty\ProfilesBundle\Form\addProfile;
 use CasperBounty\ToolsBundle\Entity\Tools;
 use CasperBounty\ToolsBundle\Form\addToolForm;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -34,9 +35,13 @@ class DefaultController extends Controller
 
         $em = $this->getDoctrine()->getRepository('CasperBountyToolsBundle:Tools');
         $tools = $em->findAll();
+        //$tools[0]->getToolid();
+
         //echo count($tools);
         $profileObj=new Profiles();
         $profileForm=$this->createForm(addProfile::class,$profileObj,array('action'=>$this->generateUrl('casper_bounty_profiles_addprofile')));//hardcoded id
+
+        //$profileObj->getToolid()
 
         return $this->render('@CasperBountyTools/tools.html.twig', array(
             'form' => $form->createView(),
@@ -104,4 +109,16 @@ class DefaultController extends Controller
         //$response->sendContent();
         return $response;
     }
+
+    /**
+     * @Route("/tools/{toolId}/getProfiles", name="casper_bounty_tools_getprofiles")
+     */
+    public function getProfilesByToolid($toolId){
+        $repP=$this->getDoctrine()->getRepository('CasperBountyProfilesBundle:Profiles');
+        $profilesArr=$repP->findBy(array('toolid'=>3));
+        //dump($profilesArr);
+        $html=$this->renderView('@CasperBountyTools/ajaxGetProfiles.html.twig',array('profiles'=>$profilesArr));
+        return new JsonResponse($html,200);
+    }
 }
+

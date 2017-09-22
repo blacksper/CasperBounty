@@ -18,26 +18,29 @@ class ToolsService
         $this->entityManager = $entityManager;
     }
 
-    public function buildCommand($profileId,$targetsArr,$tasksArr){
+    public function buildCommand($profileId,Tasks $tasksId){
 
-        $repT=$this->entityManager->getRepository('CasperBountyToolsBundle:Tools');
+        $repT=$this->entityManager->getRepository('CasperBountyTasksBundle:Tasks');
         $repTar=$this->entityManager->getRepository('CasperBountyTargetsBundle:Targets');
         $repP=$this->entityManager->getRepository('CasperBountyProfilesBundle:Profiles');
         $qb=$repP->find($profileId);
         //$qb->select('t')
         //echo $qb->getToolid()->getCmdpath();
         //echo $qb->getCmd();
-        $targetsHosts=array();
+        //$targetsHosts=array();
 
+        $target=$repT->find($tasksId);
         //get targets hosts
-        foreach ($targetsArr as $targetId){
-            $targetObj=$repTar->find($targetId);
-            array_push($targetsHosts,$targetObj->getHost());
 
-        }
 
-        $targetHost=$targetsHosts[0];
-        $taskId=$tasksArr[0]->getTaskid();
+//        foreach ($targetsArr as $targetId){
+//            $targetObj=$repTar->find($targetId);
+//            array_push($targetsHosts,$targetObj->getHost());
+//
+//        }
+
+        $targetHost=$target->getTargetid()->getHost();
+        $taskId=$tasksId->getTaskid();
 
         $toolPath=$qb->getToolid()->getCmdpath();
         $toolParams=$qb->getCmd();
@@ -125,13 +128,14 @@ class ToolsService
 
         $interprPath="D:\\nodejs\\node.exe";
         $execscriptPath="D:\\njs\\nn\\executtest.js";
+        foreach ($tasksArr as $task) {
+            $cmd = $interprPath . ' ' . $execscriptPath . ' ' . $this->buildCommand($profileId, $task) . ' ';
+            echo $cmd;
+            //die();
 
-        $cmd=$interprPath.' '.$execscriptPath.' '.$this->buildCommand($profileId,$targetsArr,$tasksArr).' ';
-        echo $cmd;
-        //die();
-
-        $ooo=new \COM('WScript.Shell');
-        $ooo->Run($cmd,7,0);
+            $ooo = new \COM('WScript.Shell');
+            $ooo->Run($cmd, 7, 0);
+        }
         return 0;
     }
 

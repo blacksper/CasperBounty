@@ -1,0 +1,14 @@
+<table class="table table-condensed" >
+    <thead>
+    <th>one</th>
+    <th>two</th>
+    <th>three</th>
+    </thead>
+    <tbody>
+    {% for profile in profiles %}
+    <tr><td>{{ profile.profileid }}</td><td>{{ profile.name }}</td><td>{{ profile.cmd }}</td>
+    </tr>
+    {% endfor %}
+
+    </tbody>
+</table>
