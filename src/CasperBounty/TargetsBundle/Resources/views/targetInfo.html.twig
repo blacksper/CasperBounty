@@ -3,40 +3,39 @@
 {% block body %}
     <script>
         function runTool(profileId) {
-            var arr=[];
+            var arr = [];
             var checkedValue = $('#targets:checked').val();
             console.log(checkedValue);
-            var cv=document.getElementById('targets').value;
-            $("#targets:checked").each(function(){
+            var cv = document.getElementById('targets').value;
+            $("#targets:checked").each(function () {
                 arr.push($(this).val());
             });
             console.log(arr);
 
-            $.post("/tools/"+profileId+"/run",{'targetsArr':arr.toString()}, function(data, status){
+            $.post("/tools/" + profileId + "/run", {'targetsArr': arr.toString()}, function (data, status) {
                 alert("Data: " + data + "\nStatus: " + status);
             });
 
         }
     </script>
     <div class="container">
-
-
         <form method="post" action="{{ path('casper_bounty_tools_getips',{'projectId':projectId}) }}">
-
             <p>
             <div class="btn-group">
                 <button class="btn btn-info btn-sm" type="submit">Get ips</button>
                 <div class="btn-group">
-                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Run profile
+                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Run
+                        profile
                         <span class="caret"></span></button>
                     <ul class="dropdown-menu">
                         {% for profile in profiles %}
-                        <li><a onclick="runTool({{ profile.profileId }})" href="#">{{ profile.name }} (<span style="color: #777777">{{ profile.toolId.name }} {{ profile.cmd }}</span>)</a></li>
-
+                            <li><a onclick="runTool({{ profile.profileId }})" href="#">{{ profile.name }} (<span
+                                            style="color: #777777">{{ profile.toolId.name }} {{ profile.cmd }}</span>)</a>
+                            </li>
                         {% endfor %}
                     </ul>
                 </div>
-                </div>
+            </div>
             </p>
             <br>
             <table class="table table-condensed subtargetsTable">
@@ -58,9 +57,12 @@
 
 
                         {% for ip in maintarget.getIpId() %}
-                            <br><em><a
-                                    href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}">{{ ip.host }}</a>
-                        </em>
+                            <br>
+                            <em>
+                                <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}">
+                                    {{ ip.host }}
+                                </a>
+                            </em>
                         {% endfor %}
                     </td>
                     <td>
@@ -70,8 +72,10 @@
                         <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#tasksModal" data-id="{{ maintarget.targetid }}" ><span
-                                    class="glyphicon glyphicon-list" aria-hidden="true"></span></button>
+                        <button type="button" class="btn btn-xs btn-primary" data-toggle="modal"
+                                data-target="#tasksModal" data-id="{{ maintarget.targetid }}">
+                            <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+                        </button>
 
                     </td>
                 </tr>
@@ -83,8 +87,11 @@
 
 
                             {% for ip in target.getIpid() %}
-                                <br><em><a
-                                        href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}">{{ ip.host }}</a>
+                                <br>
+                                <em>
+                                    <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}">
+                                        {{ ip.host }}
+                                    </a>
                                 </em>
                             {% endfor %}
                         </td>
@@ -93,10 +100,15 @@
                             <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-xs btn-primary"><span
-                                        class="glyphicon glyphicon-screenshot" aria-hidden="true"></span></button>
-                            <button type="button" class="btn btn-xs btn-primary"><span class="glyphicon glyphicon-globe"
-                                                                                       aria-hidden="true"></span>
+                            <button type="button" class="btn btn-xs btn-primary">
+                                <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-xs btn-primary">
+                                <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
+                            </button>
+
+                            <button type="button" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#tasksModal" data-id="{{ maintarget.targetid }}">
+                                <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
                             </button>
 
                         </td>
@@ -118,8 +130,11 @@
                         Modal body text
 
                         {% for result in results %}
-                        <pre>{{result.result}}</pre>
+                            <pre>{{ result.result }}</pre>
                         {% endfor %}
+                        <div class="result">
+
+                        </div>
 
                     </div>
                     <div class="modal-footer">

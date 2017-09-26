@@ -1,3 +1,0 @@
-casper_bounty_results_homepage:
-    path:     /
-    defaults: { _controller: CasperBountyResultsBundle:Default:index }

@@ -2,14 +2,10 @@
 {% block body %}
     <script>
         function aButtonPressed(){
-
-
             $.get( "{{path('casper_bounty_tools_getprofiles',{'toolId':1})}}", function( data ) {
                 $( ".result" ).html( data );
                 console.log( "Load was performed." );
             });
-
-
         };
 
         $(document).ready(function() {
@@ -20,7 +16,6 @@
     <div class="container">
 
         {{ form_start(form,{'attr':{'class':'form-inline row addToolForm col-md-10','label':'test1'}}) }}
-
 
                 {{ form_widget(form.name,{'attr':{'class':'form-control mb-2 mr-sm-2 mb-sm-0','placeholder':'name: dirsearch'}}) }}
 

@@ -12,25 +12,28 @@
 
         <tbody>
         {% for tool in toolsArr %}
-            <tr class="{%   if tool.name=='maindomain' %}success{% endif %}">
-                <td class="col-md-5">{{ tool.name }}</td>
+            <tr class="{% if tool.name=='maindomain' %}success{% endif %}">
+                <td class="col-md-3">{{ tool.name }}</td>
                 <td>{{ tool.cmdpath }}</td>
-                <td>
+                <td class="col-md-4">
 
                     <!--<button type="button" class="btn btn-sm btn-success"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></button>
                     -->
-                    <button type="button" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"
-                                                                              aria-hidden="true"></span>
-                    </button>
+                    <div class="btn-group btn-group-xs" role="group">
 
-                    <button type="button" class="btn btn-xs btn-info testjs" data-toggle="modal" data-target="#myModal" data-id="{{ tool.toolid }}" >
-                        Profiles
-                        <span class="glyphicon glyphicon-cog"></span>
-                    </button>
-                    <button type="button" class="btn btn-xs btn-danger">create view template</button>
 
-                        <!--<a class="btn btn-large btn-info btn-xs" href="templates/home.html"><span class="glyphicon glyphicon-cog"></span></a>
-                        -->
+                        <button type="button" class="btn btn-xs btn-info testjs" data-toggle="modal"
+                                data-target="#myModal" data-id="{{ tool.toolid }}">
+                            Profiles
+                            <span class="glyphicon glyphicon-cog"></span>
+                        </button>
+                        <button type="button" class="btn btn-xs btn-warning">Templates</button>
+                        <button type="button" class="btn btn-xs btn-danger">Delete <span class="glyphicon glyphicon-trash"
+                                                                                         aria-hidden="true"></span>
+                        </button>
+                    </div>
+                    <!--<a class="btn btn-large btn-info btn-xs" href="templates/home.html"><span class="glyphicon glyphicon-cog"></span></a>
+                    -->
 
                 </td>
             </tr>

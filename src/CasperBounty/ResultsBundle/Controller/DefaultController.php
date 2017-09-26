@@ -11,9 +11,26 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 class DefaultController extends Controller
 {
-    public function indexAction()
+    /**
+     * @Route("/projects/{projectId}/results", name="casper_bounty_results_main")
+     */
+
+    public function indexAction($projectId)
     {
-        return $this->render('CasperBountyResultsBundle:Default:index.html.twig');
+        $repoR=$this->getDoctrine()->getRepository('CasperBountyResultsBundle:Results');
+        $results=$repoR->createQueryBuilder('r')->innerJoin('r.taskid','t')
+            ->innerJoin('t.targetid','tar')
+            ->innerJoin('tar.projectid','p')
+            ->where('p.projectid=1')
+            ->getQuery()
+            ->getResult();
+//        $results=$doctr
+//            ->getRepository('CasperBountyResultsBundle:Results')
+//            ->createQueryBuilder('r')->innerJoin('r.taskid','t')->where('t.targetid=:targetid')
+//            ->setParameter('projectid',$projectId)
+//            ->getQuery()
+//            ->getResult();
+        return $this->render('CasperBountyResultsBundle:Default:index.html.twig',array('results'=>$results));
     }
 
     /**

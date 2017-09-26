@@ -1,1 +1,28 @@
-Hello World!
+{% extends '@CasperBountyFront/base.html.twig' %}
+{% block body %}
+    <div class="container">
+
+        <table class="table table-condensed toolsTable ">
+            <thead>
+            <tr>
+                <th>tool name</th>
+                <th>path</th>
+                <th>btn</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for result in results %}
+                <tr>
+                    <td class="col-md-3">{{ result.resultid }}</td>
+                    <td>{{ result.result }}</td>
+                    <td class="col-md-4">
+
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
