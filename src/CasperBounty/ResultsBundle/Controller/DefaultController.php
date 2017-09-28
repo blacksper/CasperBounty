@@ -21,7 +21,8 @@ class DefaultController extends Controller
         $results=$repoR->createQueryBuilder('r')->innerJoin('r.taskid','t')
             ->innerJoin('t.targetid','tar')
             ->innerJoin('tar.projectid','p')
-            ->where('p.projectid=1')
+            ->where('p.projectid=:prid')
+            ->setParameter('prid',$projectId)
             ->getQuery()
             ->getResult();
 //        $results=$doctr
@@ -30,7 +31,7 @@ class DefaultController extends Controller
 //            ->setParameter('projectid',$projectId)
 //            ->getQuery()
 //            ->getResult();
-        return $this->render('CasperBountyResultsBundle:Default:index.html.twig',array('results'=>$results));
+        return $this->render('CasperBountyResultsBundle:Default:index.html.twig',array('results'=>$results,'projectId'=>$projectId));
     }
 
     /**

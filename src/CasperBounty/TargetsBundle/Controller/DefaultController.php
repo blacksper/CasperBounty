@@ -133,4 +133,5 @@ class DefaultController extends Controller
         //die();
         return $this->render('@CasperBountyTargets/ipView/domainByIp.html.twig',array('domains'=>$res,'projectId'=>$projectId));
     }
+    
 }
