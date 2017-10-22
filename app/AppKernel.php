@@ -32,6 +32,7 @@ class AppKernel extends Kernel
             new CasperBounty\ScenarioBundle\CasperBountyScenarioBundle(),
             new CasperBounty\ServicesBundle\CasperBountyServicesBundle(),
             new CasperBounty\TasksBundle\CasperBountyTasksBundle(),
+            new mbgena\GenaBundle\mbgenaGenaBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

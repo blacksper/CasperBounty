@@ -1,3 +1,7 @@
+mbgena_gena:
+    resource: "@mbgenaGenaBundle/Resources/config/routing.yml"
+    prefix:   /
+
 homepage1:
     path:   /
     defaults:  { _controller: CasperBountyProjectsBundle:Default:index }
