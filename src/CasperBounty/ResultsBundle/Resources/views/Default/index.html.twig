@@ -7,6 +7,7 @@
             <tr>
                 <th>tool name</th>
                 <th>path</th>
+                <th>target</th>
                 <th>btn</th>
             </tr>
             </thead>
@@ -14,10 +15,12 @@
             <tbody>
             {% for result in results %}
                 <tr>
-                    <td class="col-md-3">{{ result.resultid }}</td>
-                    <td>{{ result.result }}</td>
+                    <td class="col-md-3">{{ result.taskid.targetid.host }}</td>
+                    <td class="col-md-2"><pre>{{ result.result }}</pre></td>
+                    <td class="col-md-4"></td>
                     <td class="col-md-4">
 
+                        <button class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
                     </td>
                 </tr>
             {% endfor %}

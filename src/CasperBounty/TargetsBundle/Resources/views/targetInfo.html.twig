@@ -89,6 +89,7 @@
                             {% for ip in target.getIpid() %}
                                 <br>
                                 <em>
+
                                     <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}">
                                         {{ ip.host }}
                                     </a>
