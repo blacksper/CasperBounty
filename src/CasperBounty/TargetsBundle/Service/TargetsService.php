@@ -193,11 +193,13 @@ class TargetsService
             $query = $this->em->createQuery('
                 select t from CasperBountyTargetsBundle:Targets t
                 JOIN t.projectid pid
-                WHERE t.parentid=:parentId and pid=:projectId')
+                JOIN  t.ipid ipid
+                WHERE t.parentid=:parentId and pid=:projectId and ipid.host like \'185.73.193.%\'')
                 ->setParameters(array('parentId' => $targetId, 'projectId' => $projectId));
 
             // echo $query->getSQL();
             $subTargets = $query->getResult();
+            dump($subTargets);
             //echo count($subTargets);
         } else {
             $subTargets = 0;

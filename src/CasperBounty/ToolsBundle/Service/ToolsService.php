@@ -81,9 +81,9 @@ class ToolsService
         $targets=sprintf('%s',$coolstr);
         $command="node D:\\njs\\nn\\resol.js --hosts=$targets";
 
-        die($command);
+        //die($command);
         $ooo=new \COM('WScript.Shell');
-        $ooo->Run($command,0,false);
+        $ooo->Run($command,7,false);
 
 //        if (substr(php_uname(), 0, 7) == "Windows"){//working
 //            pclose(popen("start /B ". $command, "r"));
@@ -98,7 +98,7 @@ class ToolsService
         //pclose(popen('start /B cmd /C "'.$command.' >NUL 2>NUL"', 'r'));//working
 
         echo "runned";
-        die();
+        //die();
         return 0;
     }
 

@@ -80,7 +80,9 @@ class DefaultController extends Controller
             $tarhost[]['ips']=$target->getIpid();
         }
 
-        $maintarget=$doctr->getRepository('CasperBountyTargetsBundle:Targets')->createQueryBuilder('t')->where('t.targetid=:targetid')
+        $targetsRepo=$doctr->getRepository('CasperBountyTargetsBundle:Targets');
+
+        $maintarget=$targetsRepo->createQueryBuilder('t')->where('t.targetid=:targetid')
             ->setParameter('targetid',$targetId)
             ->getQuery()
             ->getResult();
@@ -89,25 +91,39 @@ class DefaultController extends Controller
         $targetInfo['subtargets']=$subTargets;
         $profiles=$doctr->getRepository('CasperBountyProfilesBundle:Profiles')->findAll();
 
-        $results=$doctr
-            ->getRepository('CasperBountyResultsBundle:Results')
-            ->createQueryBuilder('r')->innerJoin('r.taskid','t')->where('t.targetid=:targetid')
-            ->setParameter('targetid',$maintarget->getTargetid())
+//        $results=$doctr
+//            ->getRepository('CasperBountyResultsBundle:Results')
+//            ->createQueryBuilder('r')->innerJoin('r.taskid','t')->where('t.targetid=:targetid')
+//            ->setParameter('targetid',$maintarget->getTargetid())
+//            ->getQuery()
+//            ->getResult();
+
+        $group=$targetsRepo->createQueryBuilder('t')
+            ->select('count(t.targetid) cnt,ipid.host,ipid.targetid')
+            ->innerJoin('t.ipid','ipid')
+            ->innerJoin('t.projectid','proj')
+            ->where('proj.projectid=:projectid')
+            ->groupBy('ipid.host')
+            ->orderBy('cnt','DESC')
+            ->setParameters(array('projectid'=>$projectId))
             ->getQuery()
             ->getResult();
+        //dump($heh);
+        //die();
 
 //        $query=$ips->innerJoin('d.ipid','ipid')->where('ipid.targetid=:tarid')
 //            ->getDQL();
         //dump()
-        dump($results);
+        //dump($results);
         return $this->render('@CasperBountyTargets/targetInfo.html.twig',
             array(
                 'projectId'=>$projectId,
-                'targetId'=>$targetId,
+                //'targetId'=>$targetId,
                 'targetInfo'=>$targetInfo,
                 'maintarget'=>$maintarget,
                 'profiles'=>$profiles,
-                'results'=>$results
+                //'results'=>$results,
+                'group'=>$group
             ));
 
     }
@@ -117,10 +133,23 @@ class DefaultController extends Controller
      * @Method({"GET","POST"})
      */
     public function getDomainsByIp($targetId,$projectId){
-        $repos=$this->getDoctrine()->getRepository('CasperBountyTargetsBundle:Targets');
-        $target=$repos->find($targetId);
-        //echo $targetId;
-        if($target->getType()!='ip'){
+        $doctrine=$this->getDoctrine();
+        $repos=$doctrine->getRepository('CasperBountyTargetsBundle:Targets');
+        //$target=$repos->find($targetId);
+        //$target=$repos->findBy(array('targetid'=>$targetId,'projectid'=>$projectId));
+
+        $target=$repos->createQueryBuilder('t')
+            ->select('t')
+            ->innerJoin('t.projectid','p')
+            ->where('t.targetid=:targetid')
+            ->andWhere('p.projectid=:projectid')
+            ->setParameters(array('targetid'=>$targetId,'projectid'=>$projectId))
+        ->getQuery()->getResult();
+
+        if(empty($target))
+            return $this->redirectToRoute('casper_bounty_projectTargets',array('projectId'=>$projectId));
+        //dump($target);
+        if($target[0]->getType()!='ip'){
             return $this->redirectToRoute('casper_bounty_projectTargets',array('projectId'=>$projectId));
         }
 
@@ -128,7 +157,7 @@ class DefaultController extends Controller
         $query=$ips->innerJoin('d.ipid','ipid')->where('ipid.targetid=:tarid')
             ->getDQL();
         //dump($query);
-        $res=$this->getDoctrine()->getManager()->createQuery($query)->setParameter('tarid',$targetId)->getResult();
+        $res=$doctrine->getManager()->createQuery($query)->setParameter('tarid',$targetId)->getResult();
         //dump($res);
         //die();
         return $this->render('@CasperBountyTargets/ipView/domainByIp.html.twig',array('domains'=>$res,'projectId'=>$projectId));

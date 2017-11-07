@@ -69,9 +69,6 @@ class DefaultController extends Controller
     public function getHostsIpsAction(Request $request,$projectId){
         //);
         $targetsArr=$request->get('targetsArr');
-
-
-
             $ts = $this->get('casper_bounty_tools.toolssrvice');
             //$ts->runTool($id);
             $ts->getAllIps($targetsArr,$projectId);
