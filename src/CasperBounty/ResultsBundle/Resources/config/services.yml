@@ -1,4 +1,4 @@
 services:
-#    casper_bounty_results.example:
-#        class: CasperBounty\ResultsBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]
+  casper_bounty_targets.resultsService:
+    class: CasperBounty\ResultsBundle\Service\ResultsService
+    arguments: ["@doctrine.orm.entity_manager"]

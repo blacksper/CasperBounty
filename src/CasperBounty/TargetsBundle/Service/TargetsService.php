@@ -163,16 +163,6 @@ class TargetsService
         return $successAdded;
     }
 
-    public function isMainDomain($hosts)
-    {
-        //$repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
-        foreach ($hosts as $host) {
-            preg_match("#(.*)\.([\w\d\-]*\.\w{2,10})#", $host, $m);
-            print_r($m);
-        }
-        die();
-
-    }
 
     public function getSubtargets($targetId)
     {

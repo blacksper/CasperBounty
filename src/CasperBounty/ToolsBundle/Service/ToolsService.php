@@ -7,6 +7,7 @@
  */
 
 namespace CasperBounty\ToolsBundle\Service;
+use CasperBounty\ProfilesBundle\Entity\Profiles;
 use CasperBounty\TasksBundle\Entity\Tasks;
 use Doctrine\ORM\EntityManager;
 
@@ -87,6 +88,30 @@ class ToolsService
         //system('');
     }
 
+    public function buildCommandv2(Profiles $profile,$targetObjects){
+        $commandArray=array();
+        $commandString=$profile->getCmd();
+        foreach ($targetObjects as &$targetObject){
+            $host=$targetObject->getHost();
+            $filename=$this->getFilename($host);
+
+            $commandStrPrepare=str_replace('[TARGET]',$host,$commandString);
+            $commandStrPrepare=str_replace('[FILENAME]',$filename,$commandStrPrepare);
+
+
+            $commandArray[]=$commandStrPrepare;
+        }
+        $this->entityManager->flush();
+
+        return $commandArray;
+    }
+
+    public function getFilename($host){
+        $resultsNmapPath="D:\\PhpstormProjects\\CasperBounty\\results\\nmap\\";
+        $filename=$resultsNmapPath.$host.'_'.time().'.xml';
+        return $filename;
+    }
+
     public function getAllIps($targetsArr,$projectId){
         if(empty($targetsArr))
             return 0;
@@ -143,20 +168,27 @@ class ToolsService
         $profile=$repoProfile->find($profileId);
         //$tasks=array();
         $targetsObjArr=array();
-        //setting targets objects by id
-        foreach ($targetsArr as $target){
-            $targetsObjArr[]=$repoTargets->find($target);
-        }
-        $tmparr=array();
-        if(strripos($profile->getCmd(), '[BOTH]')){
-            foreach ($targetsObjArr as $item) {
-                $ips=$item->getIpId();
-                $tmparr[]=$repoTargets->findBy(array('targetid'=>$ips));
-            }
-            $targetsObjArr=array_merge($targetsObjArr,$tmparr);
-        }
 
-        $tasksArr=array();
+        $targetsObjects=$repoTargets->findBy(array('targetid'=>$targetsArr));
+
+        $commands=$this->buildCommandv2($profile,$targetsObjects);
+        dump($commands);
+        die();
+
+        //setting targets objects by id
+//        foreach ($targetsArr as $target){
+//            $targetsObjArr[]=$repoTargets->find($target);
+//        }
+        //$tmparr=array();
+//        if(strripos($profile->getCmd(), '[BOTH]')){
+//            foreach ($targetsObjArr as $item) {
+//                $ips=$item->getIpId();
+//                $tmparr[]=$repoTargets->findBy(array('targetid'=>$ips));
+//            }
+//            $targetsObjArr=array_merge($targetsObjArr,$tmparr);
+//        }
+
+        //$tasksArr=array();
         //Creating tasks
 //        foreach ($targetsObjArr as $target) {
 //            $task = new Tasks();
@@ -184,18 +216,6 @@ class ToolsService
         return 0;
     }
 
-//    public function getHappyMessage()
-//    {
-//        $messages = [
-//            'You did it! You updated the system! Amazing!',
-//            'That was one of the coolest updates I\'ve seen all day!',
-//            'Great work! Keep going!',
-//        ];
-//
-//        $index = array_rand($messages);
-//        //die('die motherfucker1');
-//        return $messages[$index];
-//    }
 
 //    public function addTargetsToProject($projectId,$targetsArr){
 //

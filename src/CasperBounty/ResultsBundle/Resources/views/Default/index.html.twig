@@ -1,6 +1,16 @@
 {% extends '@CasperBountyFront/base.html.twig' %}
 {% block body %}
     <div class="container">
+        <a href="{{ path('casper_bounty_task_prichesat',{'taskid':12}) }}">применить регулярку</a>
+
+        <form method="post" action="{{ path('casper_bounty_task_prichesat',{'taskid':12}) }}">
+            <input value="reg" type="text" name="regexp[]">
+            <input type="text" name="regexpname[]">
+            <br>
+            <input value="reg" type="text" name="regexp[]">
+            <input type="text" name="regexpname[]">
+            <input type="submit" value="create">
+        </form>
 
         <table class="table table-condensed toolsTable ">
             <thead>

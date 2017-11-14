@@ -138,5 +138,33 @@ class Tasks
     {
         return $this->targetid;
     }
-}
+    /**
+     * @var string
+     */
+    private $output;
 
+
+    /**
+     * Set output
+     *
+     * @param string $output
+     *
+     * @return Tasks
+     */
+    public function setOutput($output)
+    {
+        $this->output = $output;
+
+        return $this;
+    }
+
+    /**
+     * Get output
+     *
+     * @return string
+     */
+    public function getOutput()
+    {
+        return $this->output;
+    }
+}
