@@ -56,6 +56,11 @@ casper_bounty_targets:
     prefix:
     type: annotation
 
+casper_bounty_addTargets:
+    resource: "@CasperBountyTargetsBundle/Controller/addTargetsController.php"
+    prefix:
+    type: annotation
+
 casper_bounty_projects:
     resource: "@CasperBountyProjectsBundle/Resources/config/routing.yml"
     prefix:   /

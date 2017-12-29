@@ -8,15 +8,18 @@
 
 namespace CasperBounty\ToolsBundle\Service;
 use CasperBounty\ProfilesBundle\Entity\Profiles;
+use CasperBounty\TargetsBundle\Entity\Targets;
 use CasperBounty\TasksBundle\Entity\Tasks;
+use function Couchbase\defaultDecoder;
 use Doctrine\ORM\EntityManager;
 
 
 class ToolsService
 {
     //private $em;
-    public function __construct(EntityManager $entityManager) {
+    public function __construct(EntityManager $entityManager,NmapService $nmapService) {
         $this->entityManager = $entityManager;
+        $this->nmapService=$nmapService;
     }
 
     public function buildCommand($profileId,$targetId,$targetsArr){
@@ -89,26 +92,68 @@ class ToolsService
     }
 
     public function buildCommandv2(Profiles $profile,$targetObjects){
-        $commandArray=array();
-        $commandString=$profile->getCmd();
-        foreach ($targetObjects as &$targetObject){
-            $host=$targetObject->getHost();
-            $filename=$this->getFilename($host);
-
-            $commandStrPrepare=str_replace('[TARGET]',$host,$commandString);
-            $commandStrPrepare=str_replace('[FILENAME]',$filename,$commandStrPrepare);
-
-
-            $commandArray[]=$commandStrPrepare;
+        $commands=array();
+        foreach ($targetObjects as $targetObject){
+            $commandsPrepare=$this->getCommandToTarget($targetObject, $profile);
+            //its possible if IP+DOMAINS macros used
+            if(is_array($commandsPrepare))
+                $commands=array_merge($commands,$commandsPrepare);
+            else
+                $commands[]=$commandsPrepare;
         }
-        $this->entityManager->flush();
 
-        return $commandArray;
+
+        dump($targetObjects);
+        dump($commands);
+        //die();
+
+        return $commands;
     }
 
-    public function getFilename($host){
+    public function getCommandToTarget(Targets $targetObject,Profiles $profile){
+
+        //$commandArray=array();
+        $commandString=$profile->getCmd();
+        $toolPath=$profile->getToolid()->getCmdpath();
+        $ips=$targetObject->getIpid();
+        $host=$targetObject->getHost();
+        $hostId=$targetObject->getTargetid();
+        $hostType=$targetObject->getType();
+        $commandStrPrepare=array();
+
+        //$filename=$this->getFilename($host);
+        if(strstr($commandString,'[IP+DOMAIN]')){
+            $cmdstr=$toolPath.str_replace('[IP+DOMAIN]',$host,$commandString);
+            $commandStrPrepare[]=array('targetId'=>$hostId,'cmdStr'=>$cmdstr);
+            foreach ($ips as $ip){
+                $cmdstr=$toolPath.str_replace('[IP+DOMAIN]',$ip->getHost(),$commandString);
+                $commandStrPrepare[]=array('targetId'=>$ip->getTargetId(),'cmdStr'=>$cmdstr);
+            }
+
+        }
+        else if(strstr($commandString,'[DOMAIN]')&&(($hostType=='domain') or ($hostType=='maindomain'))){
+            $cmdstr=$toolPath.str_replace('[DOMAIN]',$host,$commandString);
+            $commandStrPrepare[]=array('targetId'=>$hostId,'cmdStr'=>$cmdstr);
+
+        }else if(strstr($commandString,'[IP]')&&(($hostType=='ipv4')||($hostType=='ipv6'))){
+            foreach ($ips as $ip) {
+                $cmdstr=$toolPath.str_replace('[DOMAIN]',$ip->getHost(),$commandString);
+                $commandStrPrepare[]=array('targetId'=>$ip->getTargetId(),'cmdStr'=>$cmdstr);
+            }
+
+        }
+
+        //creating tasks
+
+
+
+        return $commandStrPrepare;
+    }
+
+
+    public function getFilename(){
         $resultsNmapPath="D:\\PhpstormProjects\\CasperBounty\\results\\nmap\\";
-        $filename=$resultsNmapPath.$host.'_'.time().'.xml';
+        $filename=$resultsNmapPath.rand(1,10000).'_'.time().'.xml';
         return $filename;
     }
 
@@ -166,13 +211,43 @@ class ToolsService
         $repoProfile=$this->entityManager->getRepository('CasperBountyProfilesBundle:Profiles');
         $repoTargets=$this->entityManager->getRepository('CasperBountyTargetsBundle:Targets');
         $profile=$repoProfile->find($profileId);
-        //$tasks=array();
-        $targetsObjArr=array();
+        $tool=$profile->getToolid()->getName();
 
-        $targetsObjects=$repoTargets->findBy(array('targetid'=>$targetsArr));
 
-        $commands=$this->buildCommandv2($profile,$targetsObjects);
+
+
+//        switch ($tool){
+//            case 'nmap':
+//                $this->nmapService->startNmap($targetsObjects,$profile);
+//                break;
+//            default:
+//                break;
+//        }
+
+        $targetObjects=$repoTargets->findBy(array('targetid'=>$targetsArr));
+        ##get coomands for each target
+        $commands=$this->buildCommandv2($profile,$targetObjects);
+
+        ##create task for each target
+        if(!empty($commands)){
+            $tasksArr=array();
+            foreach ($commands as &$command) {
+                $target=$repoTargets->find($command['targetId']);
+                $task=$this->createTask($profile,$target);
+                $tasksArr[]=$task;
+                $this->entityManager->persist($task);
+                $this->entityManager->flush();
+                $this->entityManager->refresh($task);
+
+                $command['taskId']=$task->getTaskid();
+            }
+            $this->entityManager->flush();
+        }
+
+
         dump($commands);
+        die();
+        $this->runToolv2($commands);
         die();
 
         //setting targets objects by id
@@ -216,6 +291,23 @@ class ToolsService
         return 0;
     }
 
+    public function runToolv2(array $cmdArr){
+
+        $interprPath="D:\\nodejs\\node.exe";
+        $execscriptPath="D:\\njs\\nn\\executtest.js";
+        foreach ($cmdArr as $cmd) {
+
+            $cmd="--tool=\"$toolPath\" --parameters=\"$param\" --taskid=$taskId"; //
+            $cmd = $interprPath . ' ' . $execscriptPath . ' ' . $cmd . ' ';
+            echo $cmd."\r\n\r\n";
+            //die();
+            $ooo = new \COM('WScript.Shell');
+            $ooo->Run($cmd, 7, 0);
+            //usleep(100000);
+        break;
+        }
+
+    }
 
 //    public function addTargetsToProject($projectId,$targetsArr){
 //
@@ -237,8 +329,13 @@ class ToolsService
 //
 //
 //    }
-public function getIpByDomain(){
-
+public function createTask($profile, $target, $scenarioId=null){
+        $task=new Tasks();
+        $task->setProfileid($profile);
+        $task->setTargetid($target);
+        $task->setStatus(0);
+        $task->setScenarioid($scenarioId);
+        return $task;
 }
 
 }

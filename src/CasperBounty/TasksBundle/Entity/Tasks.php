@@ -118,7 +118,7 @@ class Tasks
     /**
      * Set targetid
      *
-     * @param \CasperBounty\TasksBundle\Entity\Targets $targetid
+     * @param \CasperBounty\TargetsBundle\Entity\Targets $targetid
      *
      * @return Tasks
      */

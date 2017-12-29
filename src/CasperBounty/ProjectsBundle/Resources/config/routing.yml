@@ -18,23 +18,18 @@ casper_bounty_projectTargets:
     requirements:
       projectId: '\d+'
 
-casper_bounty_projects_addTargets:
-    path:     /projects/{projectId}/addtargets
-    defaults: { _controller: CasperBountyProjectsBundle:Default:addTargets }
-    requirements:
-      projectId: '\d+'
-    methods: [GET]
-casper_bounty_projects_targetsToProject:
-    path:     /projects/{projectId}/addtargets
-    defaults: { _controller: CasperBountyProjectsBundle:Default:targetsToProject }
-    requirements:
-      id: '\d+'
-      targetid: '\w+'
-    methods: [POST]
-casper_bounty_projects_targetsToProjectFromList:
-    path:     /projects/{projectId}/addtargets/fromList
-    defaults: { _controller: CasperBountyProjectsBundle:Default:targetsToProjectFromList }
-    requirements:
-      id: '\d+'
-      targetid: '\w+'
-    methods: [POST]
+
+#casper_bounty_projects_targetsToProject:
+#    path:     /projects/{projectId}/addtargets
+#    defaults: { _controller: CasperBountyProjectsBundle:Default:targetsToProject }
+#    requirements:
+#      id: '\d+'
+#      targetid: '\w+'
+#    methods: [POST]
+#casper_bounty_projects_targetsToProjectFromList:
+#    path:     /projects/{projectId}/addtargets/fromList
+#    defaults: { _controller: CasperBountyProjectsBundle:Default:targetsToProjectFromList }
+#    requirements:
+#      id: '\d+'
+#      targetid: '\w+'
+#    methods: [POST]

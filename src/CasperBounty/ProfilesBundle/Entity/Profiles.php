@@ -156,4 +156,3 @@ class Profiles
         return $this->taskid;
     }
 }
-

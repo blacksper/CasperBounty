@@ -4,17 +4,22 @@ namespace CasperBounty\TargetsBundle\Service;
 
 
 use CasperBounty\TargetsBundle\Entity\Targets;
+use Doctrine\DBAL\Schema\Table;
 use Doctrine\ORM\EntityManager;
-
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class TargetsService
 {
+    private $projectId;
+
     public function __construct(EntityManager $entityManager)
     {
         $this->em = $entityManager;
     }
 
-    var $projectId;
+    public function setProjectId($projectId){
+        $this->projectId=$projectId;
+    }
 
     /** set hosts type */
     public function setHostType($hosts)
@@ -26,86 +31,125 @@ class TargetsService
                 $type = 'ipv4';
             } elseif (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
                 $type = 'ipv6';
-            } elseif (filter_var($host, FILTER_VALIDATE_DOMAIN)) {
+            } elseif ($this->validateDomain($host)) {
                 $type = 'domain';
-
                 preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#", $host, $m);
-                dump($m);
+                //dump($m);
                 if (empty($m[2]) && empty($m[1])) {
                     $type = "maindomain";
                 }
-                //echo $type;
-                //print_r($m);
-                //die();
-
             } else {
+                $type = "";
                 continue;
             }
             //echo $type;
             //TODO проверку на дубликаты входных доменов
-            $hostWithType[$type][] = $host;
+//            echo $type."   ";
+//            echo $host."<br>";
+            if ($type != "")
+                $hostWithType[$type][] = $host;
         }
         //die();
         //print_r($hostWithType);
         return $hostWithType;
     }
 
+
+    public function validateDomain($domain)
+    {
+
+        ///Not even a single . this will eliminate things like abcd, since http://abcd is reported valid
+        if (!substr_count($domain, '.')) {
+            return false;
+        }
+
+        if (stripos($domain, 'www.') === 0) {
+            $domain = substr($domain, 4);
+        }
+
+        $again = 'http://' . $domain;
+        //echo filter_var($again, FILTER_VALIDATE_URL);
+        return filter_var($again, FILTER_VALIDATE_URL);
+    }
+
+
     /** check hosts for exists in db and return non exists */
 
     public function checkHostExists($hostsArray)
     {
+        //dump($hostsArray);
+        $allHostsForCheck = array();
+        foreach ($hostsArray as $type) {
+            foreach ($type as $host) {
+                $allHostsForCheck[] = $host;
 
-        $maindomains=array();
-        //set maindomains
-        foreach ($hostsArray as $host){
-            preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#", trim($host), $m);
-            //echo "<br>".$host." shit";
-
-            if(empty($m))
-                continue;
-
-            if (!array_search($m[3],$maindomains)&&!array_search($m[3],$hostsArray)) {
-                $maindomains[] = $m[3];
             }
         }
 
-        $hostsArray=array_unique(array_merge($hostsArray,$maindomains));
-        //dump($hostsArray);die();
-
         $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');//TODO уточнить необходимость создания репозитория второй раз
-        $existHost = $repository->createQueryBuilder('t')->select('t.host')->where('t.host in (:har)')->setParameter('har', $hostsArray)->getQuery();
-        $rere = $existHost->getResult();
-        //print_r($rere);
-        $tmparr = array();
-        foreach ($rere as $i) {
-            $tmparr[] = $i['host'];
+
+        $existsTargets = $repository
+            ->createQueryBuilder('t')
+            ->select('t.host')
+            ->where('t.host in(:allDomains)')
+            ->setParameters(array('allDomains' => $allHostsForCheck))
+            ->getQuery()->getArrayResult();
+
+
+        $existsTargetsArr = array();
+        foreach ($existsTargets as $exTarget)
+            $existsTargetsArr[] = $exTarget['host'];
+
+        $uniqHostsArray = array_unique(array_diff($allHostsForCheck, $existsTargetsArr));
+        //dump($allHostsForCheck);
+        if (empty($uniqHostsArray))
+            return 0;
+
+        //add types to targets
+        $uniqHostsTypeArray = array();
+        foreach ($hostsArray as $type => $domainsArr) {
+            foreach ($uniqHostsArray as $host) {
+                if (array_search($host, $domainsArr) !== false) {
+                    $uniqHostsTypeArray[$type][] = $host;
+
+                }
+
+            }
         }
 
-        $nonExistsHosts = array_diff($hostsArray, $tmparr);
-        return $nonExistsHosts;
+        //dump($uniqHostsTypeArray);
+        return $uniqHostsTypeArray;
     }
 
     /**
      * add hosts to db
      */
 
-    public function addHosts($hostsArr)
+    public function addHosts($targetsText)
     {
+        //$this->projectId=$projectId;
+        $hostsArr = explode("\r\n", $targetsText);
+        //print_r($hostsArr);
+        if (empty($hostsArr))
+            return 0;
+
         $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
         $repositoryp = $this->em->getRepository('CasperBountyProjectsBundle:Projects');
         $project = $repositoryp->find($this->projectId);
         //echo $this->projectId;
+        $hostTypeArr = $this->setHostType($hostsArr);//array ('domain'=>array(hosts),'maindomain'=>array(hosts))
+        if (empty($hostTypeArr))
+            return 0;
+        //print_r($hostTypeArr);
 
-        $uniqueHosts = $this->checkHostExists($hostsArr);
+        $uniqueHosts = $this->checkHostExists($hostTypeArr);
         if (empty($uniqueHosts))
             return 0;
-        $hostTypeArr = $this->setHostType($uniqueHosts);//array ('domain'=>array(hosts),'maindomain'=>array(hosts))
-        //print_r($hostTypeArr);
-        //die();
         $successAdded = array();
         //add maindomains, add to projects, delete from array maindomain
-        if (isset($hostTypeArr['maindomain']))
-            foreach ($hostTypeArr['maindomain'] as $key => $host) {
+        //потому что первым делом нужно добавить maindomains чтобы остальные цеплялись к нему
+        if (isset($uniqueHosts['maindomain']))
+            foreach ($uniqueHosts['maindomain'] as $key => $host) {
                 $target = new Targets();
 
                 $target->setType('maindomain');
@@ -121,13 +165,14 @@ class TargetsService
                 $this->em->refresh($target);
                 //$this->em->refresh($project); //возможно если убрать это то будут проблемы с дубликатами
 
-                unset($hostTypeArr['maindomain'][$key]);
+                unset($uniqueHosts['maindomain'][$key]);
                 $successAdded[] = $target->getTargetid();
             }
 
 
         //add other targets
-        foreach ($hostTypeArr as $type => $val) {
+        foreach ($uniqueHosts as $type => $val) {
+            //dump($uniqueHosts);
             foreach ($val as $host) {
                 //$parent=null;
                 //$existHost = $repository->findOneBy(array('host' => $host));
@@ -138,7 +183,8 @@ class TargetsService
 
                 if ($type == 'domain') {
                     $parent = $this->searchMain($host);
-                    $target->setParentid($parent);
+                    if ($parent)
+                        $target->setParentid($parent);
                 }
 
                 $target->setHost($host);
@@ -164,32 +210,42 @@ class TargetsService
     }
 
 
+    public function addHostsFromFile($files)
+    {
+        $hostsStr = "";
+        foreach ($files as $file) {
+            //dump($file);
+            $hostsStr .= file_get_contents($file->getRealPath())."\r\n";
+        }
+        //dump($hostsStr);
+        $newTargets = $this->addHosts($hostsStr);
+        if (!empty($newTargets))
+            return $newTargets;
+        else
+            return 0;
+    }
+
+    //get subdomains of domain
     public function getSubtargets($targetId)
     {
         $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
         $targetInfotest = $repository->find($targetId);
+        //dump($targetInfotest);
         $projectId = $targetInfotest->getProjectid(); //maindomain projectid
 
         if ($targetInfotest->getType() == 'maindomain') {
 
-//            $query = $this->em->createQuery('
-//                select t from CasperBountyTargetsBundle:Targets t
-//                JOIN t.projectid pid
-//                WHERE t.host
-//                like :maindomainHost and t.type!=\'maindomain\' and pid=:projectId')
-//                ->setParameters(array('maindomainHost' => '%.' . $targetInfotest->getHost(),
-//                    'projectId' => $projectId));
-
             $query = $this->em->createQuery('
                 select t from CasperBountyTargetsBundle:Targets t
                 JOIN t.projectid pid
-                JOIN  t.ipid ipid
-                WHERE t.parentid=:parentId and pid=:projectId and ipid.host like \'185.73.193.%\'')
+                
+                WHERE t.parentid=:parentId and pid=:projectId')
+                ->setMaxResults(5)//limit
                 ->setParameters(array('parentId' => $targetId, 'projectId' => $projectId));
 
             // echo $query->getSQL();
             $subTargets = $query->getResult();
-            dump($subTargets);
+            //dump($subTargets);
             //echo count($subTargets);
         } else {
             $subTargets = 0;
@@ -203,6 +259,7 @@ class TargetsService
     {
         $parent = null;
         preg_match('#((.*)\.)?([\w\d\-]*\.\w{2,10})#', $host, $m);
+        //dump($m[3]);
         if (isset($m[3])) { //m[3] contain hostname
             $mainDomain = $m[3];
 
@@ -220,7 +277,7 @@ class TargetsService
         return $parent;
     }
 
-    public function addIps(int $targetId, array $ipsArr,$projectId)
+    public function addIps(int $targetId, array $ipsArr, $projectId)
     {
         //dump($ipsArr);
         $rept = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
@@ -230,15 +287,15 @@ class TargetsService
         //dump($projectId[0]);
         $addedIpsArr = array();
         //$project=$this->em->find('CasperBountyProjectsBundle:Projects',1);
-        $repP=$this->em->getRepository('CasperBountyProjectsBundle:Projects');
+        $repP = $this->em->getRepository('CasperBountyProjectsBundle:Projects');
 
-        $project=$repP->find($projectId);
+        $project = $repP->find($projectId);
         //die();
         echo "projectid $projectId";
         foreach ($ipsArr as $ip) {
             //echo 'helo2';
-            $ipExists = $this->checkIpExist($ip,$projectId);
-            if ($ipExists!=0) {
+            $ipExists = $this->checkIpExist($ip, $projectId);
+            if ($ipExists != 0) {
                 $addedIpsArr[] = $ipExists[0];
                 continue;
             }
@@ -254,13 +311,13 @@ class TargetsService
             $project->addTargetid($ipObj);
             $addedIpsArr[] = $ipObj;
         }
-        
+
         //dump($addedIpsArr);
-        $exstIps=$target->getIpid();
+        $exstIps = $target->getIpid();
         foreach ($addedIpsArr as $ip) {
 
-            foreach ($exstIps as $eip){//cheching for exist relation
-                if($ip->getTargetid()==$eip->getTargetid())
+            foreach ($exstIps as $eip) {//cheching for exist relation
+                if ($ip->getTargetid() == $eip->getTargetid())
                     continue 2;
             }
 
@@ -269,7 +326,7 @@ class TargetsService
             //$tid=$exst->getTargetId();
             //dump($exst);
             //if($exst) {
-           //     echo "exists<br>";
+            //     echo "exists<br>";
             //    continue;
             //}
             $target->addIpid($ip);
@@ -294,13 +351,13 @@ class TargetsService
     {
         $repT = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
         $ipExistDql = $repT->createQueryBuilder('t')
-            ->leftJoin('t.projectid','targetproject')
+            ->leftJoin('t.projectid', 'targetproject')
             ->where('t.type=\'ip\'')
             ->andWhere('t.host=:ip')
             ->andWhere('targetproject.projectid=:projectid')
             ->getDQL();
 
-        $ips=$this->em->createQuery($ipExistDql)->setParameters(array('projectid'=>$projectId,'ip'=> $ip))->getResult();
+        $ips = $this->em->createQuery($ipExistDql)->setParameters(array('projectid' => $projectId, 'ip' => $ip))->getResult();
         //$ipExist = $repT->findBy(array('host' => $ip, 'type' => 'ip'));
         //dump($ipExistDql);
         //dump($ips);

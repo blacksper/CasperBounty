@@ -6,6 +6,7 @@ use CasperBounty\TargetsBundle\Entity\Targets;
 use CasperBounty\TargetsBundle\Form\FirstForm;
 use Doctrine\DBAL\Types\DateType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -68,10 +69,10 @@ class DefaultController extends Controller
      * @Method({"GET","POST"})
      */
     public function getTargetInfoAction($projectId,$targetId){
-        $messageGenerator = $this->get('casper_bounty_targets.targetsservice');
+        $targetsService = $this->get('casper_bounty_targets.targetsservice');
         $doctr=$this->getDoctrine();
         $tarhost=array();
-        $subTargets = $messageGenerator->getSubtargets($targetId);
+        $subTargets = $targetsService->getSubtargets($targetId);
        // $messageGenerator->checkIpExist('199.16.156.9',1);
 
         if(!empty($subTargets))
@@ -162,5 +163,7 @@ class DefaultController extends Controller
         //die();
         return $this->render('@CasperBountyTargets/ipView/domainByIp.html.twig',array('domains'=>$res,'projectId'=>$projectId));
     }
-    
+
+
+
 }

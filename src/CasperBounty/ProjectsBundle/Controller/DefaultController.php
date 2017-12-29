@@ -66,54 +66,7 @@ class DefaultController extends Controller
         return $this->render('@CasperBountyProjects/sin.html.twig', array('projectId' => $projectId));
     }
 
-    public function addTargetsAction($projectId)
-    {
-        $target = new Targets();
-        $form = $this->createFormBuilder($target);
-        $form2 = $this->createForm(
-            'CasperBounty\TargetsBundle\Form\FirstForm',
-            null,
-            array(
-                'action' => $this->generateUrl(
-                    'casper_bounty_projects_targetsToProjectFromList', array('projectId' => $projectId))
-            )
-        );
 
-        $em = $this->getDoctrine()->getRepository('CasperBountyTargetsBundle:Targets');
-        $qwe = $em->createQueryBuilder('t')->select('t')->leftJoin('t.projectid', 'p')->where('p.projectid is null')->getQuery();
-
-        $allTargets = $qwe->getResult();
-        $hosts = array();
-
-        foreach ($allTargets as $host)
-            $hosts[$host->getHost()] = $host->getTargetid();
-
-        $form = $form
-            ->add('targetid', ChoiceType::class, array(
-                'choices' => $hosts,
-                'multiple' => true,
-                'label' => false,
-                //'attr'=>array('id'=>'example-getting-started')
-            ))
-            ->add('save', SubmitType::class, array(
-                'label' => 'Select',
-                'attr' => array('class' => 'btn btn-sm btn-success')))
-            ->add('projectId', HiddenType::class, array(
-                'data' => $projectId))
-
-            ->getForm();
-        $messageGenerator = $this->get('casper_bounty_projects.testservice');
-        $message = $messageGenerator->getHappyMessage();
-
-        return $this->render('@CasperBountyProjects/addTargets.html.twig',
-            array('projectId' => $projectId,
-                'hosts' => $hosts,
-                'form' => $form->createView(),
-                'form2' => $form2->createView(),
-                'mess' => $message
-            )
-        );
-    }
 
     //обработка пост запроса к роуту /addtargeets
     public function targetsToProjectAction(Request $request)

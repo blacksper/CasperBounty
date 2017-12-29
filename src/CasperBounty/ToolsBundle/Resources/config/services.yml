@@ -1,7 +1,16 @@
 services:
   casper_bounty_tools.toolssrvice:
     class: CasperBounty\ToolsBundle\Service\ToolsService
-    arguments: ["@doctrine.orm.entity_manager"]
+    arguments: ["@doctrine.orm.entity_manager","@casper_bounty_tools.nmapservice"]
+
+  casper_bounty_tools.reconService:
+    class: CasperBounty\ToolsBundle\Service\ReconService
+    arguments: ["@doctrine.orm.entity_manager",%recon.aquatonePath%]
+
+  casper_bounty_tools.nmapService:
+    class: CasperBounty\ToolsBundle\Service\NmapService
+    arguments: ["@doctrine.orm.entity_manager",%nmap.nmapPath%]
+
 
 #    casper_bounty_projects.example:
 #        class: CasperBounty\ProjectsBundle\Example
