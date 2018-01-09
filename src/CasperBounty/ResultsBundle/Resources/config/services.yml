@@ -1,4 +1,6 @@
 services:
   casper_bounty_targets.resultsService:
     class: CasperBounty\ResultsBundle\Service\ResultsService
-    arguments: ["@doctrine.orm.entity_manager"]
+    arguments:
+      $em: "@doctrine.orm.entity_manager"
+      $targetsService: "@casper_bounty_targets.targetsservice"

@@ -3,22 +3,33 @@
 namespace CasperBounty\TargetsBundle\Service;
 
 
+use CasperBounty\ProjectsBundle\Entity\Projects;
 use CasperBounty\TargetsBundle\Entity\Targets;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\ORM\EntityManager;
+use function PHPSTORM_META\elementType;
+use function PHPSTORM_META\type;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class TargetsService
 {
-    private $projectId;
+    private $project;
 
     public function __construct(EntityManager $entityManager)
     {
         $this->em = $entityManager;
     }
 
-    public function setProjectId($projectId){
-        $this->projectId=$projectId;
+    public function setProjectId($project)
+    {
+        //dump($project);
+        if (is_int($project)) {
+            $repositoryp = $this->em->getRepository('CasperBountyProjectsBundle:Projects');
+            $this->project = $repositoryp->find($project);
+        } else if ($project instanceof Projects)
+            return $this->project = $project;
+        else
+            return "Error type of project";
     }
 
     /** set hosts type */
@@ -93,7 +104,8 @@ class TargetsService
             ->select('t.host')
             ->where('t.host in(:allDomains)')
             ->setParameters(array('allDomains' => $allHostsForCheck))
-            ->getQuery()->getArrayResult();
+            ->getQuery()
+            ->getArrayResult();
 
 
         $existsTargetsArr = array();
@@ -121,26 +133,54 @@ class TargetsService
         return $uniqHostsTypeArray;
     }
 
+    public function checkHostsForExists($hostsArray)
+    {
+
+        //$allHostsForCheck = array();
+
+        $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');//TODO уточнить необходимость создания репозитория второй раз
+
+        $existsTargets = $repository
+            ->createQueryBuilder('t')
+            ->select('t.host')
+            ->where('t.host in(:allDomains)')
+            ->setParameters(array('allDomains' => $hostsArray))
+            ->getQuery()
+            ->getArrayResult();
+
+        $existsTargetsArr = array();
+        foreach ($existsTargets as $exTarget)
+            $existsTargetsArr[] = $exTarget['host'];
+
+        $uniqHostsArray = array_unique(array_diff($hostsArray, $existsTargetsArr));
+        return $uniqHostsArray;
+    }
+
     /**
      * add hosts to db
      */
 
-    public function addHosts($targetsText)
+    public function addHosts($hosts, $type = null)
     {
-        //$this->projectId=$projectId;
-        $hostsArr = explode("\r\n", $targetsText);
-        //print_r($hostsArr);
-        if (empty($hostsArr))
-            return 0;
 
-        $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
-        $repositoryp = $this->em->getRepository('CasperBountyProjectsBundle:Projects');
-        $project = $repositoryp->find($this->projectId);
-        //echo $this->projectId;
-        $hostTypeArr = $this->setHostType($hostsArr);//array ('domain'=>array(hosts),'maindomain'=>array(hosts))
-        if (empty($hostTypeArr))
-            return 0;
-        //print_r($hostTypeArr);
+        //$this->projectId=$projectId;
+        //если не указан тип значит добавление идёт с заранее указаннымb типами хостов
+
+        if (is_null($type)) {
+            $hostsArr = explode("\r\n", $hosts);
+            //print_r($hostsArr);
+            if (empty($hostsArr))
+                return 0;
+            //echo $this->projectId;
+            $hostTypeArr = $this->setHostType($hostsArr);//array ('domain'=>array(hosts),'maindomain'=>array(hosts))
+
+            if (empty($hostTypeArr))
+                return 0;
+        } else if (!empty($hosts)) {
+            $hostTypeArr = $hosts;
+        } else {
+            return "something wrong with type";
+        }
 
         $uniqueHosts = $this->checkHostExists($hostTypeArr);
         if (empty($uniqueHosts))
@@ -155,9 +195,9 @@ class TargetsService
                 $target->setType('maindomain');
                 $target->setHost($host);
 
-                $project->addTargetid($target);//добавление цели к проекту
+                $this->project->addTargetid($target);//добавление цели к проекту
 
-                $this->em->persist($project);
+                $this->em->persist($this->project);
                 $this->em->persist($target);
 
                 //оно тут для получения id
@@ -174,11 +214,7 @@ class TargetsService
         foreach ($uniqueHosts as $type => $val) {
             //dump($uniqueHosts);
             foreach ($val as $host) {
-                //$parent=null;
-                //$existHost = $repository->findOneBy(array('host' => $host));
-                //$existHostr = $repository->createQueryBuilder('t')->where('t.host in (:har)')->setParameter('har',$hostsArray)->getQuery()->getResult();
-                //$existHossq = $repository->createQueryBuilder('t')->where('t.host in (:har)')->setParameter('har',$hostsArray)->getQuery()->getSQL();
-                //$existHost = $repository->createQueryBuilder('t')->where('t.targetid in (:har)')->setParameter('har',$hostsArray)->;
+
                 $target = new Targets();
 
                 if ($type == 'domain') {
@@ -189,9 +225,9 @@ class TargetsService
 
                 $target->setHost($host);
                 $target->setType($type);
-                $project->addTargetid($target);//добавление цели к проекту
+                $this->project->addTargetid($target);//добавление цели к проекту
 
-                $this->em->persist($project);
+                $this->em->persist($this->project);
                 $this->em->persist($target);
 
                 //оно тут для получения id
@@ -204,18 +240,142 @@ class TargetsService
 
         //$this->em->refresh($project);
 
-        $repository->clear();
+        //$repository->clear();
         //die();
         return $successAdded;
     }
 
+    public function addHostIpsPtr($hostsArr)
+    {//=array('target'=>"ert.com",'hostnames'=>array(),'address'=>array())
+        $hostsArrForCheck = array();
+        $repoT = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+        $target = false;
+        //die();
+
+        foreach ($hostsArr as $hosts) {
+            if (isset($hosts['target'])) {
+                $target = $hosts['target'];
+            }
+            if (isset($hosts['hostnames']))
+                foreach ($hosts['hostnames'] as $hostname) {
+                    $hostsArrForCheck[] = $hostname;
+                }
+
+            if (isset($hosts['address']))
+                foreach ($hosts['address'] as $address) {
+                    $hostsArrForCheck[] = $address;
+                }
+        }
+        $uniq = $this->checkHostsForExists($hostsArrForCheck);
+        dump($hostsArr);
+        dump($uniq);
+        dump($target);
+
+        if (empty($hostsArr))
+            return 'hostsArr array is empty';
+
+        if ($target) {
+            $targetObj = $repoT->findBy(array('host' => $target));
+            if (count($targetObj) > 1)
+                return 'error, duplicate targets if db!';
+            else if (count($targetObj) < 0)
+                return 'error, target of the scan not found!';
+
+            $targetObj = $targetObj[0];
+
+        }
+
+        $allreadyIpsInTarget = $targetObj->getIpid()->toArray();
+
+        $targetObj->setState('up');
+
+        foreach ($hostsArr as $host) {
+
+            foreach ($host['address'] as $type => $addr) {
+                //if ip exists, find it in db
+                if (array_search($addr, $uniq) === false) {
+                    $ipObject = $repoT->findBy(array('host' => $addr));
+                    if (count($ipObject) > 1)
+                        return 'error, duplicate targets if db!';
+                    else if (count($ipObject) < 0)
+                        return 'error, target of the scan not found!';
+                    else
+                        $ip = $ipObject[0];
+                } else {
+                    //creating new target object for ip
+                    $ip = new Targets();
+                    $ip->setHost($addr);
+                    $ip->setType($type);
+                    //$ip->setDateadded(new \DateTime("now"));
+                }
+
+                if (array_search($ip, $allreadyIpsInTarget) === false) {
+                    //adding new ips to scan target
+                    $targetObj->addIpId($ip);
+                }
+
+                //if ptr exists
+                if (isset($host['hostnames']['PTR'])) {
+                    $ptrStr = $host['hostnames']['PTR'];
+                    //end if ptr is uniq, create new target obj for ptr
+                    if (array_search($ptrStr, $uniq) === false) {
+                        $ptrObj = $repoT->findBy(array('host' => $ptrStr));
+                        if (count($ptrObj) > 1)
+                            return 'error, duplicate targets if db!';
+                        else if (count($ptrObj) < 0)
+                            return 'error, target of the scan not found!';
+                        else
+                            $ptr = $ptrObj[0];
+
+                    } else {
+                        $ptr = new Targets();
+                        $ptr->setHost($host['hostnames']['PTR']);
+                        $ptr->setType(key($host['hostnames']));
+                    }
+                    if (array_search($ip, $ptr->getIpid()->toArray()) === false) {
+                        $ptr->addIpid($ip);
+                    }
+                    $this->em->persist($ptr);
+
+                }
+
+                $this->em->persist($ip);
+                $this->em->persist($targetObj);
+            }
+
+
+        }
+        $this->em->flush();
+
+        //dump($host);
+        return 1;
+    }
+
+    public function addHost($prepareHosts)
+    {
+        $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+        //return uniq hosts
+        $uniqHosts = $this->checkHostExists($prepareHosts);
+
+        dump($uniqHosts);
+        die();
+        $target = new Targets();
+        $target->setHost($targetHost);
+        $target->setType($type);
+
+        //$target->set
+        $this->em->persist($target);
+        $this->em->flush();
+
+        return $target;
+    }
 
     public function addHostsFromFile($files)
     {
         $hostsStr = "";
         foreach ($files as $file) {
             //dump($file);
-            $hostsStr .= file_get_contents($file->getRealPath())."\r\n";
+            $hostsStr .= file_get_contents($file->getRealPath()) . "\r\n";
         }
         //dump($hostsStr);
         $newTargets = $this->addHosts($hostsStr);
@@ -231,8 +391,8 @@ class TargetsService
         $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
         $targetInfotest = $repository->find($targetId);
         //dump($targetInfotest);
-        $projectId = $targetInfotest->getProjectid(); //maindomain projectid
-
+        //$projectId = $targetInfotest->getProjectid(); //maindomain projectid
+        dump($this->project);
         if ($targetInfotest->getType() == 'maindomain') {
 
             $query = $this->em->createQuery('
@@ -240,13 +400,12 @@ class TargetsService
                 JOIN t.projectid pid
                 
                 WHERE t.parentid=:parentId and pid=:projectId')
-                ->setMaxResults(5)//limit
-                ->setParameters(array('parentId' => $targetId, 'projectId' => $projectId));
+                ->setMaxResults(20)//limit
+                ->setParameters(array('parentId' => $targetId, 'projectId' => $this->project));
 
-            // echo $query->getSQL();
+
             $subTargets = $query->getResult();
-            //dump($subTargets);
-            //echo count($subTargets);
+
         } else {
             $subTargets = 0;
         }
@@ -268,7 +427,7 @@ class TargetsService
                 JOIN t.projectid pid
                 WHERE t.host=:maindomainHost and pid=:projectId')
                 ->setParameters(array('maindomainHost' => $mainDomain,
-                    'projectId' => $this->projectId));
+                    'projectId' => $this->project));
             $result = $query->getResult();
             if (count($result) == 1) {//if result is finded and count is 1
                 $parent = $result[0];

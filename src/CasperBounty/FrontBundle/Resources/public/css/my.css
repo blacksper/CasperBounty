@@ -46,7 +46,7 @@ table.targetsTable, table.notifTable {
 }
 table.subtargetsTable, table.notifTable {
     max-width: 700px;
-    font-size: 12px;
+    font-size: 14px;
     margin-left: 5px;
 }
 table.toolsTable{
@@ -64,6 +64,9 @@ table.toolsTable{
 
 .targetsTable > thead > tr > th {
     font-size: 14px;
+}
+.state{
+    font-size: 22px;
 }
 
 .notifTable > thead > tr > th {
@@ -116,3 +119,17 @@ padding-bottom: 15px;
 .btnAddToScen{
     margin-top:10px;
 }
+.toolsListElement{
+
+    display: block;
+    width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: #777777;
+}
+.toolsPad{
+    padding: 8px;
+}
+
+.tooltip-wide .tooltip {min-width:200px;}

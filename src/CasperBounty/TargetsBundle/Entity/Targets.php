@@ -23,9 +23,34 @@ class Targets
     private $type;
 
     /**
+     * @var string
+     */
+    private $state;
+
+
+    /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $groupid;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $domainid;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $serviceid;
+
+
+//    /**
+//     * @param \Doctrine\Common\Collections\Collection $serviceid
+//     */
+//    public function addServiceid(\CasperBounty\ServicesBundle\Entity\Services $serviceid)
+//    {
+//        $this->serviceid[] = $serviceid;
+//    }
 
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -45,7 +70,9 @@ class Targets
         $this->groupid = new \Doctrine\Common\Collections\ArrayCollection();
         $this->ipid = new \Doctrine\Common\Collections\ArrayCollection();
         $this->projectid = new \Doctrine\Common\Collections\ArrayCollection();
-
+        $this->domainid = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->serviceid = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->dateadded = new \DateTime('now');
     }
 
     /**
@@ -104,6 +131,25 @@ class Targets
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getState()
+    {
+        return $this->state;
+    }
+
+    /**
+     * @param string $state
+     *
+     * @return Targets
+     */
+    public function setState(string $state)
+    {
+        $this->state = $state;
+        return $this;
     }
 
     /**
@@ -207,6 +253,7 @@ class Targets
     {
         return $this->projectid;
     }
+
     /**
      * @var \CasperBounty\TargetsBundle\Entity\Targets
      */
@@ -235,5 +282,78 @@ class Targets
     public function getParentid()
     {
         return $this->parentid;
+    }
+
+    /**
+     * @var \DateTime
+     */
+    private $dateadded = 'CURRENT_TIMESTAMP';
+
+    /**
+     * Set dateadded
+     *
+     * @param \DateTime $dateadded
+     *
+     * @return Targets
+     */
+    public function setDateadded(\DateTime $dateadded)
+    {
+        $this->dateadded = $dateadded;
+
+        return $this;
+    }
+
+    /**
+     * Get dateadded
+     *
+     * @return \DateTime
+     */
+    public function getDateadded()
+    {
+        return $this->dateadded;
+    }
+
+    /**
+     * Add domainid
+     *
+     * @param \CasperBounty\TargetsBundle\Entity\Targets $domainid
+     *
+     * @return Targets
+     */
+    public function addDomainid(\CasperBounty\TargetsBundle\Entity\Targets $domainid)
+    {
+        $this->domainid[] = $domainid;
+
+        return $this;
+    }
+
+    /**
+     * Remove domainid
+     *
+     * @param \CasperBounty\TargetsBundle\Entity\Targets $domainid
+     */
+    public function removeDomainid(\CasperBounty\TargetsBundle\Entity\Targets $domainid)
+    {
+        $this->domainid->removeElement($domainid);
+    }
+
+    /**
+     * Get domainid
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDomainid()
+    {
+        return $this->domainid;
+    }
+
+    /**
+     * Get serviceid
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getServiceid()
+    {
+        return $this->serviceid;
     }
 }

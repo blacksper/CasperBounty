@@ -95,13 +95,15 @@ class ToolsService
         $commands=array();
         foreach ($targetObjects as $targetObject){
             $commandsPrepare=$this->getCommandToTarget($targetObject, $profile);
+
             //its possible if IP+DOMAINS macros used
             if(is_array($commandsPrepare))
                 $commands=array_merge($commands,$commandsPrepare);
             else
                 $commands[]=$commandsPrepare;
         }
-
+//        dump($commands);
+//        die();
 
         dump($targetObjects);
         dump($commands);
@@ -114,7 +116,12 @@ class ToolsService
 
         //$commandArray=array();
         $commandString=$profile->getCmd();
-        $toolPath=$profile->getToolid()->getCmdpath();
+
+        $tool=$profile->getToolid();
+        $toolPath=$tool->getCmdpath();
+        $toolName=$tool->getName();
+
+
         $ips=$targetObject->getIpid();
         $host=$targetObject->getHost();
         $hostId=$targetObject->getTargetid();
@@ -122,26 +129,36 @@ class ToolsService
         $commandStrPrepare=array();
 
         //$filename=$this->getFilename($host);
+        if($toolName=="nmap")
+            $commandString.=" -oA [FILENAME]";
+
         if(strstr($commandString,'[IP+DOMAIN]')){
-            $cmdstr=$toolPath.str_replace('[IP+DOMAIN]',$host,$commandString);
-            $commandStrPrepare[]=array('targetId'=>$hostId,'cmdStr'=>$cmdstr);
+            $cmdstr=str_replace('[IP+DOMAIN]',$host,$commandString);
+            $commandStrPrepare[]=array('targetId'=>$hostId,'cmdStr'=>$cmdstr,'toolPath'=>$toolPath);
             foreach ($ips as $ip){
-                $cmdstr=$toolPath.str_replace('[IP+DOMAIN]',$ip->getHost(),$commandString);
-                $commandStrPrepare[]=array('targetId'=>$ip->getTargetId(),'cmdStr'=>$cmdstr);
+                $cmdstr=str_replace('[IP+DOMAIN]',$ip->getHost(),$commandString);
+                $commandStrPrepare[]=array('targetId'=>$ip->getTargetId(),'cmdStr'=>$cmdstr,'toolPath'=>$toolPath);
             }
 
         }
         else if(strstr($commandString,'[DOMAIN]')&&(($hostType=='domain') or ($hostType=='maindomain'))){
-            $cmdstr=$toolPath.str_replace('[DOMAIN]',$host,$commandString);
-            $commandStrPrepare[]=array('targetId'=>$hostId,'cmdStr'=>$cmdstr);
+            $cmdstr=str_replace('[DOMAIN]',$host,$commandString);
+            $commandStrPrepare[]=array('targetId'=>$hostId,'cmdStr'=>$cmdstr,'toolPath'=>$toolPath);
 
         }else if(strstr($commandString,'[IP]')&&(($hostType=='ipv4')||($hostType=='ipv6'))){
             foreach ($ips as $ip) {
-                $cmdstr=$toolPath.str_replace('[DOMAIN]',$ip->getHost(),$commandString);
-                $commandStrPrepare[]=array('targetId'=>$ip->getTargetId(),'cmdStr'=>$cmdstr);
+                $cmdstr=str_replace('[DOMAIN]',$ip->getHost(),$commandString);
+                $commandStrPrepare[]=array('targetId'=>$ip->getTargetId(),'cmdStr'=>$cmdstr,'toolPath'=>$toolPath);
             }
 
         }
+
+        foreach ($commandStrPrepare as &$cmdItem) {
+            $fileOutput=$this->getFilename($toolName,$cmdItem['targetId']);
+            $cmdItem['cmdStr']=str_replace('[FILENAME]',$fileOutput,$cmdItem['cmdStr']);
+            $cmdItem['fileOutput']=$fileOutput;
+        }
+
 
         //creating tasks
 
@@ -151,9 +168,9 @@ class ToolsService
     }
 
 
-    public function getFilename(){
-        $resultsNmapPath="D:\\PhpstormProjects\\CasperBounty\\results\\nmap\\";
-        $filename=$resultsNmapPath.rand(1,10000).'_'.time().'.xml';
+    public function getFilename($toolName,$targetId){
+        $resultsNmapPath="G:\\PhpstormProjects\\CasperBounty\\results\\$toolName\\";
+        $filename=$resultsNmapPath.$targetId.'_'.time();
         return $filename;
     }
 
@@ -234,19 +251,22 @@ class ToolsService
             foreach ($commands as &$command) {
                 $target=$repoTargets->find($command['targetId']);
                 $task=$this->createTask($profile,$target);
+
                 $tasksArr[]=$task;
                 $this->entityManager->persist($task);
                 $this->entityManager->flush();
+
                 $this->entityManager->refresh($task);
 
                 $command['taskId']=$task->getTaskid();
+                //$command['projectId']=$task->getTaskid();
             }
             $this->entityManager->flush();
         }
 
 
         dump($commands);
-        die();
+        //die();
         $this->runToolv2($commands);
         die();
 
@@ -275,8 +295,8 @@ class ToolsService
 //        }
 
 
-        $interprPath="D:\\nodejs\\node.exe";
-        $execscriptPath="D:\\njs\\nn\\executtest.js";
+        $interprPath="G:\\nodejs\\node.exe";
+        $execscriptPath="G:\\nodeprojects\\njs\\nn\\executtest.js";
         foreach ($targetsObjArr as $task) {
             $commandpart=$this->buildCommand($profileId, $task);
             if(!$commandpart)
@@ -294,17 +314,26 @@ class ToolsService
     public function runToolv2(array $cmdArr){
 
         $interprPath="D:\\nodejs\\node.exe";
-        $execscriptPath="D:\\njs\\nn\\executtest.js";
+        $execscriptPath="G:\\nodeprojects\\njs\\nn\\executtest.js";
         foreach ($cmdArr as $cmd) {
 
-            $cmd="--tool=\"$toolPath\" --parameters=\"$param\" --taskid=$taskId"; //
+            $cmd=
+                "--tool=\"".
+                $cmd['toolPath'].
+                "\" --parameters=\"".
+                $cmd['cmdStr']."\"".
+                " --taskid=".
+                $cmd['taskId'].
+                " --fileOutput=".
+                $cmd['fileOutput'].
+                ""; //
             $cmd = $interprPath . ' ' . $execscriptPath . ' ' . $cmd . ' ';
             echo $cmd."\r\n\r\n";
             //die();
             $ooo = new \COM('WScript.Shell');
             $ooo->Run($cmd, 7, 0);
             //usleep(100000);
-        break;
+        //break;
         }
 
     }
@@ -335,6 +364,7 @@ public function createTask($profile, $target, $scenarioId=null){
         $task->setTargetid($target);
         $task->setStatus(0);
         $task->setScenarioid($scenarioId);
+
         return $task;
 }
 

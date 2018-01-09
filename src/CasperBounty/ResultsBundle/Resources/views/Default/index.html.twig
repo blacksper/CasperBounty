@@ -12,7 +12,7 @@
             <input type="submit" value="create">
         </form>
 
-        <table class="table table-condensed toolsTable ">
+        <table class="table table-condensed ">
             <thead>
             <tr>
                 <th>tool name</th>
@@ -25,11 +25,11 @@
             <tbody>
             {% for result in results %}
                 <tr>
-                    <td class="col-md-3">{{ result.taskid.targetid.host }}</td>
-                    <td class="col-md-2"><pre>{{ result.result }}</pre></td>
-                    <td class="col-md-4"></td>
-                    <td class="col-md-4">
+                    <td class="col-md-1"></td>
+                    <td class="col-md-1">{{ result.taskid.targetid.host }}</td>
+                    <td class="col-md-6"><div >{{ result.result }}</div></td>
 
+                    <td class="col-md-1">
                         <button class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
                     </td>
                 </tr>

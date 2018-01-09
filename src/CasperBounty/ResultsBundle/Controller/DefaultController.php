@@ -40,6 +40,15 @@ class DefaultController extends Controller
      */
     public function addResultAction($taskid, Request $request)
     {
+        $resultsService=$this->get('casper_bounty_targets.resultsservice');
+        $resultsService->setTaskId($taskid);
+        $fileOutput=$request->get('fileOutput');
+        $resultData=$request->get('resultData');
+        $resultsService->resultsHandle($resultData,$fileOutput);
+
+
+
+
         $result = new Results();
         $doctr = $this->getDoctrine();
         $task = $doctr->getRepository('CasperBountyTasksBundle:Tasks')->find($taskid);
@@ -49,14 +58,8 @@ class DefaultController extends Controller
         $option = $profile->getCmd();
         dump($option);
 
-        $rservice=$this->get('casper_bounty_targets.resultsService');
 
-        switch ($softName) {
-            case "nmap":
-                $rservice->parseNmap($task,$result);
-                break;
 
-        }
         die();
         $resultsRepo = $doctr->getRepository('CasperBountyResultsBundle:Results');
         $resExist = $resultsRepo->findBy(array('taskid' => $task));

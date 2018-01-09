@@ -1,29 +1,49 @@
 CasperBounty\TargetsBundle\Entity\Targets:
     type: entity
     table: targets
+    indexes:
+        IDX_AF431E13856A684C:
+            columns:
+                - parentid
     id:
         targetid:
-            id: true
             type: integer
+            nullable: false
             options:
                 unsigned: false
+            id: true
             column: targetId
             generator:
                 strategy: IDENTITY
-
     fields:
         host:
             type: string
+            nullable: false
             length: 255
             options:
                 fixed: false
-            nullable: false
         type:
             type: string
+            nullable: false
             length: 255
             options:
                 fixed: false
-            nullable: false
+        dateadded:
+            type: datetime
+            nullable: true
+            options:
+                default: CURRENT_TIMESTAMP
+            column: dateAdded
+        state:
+            type: string
+            length: 255
+            nullable: true
+            options:
+              fixed: false
+    oneToMany:
+        serviceid:
+          targetEntity: CasperBounty\ServicesBundle\Entity\Services
+          mappedBy: targetid
     manyToOne:
         parentid:
             targetEntity: CasperBounty\TargetsBundle\Entity\Targets
@@ -44,23 +64,26 @@ CasperBounty\TargetsBundle\Entity\Targets:
             inversedBy: null
             joinTable: null
             orderBy: null
-
         ipid:
-            targetEntity: CasperBounty\TargetsBundle\Entity\Targets
+            targetEntity: Targets
             cascade: {  }
             fetch: LAZY
+            mappedBy: null
+            inversedBy: domainid
             joinTable:
                 name: ipdomainrelation
                 joinColumns:
                     -
-                        referencedColumnName: targetId
                         name: domainId
+                        referencedColumnName: targetId
                 inverseJoinColumns:
                     -
-                        referencedColumnName: targetId
                         name: ipId
+                        referencedColumnName: targetId
             orderBy: null
-
+        domainid:
+          targetEntity: Targets
+          mappedBy: ipid
         projectid:
             targetEntity: CasperBounty\ProjectsBundle\Entity\Projects
             cascade: {  }
@@ -70,3 +93,6 @@ CasperBounty\TargetsBundle\Entity\Targets:
             joinTable: null
             orderBy: null
     lifecycleCallbacks: {  }
+
+Domain:
+  type: entity

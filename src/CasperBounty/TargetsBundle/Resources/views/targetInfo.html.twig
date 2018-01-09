@@ -17,8 +17,16 @@
             });
 
         }
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
     </script>
     <div class="container">
+        {% if errorMsg is defined %}
+            <div class="alert alert-danger">
+                <strong>{{ errorMsg }}</strong> Indicates a successful or positive action.
+            </div>
+        {% endif %}
         <div class="row">
             <div class="col-lg-6">
                 <form method="post" action="{{ path('casper_bounty_tools_getips',{'projectId':projectId}) }}">
@@ -30,12 +38,33 @@
                                 Run
                                 profile
                                 <span class="caret"></span></button>
-                            <ul class="dropdown-menu">
-                                {% for profile in profiles %}
-                                    <li><a onclick="runTool({{ profile.profileId }})" href="#">{{ profile.name }} (<span
-                                                    style="color: #777777">{{ profile.toolId.name }} {{ profile.cmd }}</span>)</a>
-                                    </li>
-                                {% endfor %}
+                            <ul style="width: 260px;" class="dropdown-menu">
+
+
+                                <li class="bg-success"><a
+                                            href="{{ path('casper_bounty_tools_homepage') }}"><span
+                                                class="glyphicon glyphicon-pencil"></span> Create new
+                                        profile</a></li>
+                                <div class="row">
+                                    {% for profile in profiles %}
+
+
+                                        <div class="col-md-9">
+                                            <li class="toolsListElement toolsPad"><a
+                                                        onclick="runTool({{ profile.profileId }})"
+                                                        href="#"> {{ profile.name }}
+                                                    (<span>{{ profile.toolId.name }} </span>)</a>
+                                            </li>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <li class="tooltip-wide"><span class="glyphicon glyphicon-alert"
+                                                                           data-toggle="tooltip"
+                                                                           data-placement="right"
+                                                                           title="{{ profile.cmd }}"></span></li>
+                                        </div>
+
+                                    {% endfor %}
+                                </div>
                             </ul>
                         </div>
                     </div>
@@ -53,66 +82,31 @@
                         </thead>
 
                         <tbody>
-                        <tr class="success">
-                            <td><input type="checkbox" id="targets" name="targetsArr[]"
-                                       value="{{ maintarget.targetid }}"></td>
-                            <td class="col-md-4">
-                                <a href="{{ path('casper_bounty_targets_targetid',{'targetId':maintarget.targetid,'projectId':projectId}) }}">{{ maintarget.host }}</a>
-
-
-                                {% for ip in maintarget.getIpId() %}
-                                    <br>
-                                    <em>
-                                        <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}">
-                                            {{ ip.host }}
-                                        </a>
-                                    </em>
-                                {% endfor %}
-                            </td>
-                            <td>
-                                {{ maintarget.type }}
-                            </td>
-                            <td>
-                                <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-xs btn-primary" data-toggle="modal"
-                                        data-target="#tasksModal" data-id="{{ maintarget.targetid }}">
-                                    <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
-                                </button>
-
-                            </td>
-                        </tr>
-                        {% for target in targetInfo.subtargets %}
-                            <tr class="{% if target.type=='maindomain' %}success{% endif %}">
+                        {% if maintarget is defined %}
+                            <tr class="success">
                                 <td><input type="checkbox" id="targets" name="targetsArr[]"
-                                           value="{{ target.targetid }}"></td>
-                                <td class="col-md-4"><a
-                                            href="{{ path('casper_bounty_targets_targetid',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a>
+                                           value="{{ maintarget.targetid }}"></td>
+                                <td class="col-md-4">
+                                    <a href="{{ path('casper_bounty_targets_targetid',{'targetId':maintarget.targetid,'projectId':projectId}) }}">{{ maintarget.host }}</a>
 
 
-                                    {% for ip in target.getIpid() %}
+                                    {% for ip in maintarget.getIpId() %}
                                         <br>
                                         <em>
-
                                             <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}">
                                                 {{ ip.host }}
                                             </a>
                                         </em>
                                     {% endfor %}
                                 </td>
-                                <td>{{ target.type }}</td>
                                 <td>
-                                    <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                                    {{ maintarget.type }}
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-xs btn-primary">
-                                        <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-xs btn-primary">
-                                        <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
-                                    </button>
+                                    <span class="state glyphicon {% if maintarget.state== "not_resolve" or maintarget.state=="down" %}glyphicon glyphicon-remove-sign text-danger{% elseif maintarget.state=="up" %}glyphicon glyphicon-ok-sign{% else %}glyphicon-question-sign text-info{% endif %}" aria-hidden="true"></span>
 
+                                </td>
+                                <td>
                                     <button type="button" class="btn btn-xs btn-primary" data-toggle="modal"
                                             data-target="#tasksModal" data-id="{{ maintarget.targetid }}">
                                         <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
@@ -120,7 +114,54 @@
 
                                 </td>
                             </tr>
-                        {% endfor %}
+                        {% endif %}
+
+                        {% if targetInfo is defined %}
+                            {% for target in targetInfo.subtargets %}
+                                <tr class="{% if target.type=='maindomain' %}success{% endif %}">
+                                    <td><input type="checkbox" id="targets" name="targetsArr[]"
+                                               value="{{ target.targetid }}"></td>
+                                    <td class="col-md-4"><a
+                                                href="{{ path('casper_bounty_targets_targetid',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a>
+
+
+                                        {% for ip in target.getIpid() %}
+                                            <br>
+                                            <em>
+
+                                                <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}">
+                                                    {{ ip.host }}
+                                                </a>
+                                                {% for domain in ip.domainid %}
+                                                    {% if domain.type =="PTR" %}
+                                                        {{ dump(domain.host) }}
+                                                    {% endif %}
+                                                {% endfor %}
+
+                                            </em>
+                                        {% endfor %}
+                                    </td>
+                                    <td>{{ target.type }}</td>
+                                    <td>
+                                        <span class="state glyphicon {% if target.state== "not_resolve" or target.state=="down" %}glyphicon glyphicon-remove-sign text-danger{% elseif target.state=="up" %}glyphicon glyphicon-ok-sign text-success{% else %}glyphicon-question-sign text-info{% endif %}" aria-hidden="true"></span>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-xs btn-default">
+                                            <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-xs btn-default">
+                                            <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
+                                        </button>
+
+                                        <button type="button" class="btn btn-xs btn-default" data-toggle="modal"
+                                                data-target="#tasksModal" data-id="{{ maintarget.targetid }}">
+                                            <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+                                        </button>
+
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
                         </tbody>
                     </table>
                 </form>
@@ -128,41 +169,17 @@
             <div class="col-lg-6">
 
                 <ul>
-                    {% for ipgr in group %}
-                        <li>{{ ipgr.cnt }}   |
-                            <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ipgr.targetid,'projectId':projectId}) }}">{{ ipgr.host }}</a>
-                        </li>
-                    {% endfor %}
+                    {% if group is defined %}
+                        {% for ipgr in group %}
+                            <li>{{ ipgr.cnt }} |
+                                <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ipgr.targetid,'projectId':projectId}) }}">{{ ipgr.host }}</a>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
                 </ul>
             </div>
         </div>
-        {#<div id="tasksModal" class="modal fade" role="dialog">#}
-            {#<div class="modal-dialog">#}
-                {#<!-- Modal content-->#}
-                {#<div class="modal-content">#}
-                    {#<div class="modal-header">#}
-                        {#<button type="button" class="close" data-dismiss="modal">&times;</button>#}
-                        {#<h4 class="modal-title">Create profile</h4>#}
-                    {#</div>#}
 
-                    {#<div class="modal-body">#}
-                        {#Modal body text#}
-
-                        {#{% for result in results %}#}
-                            {#<pre>{{ result.result }}</pre>#}
-                        {#{% endfor %}#}
-                        {#<div class="result">#}
-
-                        {#</div>#}
-
-                    {#</div>#}
-                    {#<div class="modal-footer">#}
-                        {#<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>#}
-                    {#</div>#}
-                {#</div>#}
-
-            {#</div>#}
-        {#</div>#}
 
     </div>
 {% endblock %}

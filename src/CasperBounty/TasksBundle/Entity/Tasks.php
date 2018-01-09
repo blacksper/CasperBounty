@@ -1,6 +1,7 @@
 <?php
 
 namespace CasperBounty\TasksBundle\Entity;
+//use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * Tasks
@@ -32,6 +33,10 @@ class Tasks
      */
     private $targetid;
 
+    function __construct()
+    {
+        $this->timestart = new \DateTime();
+    }
 
     /**
      * Get taskid
@@ -166,5 +171,64 @@ class Tasks
     public function getOutput()
     {
         return $this->output;
+    }
+    /**
+     * @var \DateTime
+     */
+    private $timestart = 'CURRENT_TIMESTAMP';
+
+
+    /**
+     * @var \DateTime
+     */
+    private $timeend;
+
+
+    /**
+     * Set timestart
+     *
+     * @param \DateTime $timestart
+     *
+     * @return Tasks
+     */
+    public function setTimestart($timestart)
+    {
+        $this->timestart = $timestart;
+
+        return $this;
+    }
+
+    /**
+     * Get timestart
+     *
+     * @return \DateTime
+     */
+    public function getTimestart()
+    {
+        return $this->timestart;
+    }
+
+    /**
+     * Set timeend
+     *
+     * @param \DateTime $timeend
+     *
+     * @return Tasks
+     */
+    public function setTimeend($timeend)
+    {
+        $this->timeend = $timeend;
+
+        return $this;
+    }
+
+    /**
+     * Get timeend
+     *
+     * @return \DateTime
+     */
+    public function getTimeend()
+    {
+        return $this->timeend;
     }
 }
