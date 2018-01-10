@@ -36,14 +36,10 @@ CasperBounty\TargetsBundle\Entity\Targets:
             column: dateAdded
         state:
             type: string
-            length: 255
             nullable: true
+            length: 255
             options:
-              fixed: false
-    oneToMany:
-        serviceid:
-          targetEntity: CasperBounty\ServicesBundle\Entity\Services
-          mappedBy: targetid
+                fixed: false
     manyToOne:
         parentid:
             targetEntity: CasperBounty\TargetsBundle\Entity\Targets
@@ -65,7 +61,7 @@ CasperBounty\TargetsBundle\Entity\Targets:
             joinTable: null
             orderBy: null
         ipid:
-            targetEntity: Targets
+            targetEntity: CasperBounty\TargetsBundle\Entity\Targets
             cascade: {  }
             fetch: LAZY
             mappedBy: null
@@ -82,7 +78,7 @@ CasperBounty\TargetsBundle\Entity\Targets:
                         referencedColumnName: targetId
             orderBy: null
         domainid:
-          targetEntity: Targets
+          targetEntity: CasperBounty\TargetsBundle\Entity\Targets
           mappedBy: ipid
         projectid:
             targetEntity: CasperBounty\ProjectsBundle\Entity\Projects
@@ -93,6 +89,3 @@ CasperBounty\TargetsBundle\Entity\Targets:
             joinTable: null
             orderBy: null
     lifecycleCallbacks: {  }
-
-Domain:
-  type: entity

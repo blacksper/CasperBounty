@@ -42,14 +42,14 @@ class DefaultController extends Controller
     {
         $resultsService=$this->get('casper_bounty_targets.resultsservice');
         $resultsService->setTaskId($taskid);
+        $resultsService->setTarget();
+
         $fileOutput=$request->get('fileOutput');
         $resultData=$request->get('resultData');
         $resultsService->resultsHandle($resultData,$fileOutput);
 
 
 
-
-        $result = new Results();
         $doctr = $this->getDoctrine();
         $task = $doctr->getRepository('CasperBountyTasksBundle:Tasks')->find($taskid);
 
@@ -61,22 +61,8 @@ class DefaultController extends Controller
 
 
         die();
-        $resultsRepo = $doctr->getRepository('CasperBountyResultsBundle:Results');
-        $resExist = $resultsRepo->findBy(array('taskid' => $task));
-        if ($resExist)
-            die('ayayay uze est');
 
-        $resultData = $request->get('resultData');
-        if (!$resultData)
-            die('caramba');
-        $resultData = htmlentities(urldecode($resultData));
-
-        $result->setTaskid($task)->setResult($resultData);
-        $doctr->getEntityManager()->persist($result);
-        $doctr->getEntityManager()->flush();
-        die('horoshechno');
         return 0;
-
     }
 
     /**

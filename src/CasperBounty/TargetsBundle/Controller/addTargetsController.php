@@ -23,7 +23,7 @@ class addTargetsController extends Controller
 
 
     /**
-     * @Route("/{/projects/{projectId}/addtargets", requirements={"projectId" = "\d+"}, defaults={"id" = 1}, name="casper_bounty_targets_addTargets_post")
+     * @Route("/projects/{projectId}/addtargets", requirements={"projectId" = "\d+"}, defaults={"id" = 1}, name="casper_bounty_targets_addTargets_post")
      * @Method({"POST"})
      */
     public function addTargetsAction(int $projectId,Request $request)
@@ -32,9 +32,9 @@ class addTargetsController extends Controller
         $targetsService = $this->get('casper_bounty_targets.targetsservice');
 
         $targetsService->setProjectId($projectId);
-        //die();
-        $newTargetsCount=$targetsService->addHosts($targetsText);
 
+        $newTargetsCount=$targetsService->addHosts($targetsText);
+        //die();
 
         return $this->render('@CasperBountyTargets/addTargets/addTargetsMain.html.twig',array('projectId'=>$projectId,'newTargetsCount'=>count($newTargetsCount)));
     }

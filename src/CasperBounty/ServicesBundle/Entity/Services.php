@@ -167,5 +167,18 @@ class Services
     {
         return $this->targetid;
     }
-}
 
+    /**
+     * Set serviceid
+     *
+     * @param integer $serviceid
+     *
+     * @return Services
+     */
+    public function setServiceid($serviceid)
+    {
+        $this->serviceid = $serviceid;
+
+        return $this;
+    }
+}

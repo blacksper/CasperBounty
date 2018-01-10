@@ -28,13 +28,13 @@
             </div>
         {% endif %}
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-8">
                 <form method="post" action="{{ path('casper_bounty_tools_getips',{'projectId':projectId}) }}">
-                    <p>
-                    <div class="btn-group">
-                        <button class="btn btn-info btn-sm" type="submit">Get ips</button>
+
+                    <div class="btn-group" style="position:fixed;">
+                        <button class="btn btn-info btn-md" type="submit">Get ips</button>
                         <div class="btn-group">
-                            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                            <button class="btn btn-md btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
                                 Run
                                 profile
                                 <span class="caret"></span></button>
@@ -68,7 +68,9 @@
                             </ul>
                         </div>
                     </div>
-                    </p>
+
+                    <br>
+                    <br>
                     <br>
                     <table class="table table-condensed subtargetsTable">
                         <thead>
@@ -76,6 +78,7 @@
                             <td></td>
                             <th>host</th>
                             <th>id</th>
+                            <th>state</th>
                             <th>state</th>
                             <th></th>
                         </tr>
@@ -166,7 +169,7 @@
                     </table>
                 </form>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-4">
 
                 <ul>
                     {% if group is defined %}

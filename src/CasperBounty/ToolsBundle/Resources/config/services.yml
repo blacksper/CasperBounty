@@ -1,7 +1,10 @@
+parameters:
+    tool.resultsDir: 'D:\\PhpstormProjects\\CasperBounty\\results'
+
 services:
   casper_bounty_tools.toolssrvice:
     class: CasperBounty\ToolsBundle\Service\ToolsService
-    arguments: ["@doctrine.orm.entity_manager","@casper_bounty_tools.nmapservice"]
+    arguments: ["@doctrine.orm.entity_manager","@casper_bounty_tools.nmapservice",'%tool.resultsdir%']
 
   casper_bounty_tools.reconService:
     class: CasperBounty\ToolsBundle\Service\ReconService
@@ -10,6 +13,8 @@ services:
   casper_bounty_tools.nmapService:
     class: CasperBounty\ToolsBundle\Service\NmapService
     arguments: ["@doctrine.orm.entity_manager",%nmap.nmapPath%]
+
+
 
 
 #    casper_bounty_projects.example:

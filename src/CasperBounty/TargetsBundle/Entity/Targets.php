@@ -44,14 +44,6 @@ class Targets
     private $serviceid;
 
 
-//    /**
-//     * @param \Doctrine\Common\Collections\Collection $serviceid
-//     */
-//    public function addServiceid(\CasperBounty\ServicesBundle\Entity\Services $serviceid)
-//    {
-//        $this->serviceid[] = $serviceid;
-//    }
-
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
@@ -196,6 +188,17 @@ class Targets
     public function addIpid(\CasperBounty\TargetsBundle\Entity\Targets $ipid)
     {
         $this->ipid[] = $ipid;
+
+        return $this;
+    }
+
+
+    /**
+     * @param \Doctrine\Common\Collections\Collection $serviceid
+     */
+    public function addServiceid(\CasperBounty\ServicesBundle\Entity\Services $serviceid)
+    {
+        $this->serviceid[] = $serviceid;
 
         return $this;
     }

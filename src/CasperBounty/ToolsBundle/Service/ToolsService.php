@@ -7,6 +7,7 @@
  */
 
 namespace CasperBounty\ToolsBundle\Service;
+
 use CasperBounty\ProfilesBundle\Entity\Profiles;
 use CasperBounty\TargetsBundle\Entity\Targets;
 use CasperBounty\TasksBundle\Entity\Tasks;
@@ -17,60 +18,59 @@ use Doctrine\ORM\EntityManager;
 class ToolsService
 {
     //private $em;
-    public function __construct(EntityManager $entityManager,NmapService $nmapService) {
+    public function __construct(EntityManager $entityManager, NmapService $nmapService, $resultsDir)
+    {
         $this->entityManager = $entityManager;
-        $this->nmapService=$nmapService;
+        $this->nmapService = $nmapService;
+        $this->resultsDir=$resultsDir;
     }
 
-    public function buildCommand($profileId,$targetId,$targetsArr){
+    public function buildCommand($profileId, $targetId, $targetsArr)
+    {
 
-        $repT=$this->entityManager->getRepository('CasperBountyTasksBundle:Tasks');
-        $repTar=$this->entityManager->getRepository('CasperBountyTargetsBundle:Targets');
-        $repP=$this->entityManager->getRepository('CasperBountyProfilesBundle:Profiles');
-        $qb=$repP->find($profileId);
+        $repT = $this->entityManager->getRepository('CasperBountyTasksBundle:Tasks');
+        $repTar = $this->entityManager->getRepository('CasperBountyTargetsBundle:Targets');
+        $repP = $this->entityManager->getRepository('CasperBountyProfilesBundle:Profiles');
+        $qb = $repP->find($profileId);
 
-        $targetsObjArr=array();//array for target objects
+        $targetsObjArr = array();//array for target objects
         //$target=$repT->find($tasksId);
         //$targetHost=$target->getTargetid()->getHost();
         //$taskId=$tasksId->getTaskid();
-        foreach ($targetsArr as $targettmp){
-            $targetsObjArr[]=$repTar->find($targettmp);
+        foreach ($targetsArr as $targettmp) {
+            $targetsObjArr[] = $repTar->find($targettmp);
         }
-        $argumentsArray=array();
+        $argumentsArray = array();
 
-        $toolPath=$qb->getToolid()->getCmdpath();
-        $toolParams=$qb->getCmd();
-        $targetObj=$repTar->find($targetId);
-        if(strripos($toolParams, '[DOMAIN]')) {
-            if($targetObj->getType()=='domain') {
+        $toolPath = $qb->getToolid()->getCmdpath();
+        $toolParams = $qb->getCmd();
+        $targetObj = $repTar->find($targetId);
+        if (strripos($toolParams, '[DOMAIN]')) {
+            if ($targetObj->getType() == 'domain') {
                 $argumentsArray[] = str_replace('[DOMAIN]', $targetObj->getHost(), $toolParams);
             }
-        }
-        elseif(strripos($toolParams, '[IP]')) {
-            if($targetObj->getType()=='ip') {
+        } elseif (strripos($toolParams, '[IP]')) {
+            if ($targetObj->getType() == 'ip') {
                 $argumentsArray[] = str_replace('[IP]', $targetObj->getHost(), $toolParams);
             }
-        }
-        elseif(strripos($toolParams, '[BOTH]'))//return array with commands
+        } elseif (strripos($toolParams, '[BOTH]'))//return array with commands
         {
-            if($targetObj->getTargetid()->getType()=='domain'||$targetObj->getTargetid()->getType()=='maindomain')
-            {
-                $ips=$targetObj->getTargetid()->getIpid();
-                $targets=$repTar->findBy(array('targetid'=>$ips)); //give ips obj by ip ids
-                foreach ($targets as $target){
+            if ($targetObj->getTargetid()->getType() == 'domain' || $targetObj->getTargetid()->getType() == 'maindomain') {
+                $ips = $targetObj->getTargetid()->getIpid();
+                $targets = $repTar->findBy(array('targetid' => $ips)); //give ips obj by ip ids
+                foreach ($targets as $target) {
                     //$targetsObjArr[]=$target->getHost();
-                    $targetsObjArr[]=$target;
+                    $targetsObjArr[] = $target;
                     $argumentsArray[] = str_replace('[IP]', $targetObj->getHost(), $toolParams);
                 }
                 //$toolParams = str_replace('[BOTH]', $targetHost, $toolParams);
 
             }
 
-        }
-        else
+        } else
             return 0;//wrong parameter
         //setting profile by profileid
-        $profile=$repP->find($profileId);
+        $profile = $repP->find($profileId);
 
         //creating tasks by targets object
         foreach ($targetsObjArr as $target) {
@@ -79,31 +79,31 @@ class ToolsService
             $this->entityManager->persist($task);
             $this->entityManager->flush();
             $this->entityManager->refresh($task);
-            $tasksArr[]=$task;
+            $tasksArr[] = $task;
         }
 
 
         //$toolParams=str_replace('[TARGET]', $targetHost ,$toolParams);
         foreach ($argumentsArray as $param)
-        $cmd="--tool=\"$toolPath\" --parameters=\"$param\" --taskid=$taskId"; //
+            $cmd = "--tool=\"$toolPath\" --parameters=\"$param\" --taskid=$taskId"; //
 
-       return $cmd;
+        return $cmd;
         //system('');
     }
 
-    public function buildCommandv2(Profiles $profile,$targetObjects){
-        $commands=array();
-        foreach ($targetObjects as $targetObject){
-            $commandsPrepare=$this->getCommandToTarget($targetObject, $profile);
+    public function buildCommandv2(Profiles $profile, $targetObjects)
+    {
+        $commands = array();
+        foreach ($targetObjects as $targetObject) {
+            $commandsPrepare = $this->getCommandToTarget($targetObject, $profile);
 
             //its possible if IP+DOMAINS macros used
-            if(is_array($commandsPrepare))
-                $commands=array_merge($commands,$commandsPrepare);
+            if (is_array($commandsPrepare))
+                $commands = array_merge($commands, $commandsPrepare);
             else
-                $commands[]=$commandsPrepare;
+                $commands[] = $commandsPrepare;
         }
-//        dump($commands);
-//        die();
+
 
         dump($targetObjects);
         dump($commands);
@@ -112,99 +112,101 @@ class ToolsService
         return $commands;
     }
 
-    public function getCommandToTarget(Targets $targetObject,Profiles $profile){
+    public function getCommandToTarget(Targets $targetObject, Profiles $profile)
+    {
 
         //$commandArray=array();
-        $commandString=$profile->getCmd();
+        $commandString = $profile->getCmd();
 
-        $tool=$profile->getToolid();
-        $toolPath=$tool->getCmdpath();
-        $toolName=$tool->getName();
+        $tool = $profile->getToolid();
+        $toolPath = $tool->getCmdpath();
+        $toolName = $tool->getName();
 
 
-        $ips=$targetObject->getIpid();
-        $host=$targetObject->getHost();
-        $hostId=$targetObject->getTargetid();
-        $hostType=$targetObject->getType();
-        $commandStrPrepare=array();
+        $ips = $targetObject->getIpid();
+        $host = $targetObject->getHost();
+        $hostId = $targetObject->getTargetid();
+        $hostType = $targetObject->getType();
+        $commandStrPrepare = array();
 
         //$filename=$this->getFilename($host);
-        if($toolName=="nmap")
-            $commandString.=" -oA [FILENAME]";
+        if ($toolName == "nmap")
+            $commandString .= " -oA [FILENAME]";
 
-        if(strstr($commandString,'[IP+DOMAIN]')){
-            $cmdstr=str_replace('[IP+DOMAIN]',$host,$commandString);
-            $commandStrPrepare[]=array('targetId'=>$hostId,'cmdStr'=>$cmdstr,'toolPath'=>$toolPath);
-            foreach ($ips as $ip){
-                $cmdstr=str_replace('[IP+DOMAIN]',$ip->getHost(),$commandString);
-                $commandStrPrepare[]=array('targetId'=>$ip->getTargetId(),'cmdStr'=>$cmdstr,'toolPath'=>$toolPath);
+        if (strstr($commandString, '[IP+DOMAIN]')) {
+            $cmdstr = str_replace('[IP+DOMAIN]', $host, $commandString);
+            $commandStrPrepare[] = array('targetId' => $hostId, 'cmdStr' => $cmdstr, 'toolPath' => $toolPath);
+            foreach ($ips as $ip) {
+                $cmdstr = str_replace('[IP+DOMAIN]', $ip->getHost(), $commandString);
+                $commandStrPrepare[] = array('targetId' => $ip->getTargetId(), 'cmdStr' => $cmdstr, 'toolPath' => $toolPath);
             }
 
-        }
-        else if(strstr($commandString,'[DOMAIN]')&&(($hostType=='domain') or ($hostType=='maindomain'))){
-            $cmdstr=str_replace('[DOMAIN]',$host,$commandString);
-            $commandStrPrepare[]=array('targetId'=>$hostId,'cmdStr'=>$cmdstr,'toolPath'=>$toolPath);
+        } else if (strstr($commandString, '[DOMAIN]') && (($hostType == 'domain') or ($hostType == 'maindomain'))) {
+            $cmdstr = str_replace('[DOMAIN]', $host, $commandString);
+            $commandStrPrepare[] = array('targetId' => $hostId, 'cmdStr' => $cmdstr, 'toolPath' => $toolPath);
 
-        }else if(strstr($commandString,'[IP]')&&(($hostType=='ipv4')||($hostType=='ipv6'))){
+        } else if (strstr($commandString, '[IP]') && (($hostType == 'ipv4') || ($hostType == 'ipv6'))) {
             foreach ($ips as $ip) {
-                $cmdstr=str_replace('[DOMAIN]',$ip->getHost(),$commandString);
-                $commandStrPrepare[]=array('targetId'=>$ip->getTargetId(),'cmdStr'=>$cmdstr,'toolPath'=>$toolPath);
+                $cmdstr = str_replace('[DOMAIN]', $ip->getHost(), $commandString);
+                $commandStrPrepare[] = array('targetId' => $ip->getTargetId(), 'cmdStr' => $cmdstr, 'toolPath' => $toolPath);
             }
 
         }
 
         foreach ($commandStrPrepare as &$cmdItem) {
-            $fileOutput=$this->getFilename($toolName,$cmdItem['targetId']);
-            $cmdItem['cmdStr']=str_replace('[FILENAME]',$fileOutput,$cmdItem['cmdStr']);
-            $cmdItem['fileOutput']=$fileOutput;
+            $fileOutput = $this->getFilename($toolName, $cmdItem['targetId']);
+            $cmdItem['cmdStr'] = str_replace('[FILENAME]', $fileOutput, $cmdItem['cmdStr']);
+            $cmdItem['fileOutput'] = $fileOutput;
         }
 
 
         //creating tasks
 
 
-
         return $commandStrPrepare;
     }
 
 
-    public function getFilename($toolName,$targetId){
-        $resultsNmapPath="G:\\PhpstormProjects\\CasperBounty\\results\\$toolName\\";
-        $filename=$resultsNmapPath.$targetId.'_'.time();
+    public function getFilename($toolName, $targetId)
+    {
+        //$contaiter->getParameter('tool.resultssDir');
+        $resultsNmapPath = $this->resultsDir."\\$toolName\\";
+        $filename = $resultsNmapPath . $targetId . '_' . time();
         return $filename;
     }
 
-    public function getAllIps($targetsArr,$projectId){
-        if(empty($targetsArr))
+    public function getAllIps($targetsArr, $projectId)
+    {
+        if (empty($targetsArr))
             return 0;
 
-        $repository=$this->entityManager->getRepository('CasperBountyTargetsBundle:Targets');
+        $repository = $this->entityManager->getRepository('CasperBountyTargetsBundle:Targets');
         //$qb=$repository->findBy(array('targetid'=>$targetsArr));
-        $qb=$repository->createQueryBuilder('t');
-        $targetsEntArr=$qb->select('t')->where($qb->expr()->in('t.targetid',$targetsArr))->getQuery()->getResult();
+        $qb = $repository->createQueryBuilder('t');
+        $targetsEntArr = $qb->select('t')->where($qb->expr()->in('t.targetid', $targetsArr))->getQuery()->getResult();
 
-        if(empty($targetsEntArr))
+        if (empty($targetsEntArr))
             return 0;
-        $tmparr=array();
-        $tmparr['hostid']=array();
-        $tmparr['projectId']=$projectId;
-       // $tmparr['hostid']=array();
+        $tmparr = array();
+        $tmparr['hostid'] = array();
+        $tmparr['projectId'] = $projectId;
+        // $tmparr['hostid']=array();
 
         foreach ($targetsEntArr as $target) {
             //$tmparr[$target->getTargetId()] = $target->getHost();
-            $tmparr['hostid'][] = array('host'=>$target->getHost(),'id'=>$target->getTargetId());
+            $tmparr['hostid'][] = array('host' => $target->getHost(), 'id' => $target->getTargetId());
         }
 
-        $targetsArrJson=json_encode($tmparr,JSON_UNESCAPED_SLASHES);
-        $coolstr= addslashes($targetsArrJson);
+        $targetsArrJson = json_encode($tmparr, JSON_UNESCAPED_SLASHES);
+        $coolstr = addslashes($targetsArrJson);
         //$coolstr=str_replace('\\\\','\\',$coolstr);
 
-        $targets=sprintf('%s',$coolstr);
-        $command="node D:\\njs\\nn\\resol.js --hosts=$targets";
+        $targets = sprintf('%s', $coolstr);
+        $command = "node D:\\njs\\nn\\resol.js --hosts=$targets";
 
         //die($command);
-        $ooo=new \COM('WScript.Shell');
-        $ooo->Run($command,7,false);
+        $ooo = new \COM('WScript.Shell');
+        $ooo->Run($command, 7, false);
 
 //        if (substr(php_uname(), 0, 7) == "Windows"){//working
 //            pclose(popen("start /B ". $command, "r"));
@@ -223,14 +225,13 @@ class ToolsService
         return 0;
     }
 
-    public function runTool($profileId,$targetsArr){
+    public function runTool($profileId, $targetsArr)
+    {
         //print_r($targetsArr);
-        $repoProfile=$this->entityManager->getRepository('CasperBountyProfilesBundle:Profiles');
-        $repoTargets=$this->entityManager->getRepository('CasperBountyTargetsBundle:Targets');
-        $profile=$repoProfile->find($profileId);
-        $tool=$profile->getToolid()->getName();
-
-
+        $repoProfile = $this->entityManager->getRepository('CasperBountyProfilesBundle:Profiles');
+        $repoTargets = $this->entityManager->getRepository('CasperBountyTargetsBundle:Targets');
+        $profile = $repoProfile->find($profileId);
+        $tool = $profile->getToolid()->getName();
 
 
 //        switch ($tool){
@@ -241,24 +242,24 @@ class ToolsService
 //                break;
 //        }
 
-        $targetObjects=$repoTargets->findBy(array('targetid'=>$targetsArr));
+        $targetObjects = $repoTargets->findBy(array('targetid' => $targetsArr));
         ##get coomands for each target
-        $commands=$this->buildCommandv2($profile,$targetObjects);
+        $commands = $this->buildCommandv2($profile, $targetObjects);
 
         ##create task for each target
-        if(!empty($commands)){
-            $tasksArr=array();
+        if (!empty($commands)) {
+            $tasksArr = array();
             foreach ($commands as &$command) {
-                $target=$repoTargets->find($command['targetId']);
-                $task=$this->createTask($profile,$target);
+                $target = $repoTargets->find($command['targetId']);
+                $task = $this->createTask($profile, $target);
 
-                $tasksArr[]=$task;
+                $tasksArr[] = $task;
                 $this->entityManager->persist($task);
                 $this->entityManager->flush();
 
                 $this->entityManager->refresh($task);
 
-                $command['taskId']=$task->getTaskid();
+                $command['taskId'] = $task->getTaskid();
                 //$command['projectId']=$task->getTaskid();
             }
             $this->entityManager->flush();
@@ -295,14 +296,14 @@ class ToolsService
 //        }
 
 
-        $interprPath="G:\\nodejs\\node.exe";
-        $execscriptPath="G:\\nodeprojects\\njs\\nn\\executtest.js";
+        $interprPath = "G:\\nodejs\\node.exe";
+        $execscriptPath = "G:\\nodeprojects\\njs\\nn\\executtest.js";
         foreach ($targetsObjArr as $task) {
-            $commandpart=$this->buildCommand($profileId, $task);
-            if(!$commandpart)
+            $commandpart = $this->buildCommand($profileId, $task);
+            if (!$commandpart)
                 break;
             $cmd = $interprPath . ' ' . $execscriptPath . ' ' . $commandpart . ' ';
-            echo $cmd."\r\n\r\n";
+            echo $cmd . "\r\n\r\n";
             //die();
             $ooo = new \COM('WScript.Shell');
             $ooo->Run($cmd, 7, 0);
@@ -311,29 +312,30 @@ class ToolsService
         return 0;
     }
 
-    public function runToolv2(array $cmdArr){
+    public function runToolv2(array $cmdArr)
+    {
 
-        $interprPath="D:\\nodejs\\node.exe";
-        $execscriptPath="G:\\nodeprojects\\njs\\nn\\executtest.js";
+        $interprPath = "D:\\nodejs\\node.exe";
+        $execscriptPath = "D:\\njs\\nn\\executtest.js";
         foreach ($cmdArr as $cmd) {
 
-            $cmd=
-                "--tool=\"".
-                $cmd['toolPath'].
-                "\" --parameters=\"".
-                $cmd['cmdStr']."\"".
-                " --taskid=".
-                $cmd['taskId'].
-                " --fileOutput=".
-                $cmd['fileOutput'].
+            $cmd =
+                "--tool=\"" .
+                $cmd['toolPath'] .
+                "\" --parameters=\"" .
+                $cmd['cmdStr'] . "\"" .
+                " --taskid=" .
+                $cmd['taskId'] .
+                " --fileOutput=" .
+                $cmd['fileOutput'] .
                 ""; //
             $cmd = $interprPath . ' ' . $execscriptPath . ' ' . $cmd . ' ';
-            echo $cmd."\r\n\r\n";
+            echo $cmd . "\r\n\r\n";
             //die();
             $ooo = new \COM('WScript.Shell');
             $ooo->Run($cmd, 7, 0);
             //usleep(100000);
-        //break;
+            //break;
         }
 
     }
@@ -358,14 +360,15 @@ class ToolsService
 //
 //
 //    }
-public function createTask($profile, $target, $scenarioId=null){
-        $task=new Tasks();
+    public function createTask($profile, $target, $scenarioId = null)
+    {
+        $task = new Tasks();
         $task->setProfileid($profile);
         $task->setTargetid($target);
         $task->setStatus(0);
         $task->setScenarioid($scenarioId);
 
         return $task;
-}
+    }
 
 }

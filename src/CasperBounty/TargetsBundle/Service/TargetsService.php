@@ -183,6 +183,8 @@ class TargetsService
         }
 
         $uniqueHosts = $this->checkHostExists($hostTypeArr);
+        //dump($uniqueHosts);
+        //die();
         if (empty($uniqueHosts))
             return 0;
         $successAdded = array();
