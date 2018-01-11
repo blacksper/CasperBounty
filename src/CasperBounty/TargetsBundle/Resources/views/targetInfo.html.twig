@@ -22,50 +22,60 @@
         })
     </script>
     <div class="container">
+
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Dropdown
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <button class="dropdown-item" type="button">Action</button>
+                <button class="dropdown-item" type="button">Another action</button>
+                <button class="dropdown-item" type="button">Something else here</button>
+            </div>
+        </div>
+
         {% if errorMsg is defined %}
             <div class="alert alert-danger">
                 <strong>{{ errorMsg }}</strong> Indicates a successful or positive action.
             </div>
         {% endif %}
+
+
         <div class="row">
             <div class="col-lg-8">
+
+
                 <form method="post" action="{{ path('casper_bounty_tools_getips',{'projectId':projectId}) }}">
 
                     <div class="btn-group" style="position:fixed;">
                         <button class="btn btn-info btn-md" type="submit">Get ips</button>
-                        <div class="btn-group">
-                            <button class="btn btn-md btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                                Run
-                                profile
-                                <span class="caret"></span></button>
-                            <ul style="width: 260px;" class="dropdown-menu">
 
 
+                        <div class="dropdown show">
+                            <a class="btn btn-md btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Run profile
+                                <span class="caret"></span>
+                            </a>
+
+                            <div style="width: 260px;" class="dropdown-menu">
                                 <li class="bg-success"><a
                                             href="{{ path('casper_bounty_tools_homepage') }}"><span
-                                                class="glyphicon glyphicon-pencil"></span> Create new
-                                        profile</a></li>
-                                <div class="row">
+                                                class="glyphicon glyphicon-pencil"></span> Create new  profile</a>
+                                </li>
+                                <div class="dropdown">
                                     {% for profile in profiles %}
-
-
                                         <div class="col-md-9">
-                                            <li class="toolsListElement toolsPad"><a
-                                                        onclick="runTool({{ profile.profileId }})"
-                                                        href="#"> {{ profile.name }}
+                                            <li class="toolsListElement toolsPad"><a onclick="runTool({{ profile.profileId }})" href="#"> {{ profile.name }}
                                                     (<span>{{ profile.toolId.name }} </span>)</a>
                                             </li>
                                         </div>
                                         <div class="col-md-2">
-                                            <li class="tooltip-wide"><span class="glyphicon glyphicon-alert"
-                                                                           data-toggle="tooltip"
-                                                                           data-placement="right"
-                                                                           title="{{ profile.cmd }}"></span></li>
+                                            <li class="tooltip-wide"><span class="glyphicon glyphicon-alert" data-toggle="tooltip" data-placement="right" title="{{ profile.cmd }}"></span></li>
                                         </div>
 
                                     {% endfor %}
                                 </div>
-                            </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -92,7 +102,6 @@
                                 <td class="col-md-4">
                                     <a href="{{ path('casper_bounty_targets_targetid',{'targetId':maintarget.targetid,'projectId':projectId}) }}">{{ maintarget.host }}</a>
 
-
                                     {% for ip in maintarget.getIpId() %}
                                         <br>
                                         <em>
@@ -110,10 +119,11 @@
 
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-xs btn-primary" data-toggle="modal"
-                                            data-target="#tasksModal" data-id="{{ maintarget.targetid }}">
-                                        <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+                                    <button type="button" class="btn btn-xs btn-info"
+                                             data-id="{{ maintarget.targetid }}">
+                                        <i class="fa fa-list fa-xs"></i>
                                     </button>
+
 
                                 </td>
                             </tr>
@@ -124,9 +134,10 @@
                                 <tr class="{% if target.type=='maindomain' %}success{% endif %}">
                                     <td><input type="checkbox" id="targets" name="targetsArr[]"
                                                value="{{ target.targetid }}"></td>
-                                    <td class="col-md-4"><a
-                                                href="{{ path('casper_bounty_targets_targetid',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a>
+                                    <td class="col-md-4">
+                                        <!--<a href="{{ path('casper_bounty_targets_targetid',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a>-->
 
+                                        <a href="{{ path('casper_bounty_detTargetAction',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a>
 
                                         {% for ip in target.getIpid() %}
                                             <br>

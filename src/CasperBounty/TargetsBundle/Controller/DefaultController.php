@@ -175,6 +175,16 @@ class DefaultController extends Controller
         return $this->render('@CasperBountyTargets/ipView/domainByIp.html.twig',array('domains'=>$domains,'projectId'=>$projectId));
     }
 
+    /**
+     * @Route("/projects/{projectId}/target/{targetId}/info", requirements={"targetId"="\d+","projectId"="\d+"}, name="casper_bounty_detTargetAction")
+     * @Method({"GET","POST"})
+     */
+    public function detailedTargetInfoAction(int $targetId, int $projectId){
 
+        $servicesRepo=$this->getDoctrine()->getRepository('CasperBountyServicesBundle:Services');
+        $services=$servicesRepo->findBy(array('targetid'=>$targetId));
+        dump($services);
+        return $this->render('@CasperBountyTargets/info/detailedTargetInfo.html.twig',array('services'=>$services));
+    }
 
 }

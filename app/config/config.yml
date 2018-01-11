@@ -86,19 +86,3 @@ assetic:
           inputs:
               - 'assets/vendor/bootstrap/fonts/glyphicons-halflings-regular.woff'
           output: fonts/glyphicons-halflings-regular.woff
-      bootstrap_fonts_ttf:
-          inputs:
-              - 'assets/vendor/bootstrap/fonts/glyphicons-halflings-regular.ttf'
-          output: fonts/glyphicons-halflings-regular.ttf
-      bootstrap_fonts_svg:
-          inputs:
-              - 'assets/vendor/bootstrap/fonts/glyphicons-halflings-regular.svg'
-          output: fonts/glyphicons-halflings-regular.svg
-      bootstrap_fonts_eot:
-          inputs:
-              - 'assets/vendor/bootstrap/fonts/glyphicons-halflings-regular.eot'
-          output: fonts/glyphicons-halflings-regular.eot
-      bootstrap_fonts_woff2:
-          inputs:
-              - 'assets/vendor/bootstrap/fonts/glyphicons-halflings-regular.eot'
-          output: fonts/glyphicons-halflings-regular.woff2
