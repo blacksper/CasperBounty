@@ -1,5 +1,5 @@
 parameters:
-    tool.resultsDir: 'D:\\PhpstormProjects\\CasperBounty\\results'
+    tool.resultsDir: 'G:\\PhpstormProjects\\CasperBounty\\results'
 
 services:
   casper_bounty_tools.toolssrvice:

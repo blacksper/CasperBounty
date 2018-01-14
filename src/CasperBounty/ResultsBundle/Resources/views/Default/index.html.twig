@@ -12,30 +12,34 @@
             <input type="submit" value="create">
         </form>
 
-        <table class="table table-condensed ">
-            <thead>
-            <tr>
-                <th>tool name</th>
-                <th>path</th>
-                <th>target</th>
-                <th>btn</th>
-            </tr>
-            </thead>
 
-            <tbody>
+        <div class="container border">
+
+
+            <div class="row">
+                <div class="col-md-1">tool name</div>
+                <div class="col-md-4">path</div>
+                <div class="col-md-6">target</div>
+                <div class="col-md-1">btn</div>
+            </div>
+
+
             {% for result in results %}
-                <tr>
-                    <td class="col-md-1"></td>
-                    <td class="col-md-1">{{ result.taskid.targetid.host }}</td>
-                    <td class="col-md-6"><div >{{ result.result }}</div></td>
+                <div class="row border border-top-0">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-4">{{ result.taskid.targetid.host }}</div>
+                    <div class="col-md-6">
+                        <div class="trest">{{ result.result }}</div>
+                    </div>
 
-                    <td class="col-md-1">
-                        <button class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
-                    </td>
-                </tr>
+                    <div class="col-md-1">
+                        <button class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash"
+                                                                    aria-hidden="true"></span></button>
+                    </div>
+                </div>
             {% endfor %}
-            </tbody>
-        </table>
+
+        </div>
     </div>
 
 {% endblock %}

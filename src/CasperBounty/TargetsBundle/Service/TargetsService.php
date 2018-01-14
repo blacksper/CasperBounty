@@ -249,6 +249,9 @@ class TargetsService
 
     public function addHostIpsPtr($hostsArr)
     {//=array('target'=>"ert.com",'hostnames'=>array(),'address'=>array())
+        if (empty($hostsArr))
+            return 'hostsArr array is empty';
+
         $hostsArrForCheck = array();
         $repoT = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
         $target = false;
@@ -256,7 +259,7 @@ class TargetsService
 
         foreach ($hostsArr as $hosts) {
             if (isset($hosts['target'])) {
-                $target = $hosts['target'];
+                $target = $hosts['target']; //set target that using as main in run tool
             }
             if (isset($hosts['hostnames']))
                 foreach ($hosts['hostnames'] as $hostname) {
@@ -268,14 +271,13 @@ class TargetsService
                     $hostsArrForCheck[] = $address;
                 }
         }
+        dump($hostsArrForCheck);
         $uniq = $this->checkHostsForExists($hostsArrForCheck);
         dump($hostsArr);
         dump($uniq);
         dump($target);
 
-        if (empty($hostsArr))
-            return 'hostsArr array is empty';
-
+        //if target is set, get target object by host, else return from function
         if ($target) {
             $targetObj = $repoT->findBy(array('host' => $target));
             if (count($targetObj) > 1)
@@ -284,15 +286,19 @@ class TargetsService
                 return 'error, target of the scan not found!';
 
             $targetObj = $targetObj[0];
+        }
 
+        $targetObj->setState('up');
+        dump($targetObj);
+        if(empty($uniq)){
+            dump("im updaaate it");
+            return $this->updateState($hostsArr);
         }
 
         $allreadyIpsInTarget = $targetObj->getIpid()->toArray();
 
-        $targetObj->setState('up');
 
         foreach ($hostsArr as $host) {
-
             foreach ($host['address'] as $type => $addr) {
                 //if ip exists, find it in db
                 if (array_search($addr, $uniq) === false) {
@@ -308,6 +314,7 @@ class TargetsService
                     $ip = new Targets();
                     $ip->setHost($addr);
                     $ip->setType($type);
+                    $ip->setState('up');
                     //$ip->setDateadded(new \DateTime("now"));
                 }
 
@@ -328,7 +335,6 @@ class TargetsService
                             return 'error, target of the scan not found!';
                         else
                             $ptr = $ptrObj[0];
-
                     } else {
                         $ptr = new Targets();
                         $ptr->setHost($host['hostnames']['PTR']);
@@ -344,13 +350,27 @@ class TargetsService
                 $this->em->persist($ip);
                 $this->em->persist($targetObj);
             }
-
-
         }
         $this->em->flush();
 
         //dump($host);
         return 1;
+    }
+
+    public function updateState(array $hostsArr){
+        $targetsRepo=$this->em->getRepository('CasperBountyTargetsBundle:Targets');
+
+        foreach ($hostsArr as $host){
+            foreach ($host['address'] as $address){
+                $target=$targetsRepo->findBy(array('host'=>$address))[0];
+                //dump($target);
+                $target->setState('up');
+            }
+        }
+
+        $this->em->flush();
+
+        return 0;
     }
 
     public function addHost($prepareHosts)

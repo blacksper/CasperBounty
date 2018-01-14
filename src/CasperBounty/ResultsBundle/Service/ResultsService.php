@@ -67,14 +67,14 @@ class ResultsService
         $xml = simplexml_load_string($resultData);
 
         switch ($profile->getName()) {
-            case 'ping1':
+            case 'ping':
                 $this->targetsService->setProjectId($project);
                 $res = $this->handlePingResult($xml);
                 dump($res);
                 if (!$res) {
                     $target = $task->getTargetid();
                     $target->setState('not_resolve');
-                    $this->em->flush();
+
                 }
 
                 break;
@@ -84,8 +84,8 @@ class ResultsService
                 dump($xml);
                 break;
         }
-
-
+        $task->setStatus(1);
+        $this->em->flush();
 
         die();
     }
@@ -125,20 +125,39 @@ class ResultsService
     }
 
     public function handleNmapResults($xml){
+        $pingres=$this->handlePingResult($xml);
         dump($xml);
+        dump($pingres);
         $hosts=$xml->host;
-
+        $serviceRepo=$this->em->getRepository('CasperBountyServicesBundle:Services');
+        $targetRepo=$this->em->getRepository('CasperBountyTargetsBundle:Targets');
         $openPorts=array();
         foreach ($hosts as $host) {
             foreach ($host->ports->port as $port){
-                //dump($port['portid']);
+                //echo((string)$host->address['addr']);
+                //continue;
+                //var_dump($host);
                 $portnum=(string)$port['portid'];
+                $hostname=(string)($host->address['addr']); //get target scan address
+                $target=$targetRepo->findBy(array('host'=>$hostname))[0];
+                //dump($target);continue;
+                if(!$target)//bad check
+                    continue;
+                $existEnt=$serviceRepo->findBy(array('targetid'=>$target->getTargetid(),'port'=>$portnum));
+
+                if(count($existEnt)>0)
+                    continue;
+
                 $state=(string)$port->state['state'];
+                if($state=="open")
+                    $state=1;
+                else
+                    $state=0;
                 $serviceName=(string)$port->service['name'];
                 $openPorts[]=array('port'=>$port,'state'=>$state);
-                dump($port);
+                //dump($port);
                 $service=new Services();
-                $service->setTargetid($this->target);
+                $service->setTargetid($target);
                 $service->setPort($portnum);
                 $service->setState($state);
                 $service->setService($serviceName);
@@ -146,7 +165,7 @@ class ResultsService
                 $this->em->persist($service);
             }
         }
-
+        //die();
         try
         {
             $this->em->flush();

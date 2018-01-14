@@ -316,7 +316,7 @@ class ToolsService
     {
 
         $interprPath = "D:\\nodejs\\node.exe";
-        $execscriptPath = "D:\\njs\\nn\\executtest.js";
+        $execscriptPath = "G:\\nodeprojects\\njs\\nn\\executtest.js";
         foreach ($cmdArr as $cmd) {
 
             $cmd =

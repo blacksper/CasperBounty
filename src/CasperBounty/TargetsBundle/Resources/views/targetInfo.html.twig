@@ -23,17 +23,6 @@
     </script>
     <div class="container">
 
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Dropdown
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                <button class="dropdown-item" type="button">Action</button>
-                <button class="dropdown-item" type="button">Another action</button>
-                <button class="dropdown-item" type="button">Something else here</button>
-            </div>
-        </div>
-
         {% if errorMsg is defined %}
             <div class="alert alert-danger">
                 <strong>{{ errorMsg }}</strong> Indicates a successful or positive action.
@@ -43,45 +32,40 @@
 
         <div class="row">
             <div class="col-lg-8">
-
-
                 <form method="post" action="{{ path('casper_bounty_tools_getips',{'projectId':projectId}) }}">
 
-                    <div class="btn-group" style="position:fixed;">
-                        <button class="btn btn-info btn-md" type="submit">Get ips</button>
 
-
-                        <div class="dropdown show">
-                            <a class="btn btn-md btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Run profile
-                                <span class="caret"></span>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                            Run profile
+                            <span class="caret"></span>
+                        </button>
+                        <button class="btn btn-info btn-sm" type="submit">Get ips</button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item bg-success"
+                               href="{{ path('casper_bounty_tools_homepage') }}"><span
+                                        class="glyphicon glyphicon-pencil"></span> Create new profile
                             </a>
-
-                            <div style="width: 260px;" class="dropdown-menu">
-                                <li class="bg-success"><a
-                                            href="{{ path('casper_bounty_tools_homepage') }}"><span
-                                                class="glyphicon glyphicon-pencil"></span> Create new  profile</a>
-                                </li>
-                                <div class="dropdown">
-                                    {% for profile in profiles %}
-                                        <div class="col-md-9">
-                                            <li class="toolsListElement toolsPad"><a onclick="runTool({{ profile.profileId }})" href="#"> {{ profile.name }}
-                                                    (<span>{{ profile.toolId.name }} </span>)</a>
-                                            </li>
+                            {% for profile in profiles %}
+                                <div class="dropdown-item">
+                                    <div class="row">
+                                        <div class="col-md-10 profilename">
+                                            <a href="#" onclick="runTool({{ profile.profileId }})"> {{ profile.name }}
+                                                (<span>{{ profile.toolId.name }}</span>)</a>
                                         </div>
                                         <div class="col-md-2">
-                                            <li class="tooltip-wide"><span class="glyphicon glyphicon-alert" data-toggle="tooltip" data-placement="right" title="{{ profile.cmd }}"></span></li>
+                                            <i class="fa fa-exclamation-circle text-right" aria-hidden="true"
+                                               data-toggle="tooltip"
+                                               data-placement="right" title="{{ profile.cmd }}"></i>
                                         </div>
-
-                                    {% endfor %}
+                                    </div>
                                 </div>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
 
-                    <br>
-                    <br>
-                    <br>
+
                     <table class="table table-condensed subtargetsTable">
                         <thead>
                         <tr>
@@ -115,16 +99,20 @@
                                     {{ maintarget.type }}
                                 </td>
                                 <td>
-                                    <span class="state glyphicon {% if maintarget.state== "not_resolve" or maintarget.state=="down" %}glyphicon glyphicon-remove-sign text-danger{% elseif maintarget.state=="up" %}glyphicon glyphicon-ok-sign{% else %}glyphicon-question-sign text-info{% endif %}" aria-hidden="true"></span>
+
+                                    <i class="state {% if maintarget.state== "not_resolve" or maintarget.state=="down" %}fas fa-desktop text-danger{% elseif maintarget.state=="up" %}fas fa-desktop text-success{% else %}fa fa-question text-info{% endif %}"
+                                       aria-hidden="true"></i>
 
                                 </td>
                                 <td>
-                                    <button type="button" class="btn btn-xs btn-info"
-                                             data-id="{{ maintarget.targetid }}">
-                                        <i class="fa fa-list fa-xs"></i>
-                                    </button>
-
-
+                                    <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                                        <button type="button" class="btn btn-info"
+                                                data-id="{{ maintarget.targetid }}">
+                                            <i class="fa fa-list fa-xs"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-secondary btn-xs">Middle</button>
+                                        <button type="button" class="btn btn-secondary btn-xs">Right</button>
+                                    </div>
                                 </td>
                             </tr>
                         {% endif %}
@@ -157,7 +145,8 @@
                                     </td>
                                     <td>{{ target.type }}</td>
                                     <td>
-                                        <span class="state glyphicon {% if target.state== "not_resolve" or target.state=="down" %}glyphicon glyphicon-remove-sign text-danger{% elseif target.state=="up" %}glyphicon glyphicon-ok-sign text-success{% else %}glyphicon-question-sign text-info{% endif %}" aria-hidden="true"></span>
+                                        <i class="state {% if target.state== "not_resolve" or target.state=="down" %}fas fa-desktop text-danger{% elseif target.state=="up" %}fas fa-desktop text-success{% else %}fa fa-question text-info{% endif %}"
+                                              aria-hidden="true"></i>
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-xs btn-default">

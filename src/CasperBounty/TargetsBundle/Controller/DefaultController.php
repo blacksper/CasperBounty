@@ -183,8 +183,9 @@ class DefaultController extends Controller
 
         $servicesRepo=$this->getDoctrine()->getRepository('CasperBountyServicesBundle:Services');
         $services=$servicesRepo->findBy(array('targetid'=>$targetId));
+        //$project=$this->getDoctrine()->getRepository('CasperBountyProjectsBundle:Projects')->find($projectId);
         dump($services);
-        return $this->render('@CasperBountyTargets/info/detailedTargetInfo.html.twig',array('services'=>$services));
+        return $this->render('@CasperBountyTargets/info/detailedTargetInfo.html.twig',array('services'=>$services,'projectId'=>$projectId));
     }
 
 }

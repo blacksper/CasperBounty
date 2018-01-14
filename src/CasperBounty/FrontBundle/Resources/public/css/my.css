@@ -4,9 +4,9 @@ body {
 }
 
 /*.theme-dropdown .dropdown-menu {*/
-    /*position: static;*/
-    /*display: block;*/
-    /*margin-bottom: 20px;*/
+/*position: static;*/
+/*display: block;*/
+/*margin-bottom: 20px;*/
 /*}*/
 
 .theme-showcase > p > .btn {
@@ -44,12 +44,14 @@ table.targetsTable, table.notifTable {
     font-size: 12px;
     margin-left: 5px;
 }
+
 table.subtargetsTable, table.notifTable {
     max-width: 700px;
     font-size: 14px;
     margin-left: 5px;
 }
-table.toolsTable{
+
+table.toolsTable {
     max-width: 750px;
     font-size: 12px;
 }
@@ -65,7 +67,8 @@ table.toolsTable{
 .targetsTable > thead > tr > th {
     font-size: 14px;
 }
-.state{
+
+.state {
     font-size: 22px;
 }
 
@@ -78,19 +81,21 @@ table.toolsTable{
     border-radius: 1px;
 }
 
-.navbar-inner {
-    background-color: #5DB6F7; /* background color will be black for all browsers */
-    background-image: none;
-    background-repeat: no-repeat;
-    filter: none;
-}
-
-.navbar .nav > li > a:focus,
-.navbar .nav > li > a:hover {
-    color: white;
+.navbar-dark #navbarsExampleDefault .navbar-nav .nav-link:focus,
+.navbar-dark #navbarsExampleDefault .navbar-nav .nav-link:hover {
+    color: #fff;
     text-decoration: none;
     #background-color: transparent;
-    background-color: #7a43b6;
+
+
+}
+.navbar-dark #navbarsExampleDefault .navbar-nav .show > .nav-link,
+.navbar-dark #navbarsExampleDefault .navbar-nav .active > .nav-link,
+.navbar-dark #navbarsExampleDefault .navbar-nav .nav-link.show,
+.navbar-dark #navbarsExampleDefault .navbar-nav .nav-link.active{
+    color: #28a745;
+    background-color: white;
+    border-radius: 0.25rem;
 }
 
 .navbar .nav {
@@ -105,21 +110,24 @@ table.toolsTable{
     text-shadow: 0 0 0 #ffffff;
 }
 
-.addToolForm.row{
-padding-bottom: 15px;
+.addToolForm.row {
+    padding-bottom: 15px;
 }
 
-.toolId{
+.toolId {
     visibility: hidden;
 }
-.tryam{
+
+.tryam {
     max-width: 300px;
     min-height: 250px;
 }
-.btnAddToScen{
-    margin-top:10px;
+
+.btnAddToScen {
+    margin-top: 10px;
 }
-.toolsListElement{
+
+.toolsListElement {
 
     display: block;
     width: 200px;
@@ -128,8 +136,25 @@ padding-bottom: 15px;
     text-overflow: ellipsis;
     color: #777777;
 }
-.toolsPad{
+
+.toolsPad {
     padding: 8px;
 }
 
-.tooltip-wide .tooltip {min-width:200px;}
+.tooltip-wide .tooltip {
+    min-width: 200px;
+}
+.profilename{
+    white-space: nowrap;
+    width: 120px;
+    max-width:120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.btngractions{
+    padding-bottom: 15px;
+}
+.trest{
+    overflow-y: scroll; height:200px
+}

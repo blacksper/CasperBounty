@@ -21,7 +21,7 @@
 
 
                 <li class="nav-item {% if app.request.attributes.get('_route') == 'casper_bounty_projects_homepage' %}active{% endif %}">
-                    <a class="nav-link disabled" href="{{ path('casper_bounty_projects_homepage') }}">To main</a>
+                    <a class="nav-link" href="{{ path('casper_bounty_projects_homepage') }}">To main</a>
                 </li>
                 <li class="nav-item {% if app.request.attributes.get('_route') == 'casper_bounty_projectTargets' %}active{% endif %}">
                     <a class="nav-link " href="{{ path('casper_bounty_projectTargets',{'projectId':projectId}) }}">Targets</a>
@@ -30,7 +30,7 @@
                     <a class="nav-link" href="{{ path('casper_bounty_projects_addTargets',{'projectId':projectId}) }}">Add targets</a>
                 </li>
                 <li class="nav-item {% if app.request.attributes.get('_route') == 'casper_bounty_results_main' %}active{% endif %}">
-                    <a class="nav-link disabled" href="{{ path('casper_bounty_results_main',{'projectId':projectId}) }}">Results</a>
+                    <a class="nav-link" href="{{ path('casper_bounty_results_main',{'projectId':projectId}) }}">Results</a>
                 </li>
                 </div>
             </ul>
