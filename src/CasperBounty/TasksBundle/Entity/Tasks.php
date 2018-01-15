@@ -231,4 +231,77 @@ class Tasks
     {
         return $this->timeend;
     }
+    /**
+     * @var \CasperBounty\ServicesBundle\Entity\Services
+     */
+    private $serviceid;
+
+
+    /**
+     * Set serviceid
+     *
+     * @param \CasperBounty\ServicesBundle\Entity\Services $serviceid
+     *
+     * @return Tasks
+     */
+    public function setServiceid(\CasperBounty\ServicesBundle\Entity\Services $serviceid = null)
+    {
+        $this->serviceid = $serviceid;
+
+        return $this;
+    }
+
+    /**
+     * Get serviceid
+     *
+     * @return \CasperBounty\ServicesBundle\Entity\Services
+     */
+    public function getServiceid()
+    {
+        return $this->serviceid;
+    }
+    /**
+     * @var \CasperBounty\ServicesBundle\Entity\Services
+     */
+    private $services;
+
+
+    /**
+     * Set services
+     *
+     * @param \CasperBounty\ServicesBundle\Entity\Services $services
+     *
+     * @return Tasks
+     */
+    public function setServices(\CasperBounty\ServicesBundle\Entity\Services $services = null)
+    {
+        $this->services = $services;
+
+        return $this;
+    }
+
+    /**
+     * Get services
+     *
+     * @return \CasperBounty\ServicesBundle\Entity\Services
+     */
+    public function getServices()
+    {
+        return $this->services;
+    }
+    /**
+     * @var integer
+     */
+    private $tasks;
+
+
+    /**
+     * Get tasks
+     *
+     * @return integer
+     */
+    public function getTasks()
+    {
+        return $this->tasks;
+    }
 }

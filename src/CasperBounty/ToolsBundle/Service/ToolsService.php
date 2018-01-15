@@ -234,14 +234,6 @@ class ToolsService
         $tool = $profile->getToolid()->getName();
 
 
-//        switch ($tool){
-//            case 'nmap':
-//                $this->nmapService->startNmap($targetsObjects,$profile);
-//                break;
-//            default:
-//                break;
-//        }
-
         $targetObjects = $repoTargets->findBy(array('targetid' => $targetsArr));
         ##get coomands for each target
         $commands = $this->buildCommandv2($profile, $targetObjects);
@@ -256,7 +248,7 @@ class ToolsService
                 $tasksArr[] = $task;
                 $this->entityManager->persist($task);
                 $this->entityManager->flush();
-
+                //die();
                 $this->entityManager->refresh($task);
 
                 $command['taskId'] = $task->getTaskid();
@@ -316,7 +308,7 @@ class ToolsService
     {
 
         $interprPath = "D:\\nodejs\\node.exe";
-        $execscriptPath = "G:\\nodeprojects\\njs\\nn\\executtest.js";
+        $execscriptPath = "D:\\njs\\nn\\executtest.js";
         foreach ($cmdArr as $cmd) {
 
             $cmd =
@@ -367,7 +359,8 @@ class ToolsService
         $task->setTargetid($target);
         $task->setStatus(0);
         $task->setScenarioid($scenarioId);
-
+        $task->setServiceid(null);
+        //dump($task);die();
         return $task;
     }
 

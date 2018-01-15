@@ -22,6 +22,7 @@ class DefaultController extends Controller
             ->innerJoin('t.targetid', 'tar')
             ->innerJoin('tar.projectid', 'p')
             ->where('p.projectid=:prid')
+            ->orderBy('t.timestart','desc')
             ->setParameter('prid', $projectId)
             ->getQuery()
             ->getResult();

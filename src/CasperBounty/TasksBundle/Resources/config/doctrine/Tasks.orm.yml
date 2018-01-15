@@ -11,6 +11,9 @@ CasperBounty\TasksBundle\Entity\Tasks:
         FK_tasks_scenario:
             columns:
                 - scenarioId
+        fk_tasks_serviceid:
+            columns:
+                - serviceId
     id:
         taskid:
             type: integer
@@ -72,4 +75,11 @@ CasperBounty\TasksBundle\Entity\Tasks:
                 targetId:
                     referencedColumnName: targetId
             orphanRemoval: false
+        serviceid:
+            targetEntity: CasperBounty\ServicesBundle\Entity\Services
+            inversedBy: taskid
+            joinColumns:
+                serviceid:
+                    referencedColumnName: serviceId
+
     lifecycleCallbacks: {  }

@@ -51,13 +51,16 @@ class ResultsService
 
 
         dump($project);
-        if ($toolName == "nmap" && $fileOutput)
-            $resultData = file_get_contents(trim($fileOutput));
+        if ($toolName == "nmap" && $fileOutput) {
+            $resultData = file_get_contents(trim($fileOutput.".xml"));
+            $resultDatatext = file_get_contents(trim($fileOutput.".nmap"));
+        }
+
 
         $results = new Results();
 
         $results->setProfileid($profile);
-        $results->setResult(htmlentities(urldecode($resultData)));
+        $results->setResult(htmlentities(urldecode($resultDatatext)));
         $results->setTaskid($task);
         $this->em->persist($results);
 

@@ -181,4 +181,104 @@ class Services
 
         return $this;
     }
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $taskid;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->taskid = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add taskid
+     *
+     * @param \CasperBounty\ServicesBundle\Entity\Services $taskid
+     *
+     * @return Services
+     */
+    public function addTaskid(\CasperBounty\ServicesBundle\Entity\Services $taskid)
+    {
+        $this->taskid[] = $taskid;
+
+        return $this;
+    }
+
+    /**
+     * Remove taskid
+     *
+     * @param \CasperBounty\ServicesBundle\Entity\Services $taskid
+     */
+    public function removeTaskid(\CasperBounty\ServicesBundle\Entity\Services $taskid)
+    {
+        $this->taskid->removeElement($taskid);
+    }
+
+    /**
+     * Get taskid
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTaskid()
+    {
+        return $this->taskid;
+    }
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $tasks;
+
+
+    /**
+     * Add task
+     *
+     * @param \CasperBounty\TasksBundle\Entity\Tasks $task
+     *
+     * @return Services
+     */
+    public function addTask(\CasperBounty\TasksBundle\Entity\Tasks $task)
+    {
+        $this->tasks[] = $task;
+
+        return $this;
+    }
+
+    /**
+     * Remove task
+     *
+     * @param \CasperBounty\TasksBundle\Entity\Tasks $task
+     */
+    public function removeTask(\CasperBounty\TasksBundle\Entity\Tasks $task)
+    {
+        $this->tasks->removeElement($task);
+    }
+
+    /**
+     * Get tasks
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTasks()
+    {
+        return $this->tasks;
+    }
+    /**
+     * @var integer
+     */
+    private $services;
+
+
+    /**
+     * Get services
+     *
+     * @return integer
+     */
+    public function getServices()
+    {
+        return $this->services;
+    }
 }

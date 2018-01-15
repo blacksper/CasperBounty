@@ -55,9 +55,13 @@ class DefaultController extends Controller
      */
     public function runToolAction($profileId, Request $request){
         $targetsJson=$request->get('targetsArr');
+        dump($request);
+        //die();
         $ts=$this->get('casper_bounty_tools.toolssrvice');
         $targetsArr=explode(',',$targetsJson);
+
         $ts->runTool($profileId,$targetsArr);
+        //die();
         $response=new Response();
         $response->setContent('runned');
         return $response;

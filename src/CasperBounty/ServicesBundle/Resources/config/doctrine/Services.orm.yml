@@ -5,20 +5,25 @@ CasperBounty\ServicesBundle\Entity\Services:
         serviceTid:
             columns:
                 - targetId
+        serviceId:
+            columns:
+                - serviceId
     id:
-        port:
-            type: integer
-            nullable: false
-            options:
-                unsigned: false
-            id: true
-    fields:
         serviceid:
             type: integer
             nullable: true
             options:
                 unsigned: false
+            id: true
             column: serviceId
+            generator:
+                strategy: IDENTITY
+    fields:
+        port:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
         state:
             type: boolean
             nullable: true
@@ -34,7 +39,7 @@ CasperBounty\ServicesBundle\Entity\Services:
             length: 255
             options:
                 fixed: false
-    oneToOne:
+    manyToOne:
         targetid:
             targetEntity: CasperBounty\TargetsBundle\Entity\Targets
             cascade: {  }
@@ -45,4 +50,10 @@ CasperBounty\ServicesBundle\Entity\Services:
                 targetId:
                     referencedColumnName: targetId
             orphanRemoval: false
+    oneToMany:
+        taskid:
+            targetEntity: CasperBounty\TasksBundle\Entity\Tasks
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: serviceid
     lifecycleCallbacks: {  }

@@ -92,6 +92,9 @@
                                             <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}">
                                                 {{ ip.host }}
                                             </a>
+                                            <a href="{{ path('casper_bounty_detTargetAction',{'targetId':ip.targetid,'projectId':projectId}) }}">
+                                                info
+                                            </a>
                                         </em>
                                     {% endfor %}
                                 </td>

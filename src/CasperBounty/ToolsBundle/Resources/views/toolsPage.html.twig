@@ -1,15 +1,17 @@
 {% extends '@CasperBountyFront/base.html.twig' %}
 {% block body %}
     <script>
-        function aButtonPressed(){
-            $.get( "{{path('casper_bounty_tools_getprofiles',{'toolId':1})}}", function( data ) {
-                $( ".result" ).html( data );
-                console.log( "Load was performed." );
+        function aButtonPressed() {
+            $.get("{{ path('casper_bounty_tools_getprofiles',{'toolId':1}) }}", function (data) {
+                $(".result").html(data);
+                console.log("Load was performed.");
             });
         };
 
-        $(document).ready(function() {
-            $('button').on('click', function(){aButtonPressed();});
+        $(document).ready(function () {
+            $('button').on('click', function () {
+                aButtonPressed();
+            });
         });
     </script>
 
@@ -17,11 +19,11 @@
 
         {{ form_start(form,{'attr':{'class':'form-inline row addToolForm col-md-10','label':'test1'}}) }}
 
-                {{ form_widget(form.name,{'attr':{'class':'form-control mb-2 mr-sm-2 mb-sm-0','placeholder':'name: dirsearch'}}) }}
+        {{ form_widget(form.name,{'attr':{'class':'form-control mb-2 mr-sm-2 mb-sm-0','placeholder':'name: dirsearch'}}) }}
 
-                {{ form_widget(form.cmdpath,{'attr':{'class':'form-control mb-2 mr-sm-2 mb-sm-0','placeholder':'path: /home/testuser/dirsearch'}}) }}
+        {{ form_widget(form.cmdpath,{'attr':{'class':'form-control mb-2 mr-sm-2 mb-sm-0','placeholder':'path: /home/testuser/dirsearch'}}) }}
 
-                {{ form_widget(form.save) }}
+        {{ form_widget(form.save) }}
 
 
 
@@ -31,8 +33,20 @@
 
         {% block toolsTable %} {% endblock %}
 
-        <div id="myModal" class="modal fade" role="dialog">
-            <div class="modal-dialog">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".myModal">Large modal</button>
+
+        <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    ...
+                </div>
+            </div>
+        </div>
+
+        <div class="modal modal-lg fade myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLable"
+             aria-hidden="true">
+            <div class="modal-dialog modal-lg">
 
                 <!-- Modal content-->
                 <div class="modal-content">
@@ -44,16 +58,13 @@
                     <div class="modal-body">
                         <p>Use macros <b>[TARGET]</b> to mark point of url/ip insert</p>
                         {{ form_start(addProfileForm,{'attr':{'class':'form-inline','label':'test1'}}) }}
-                                {{ form_widget(addProfileForm.name,{'attr':{'class':'form-control mb-2 mr-sm-2 mb-sm-0','placeholder':'nmap sS web'}}) }}
-                                {{ form_widget(addProfileForm.cmd,{'attr':{'class':'form-control mb-2 mr-sm-2 mb-sm-0','placeholder':'-v -sS -T4 -p80,443'}}) }}
-                                {{ form_widget(addProfileForm.save,{'attr':{'class':'btn btn-primary'}}) }}
+                        {{ form_widget(addProfileForm.name,{'attr':{'class':'form-control mb-2 mr-sm-2 mb-sm-0','placeholder':'nmap sS web'}}) }}
+                        {{ form_widget(addProfileForm.cmd,{'attr':{'class':'form-control mb-2 mr-sm-2 mb-sm-0','placeholder':'-v -sS -T4 -p80,443'}}) }}
+                        {{ form_widget(addProfileForm.save,{'attr':{'class':'btn btn-primary'}}) }}
                         {{ form_end(addProfileForm) }}
                         <div class="result">
 
                         </div>
-
-
-
 
 
                     </div>
