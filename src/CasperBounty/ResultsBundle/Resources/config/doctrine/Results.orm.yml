@@ -22,13 +22,22 @@ CasperBounty\ResultsBundle\Entity\Results:
             length: 255
             options:
                 fixed: false
-    manyToOne:
+#    manyToOne:
+#        taskid:
+#            targetEntity: CasperBounty\TasksBundle\Entity\Tasks
+#            cascade: {  }
+#            fetch: LAZY
+#            inversedBy: results
+#            joinColumns:
+#                taskId:
+#                    referencedColumnName: taskId
+#            orphanRemoval: false
+    oneToOne:
         taskid:
             targetEntity: CasperBounty\TasksBundle\Entity\Tasks
             cascade: {  }
             fetch: LAZY
-            mappedBy: null
-            inversedBy: null
+            inversedBy: results
             joinColumns:
                 taskId:
                     referencedColumnName: taskId

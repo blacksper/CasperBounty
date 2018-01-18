@@ -26,12 +26,7 @@ class DefaultController extends Controller
             ->setParameter('prid', $projectId)
             ->getQuery()
             ->getResult();
-//        $results=$doctr
-//            ->getRepository('CasperBountyResultsBundle:Results')
-//            ->createQueryBuilder('r')->innerJoin('r.taskid','t')->where('t.targetid=:targetid')
-//            ->setParameter('projectid',$projectId)
-//            ->getQuery()
-//            ->getResult();
+
         return $this->render('CasperBountyResultsBundle:Default:index.html.twig', array('results' => $results, 'projectId' => $projectId));
     }
 

@@ -359,4 +359,53 @@ class Targets
     {
         return $this->serviceid;
     }
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $taskid;
+
+
+    /**
+     * Add taskid
+     *
+     * @param \CasperBounty\TasksBundle\Entity\Tasks $taskid
+     *
+     * @return Targets
+     */
+    public function addTaskid(\CasperBounty\TasksBundle\Entity\Tasks $taskid)
+    {
+        $this->taskid[] = $taskid;
+
+        return $this;
+    }
+
+    /**
+     * Remove taskid
+     *
+     * @param \CasperBounty\TasksBundle\Entity\Tasks $taskid
+     */
+    public function removeTaskid(\CasperBounty\TasksBundle\Entity\Tasks $taskid)
+    {
+        $this->taskid->removeElement($taskid);
+    }
+
+    /**
+     * Get taskid
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTaskid()
+    {
+        return $this->taskid;
+    }
+
+    /**
+     * Remove serviceid
+     *
+     * @param \CasperBounty\ServicesBundle\Entity\Services $serviceid
+     */
+    public function removeServiceid(\CasperBounty\ServicesBundle\Entity\Services $serviceid)
+    {
+        $this->serviceid->removeElement($serviceid);
+    }
 }

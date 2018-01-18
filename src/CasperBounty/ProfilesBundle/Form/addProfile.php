@@ -27,7 +27,7 @@ class addProfile extends AbstractType
                 'label'=>false))
             ->add('save',SubmitType::class,array(
                 'label'  => 'Add profile',
-                'attr'=>array('class'=>'btn btn-primary')
+                'attr'=>array('class'=>'btn btn-primary btn-sm')
             ));
             //$builder->setAction('casper_bounty_projects_targetsToProjectFromList');
     }

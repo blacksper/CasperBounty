@@ -70,7 +70,7 @@ CasperBounty\TasksBundle\Entity\Tasks:
             cascade: {  }
             fetch: LAZY
             mappedBy: null
-            inversedBy: null
+            inversedBy: taskid
             joinColumns:
                 targetId:
                     referencedColumnName: targetId
@@ -81,5 +81,13 @@ CasperBounty\TasksBundle\Entity\Tasks:
             joinColumns:
                 serviceid:
                     referencedColumnName: serviceId
+#    oneToMany:
+#        results:
+#          targetEntity: CasperBounty\ResultsBundle\Entity\Results
+#          mappedBy: taskid
+    oneToOne:
+        results:
+          targetEntity: CasperBounty\ResultsBundle\Entity\Results
+          mappedBy: taskid
 
     lifecycleCallbacks: {  }

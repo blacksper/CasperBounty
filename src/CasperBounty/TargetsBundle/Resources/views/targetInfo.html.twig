@@ -86,6 +86,9 @@
                                 <td class="col-md-4">
                                     <a href="{{ path('casper_bounty_targets_targetid',{'targetId':maintarget.targetid,'projectId':projectId}) }}">{{ maintarget.host }}</a>
 
+                                    <a href="{{ path('casper_bounty_detTargetAction',{'targetId':maintarget.targetid,'projectId':projectId}) }}">
+                                        info
+                                    </a>
                                     {% for ip in maintarget.getIpId() %}
                                         <br>
                                         <em>
@@ -129,20 +132,18 @@
                                         <!--<a href="{{ path('casper_bounty_targets_targetid',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a>-->
 
                                         <a href="{{ path('casper_bounty_detTargetAction',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a>
-
+                                        <a href="{{ path('casper_bounty_detTargetAction',{'targetId':target.targetid,'projectId':projectId}) }}">
+                                            info
+                                        </a>
                                         {% for ip in target.getIpid() %}
                                             <br>
                                             <em>
-
                                                 <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}">
                                                     {{ ip.host }}
                                                 </a>
-                                                {% for domain in ip.domainid %}
-                                                    {% if domain.type =="PTR" %}
-                                                        {{ dump(domain.host) }}
-                                                    {% endif %}
-                                                {% endfor %}
-
+                                                <a href="{{ path('casper_bounty_detTargetAction',{'targetId':ip.targetid,'projectId':projectId}) }}">
+                                                    info
+                                                </a>
                                             </em>
                                         {% endfor %}
                                     </td>

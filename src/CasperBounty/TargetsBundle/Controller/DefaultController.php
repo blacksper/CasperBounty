@@ -4,17 +4,8 @@ namespace CasperBounty\TargetsBundle\Controller;
 
 use CasperBounty\TargetsBundle\Entity\Targets;
 use CasperBounty\TargetsBundle\Form\FirstForm;
-use Doctrine\DBAL\Types\DateType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\BrowserKit\Response;
-use Symfony\Component\DomCrawler\Field\ChoiceFormField;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Constraints\DateTime;
-use Symfony\Component\HttpKernel\Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
@@ -182,10 +173,12 @@ class DefaultController extends Controller
     public function detailedTargetInfoAction(int $targetId, int $projectId){
 
         $servicesRepo=$this->getDoctrine()->getRepository('CasperBountyServicesBundle:Services');
+        $targetsRepo=$this->getDoctrine()->getRepository('CasperBountyTargetsBundle:Targets');
+        $target=$targetsRepo->find($targetId);
         $services=$servicesRepo->findBy(array('targetid'=>$targetId));
         //$project=$this->getDoctrine()->getRepository('CasperBountyProjectsBundle:Projects')->find($projectId);
         dump($services);
-        return $this->render('@CasperBountyTargets/info/detailedTargetInfo.html.twig',array('services'=>$services,'projectId'=>$projectId));
+        return $this->render('@CasperBountyTargets/info/detailedTargetInfo.html.twig',array('services'=>$services,'projectId'=>$projectId,'target'=>$target));
     }
 
 }

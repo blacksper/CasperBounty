@@ -30,29 +30,29 @@
 {% endblock %}
 {% block notifications %}
         Notifications
-    <table class="table table-condensed notifTable col-md-2">
-        <thead>
-        <tr>
-            <th>target</th>
-            <th>title</th>
-            <th>priority</th>
-            <th>btns</th>
-        </tr>
-        </thead>
+    {#<table class="table table-condensed notifTable col-md-2">#}
+        {#<thead>#}
+        {#<tr>#}
+            {#<th>target</th>#}
+            {#<th>title</th>#}
+            {#<th>priority</th>#}
+            {#<th>btns</th>#}
+        {#</tr>#}
+        {#</thead>#}
 
-        <tbody>
-        {% for target in targets %}
-            <tr class="{%   if target.type=='maindomain' %}success{% endif %}">
-                <td class="col-md-4"><a href="{{ path('casper_bounty_targets_targetid',{'targetId':target.id,'projectId':projectId}) }}">{{ target.hostName }}</a></td>
-                <td>{{ target.type }}</td>
-                <td>-</td>
-                <td>
-                    <button type="button" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"
-                                                                              aria-hidden="true"></span></button>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        {#<tbody>#}
+        {#{% for target in targets %}#}
+            {#<tr class="{%   if target.type=='maindomain' %}success{% endif %}">#}
+                {#<td class="col-md-4"><a href="{{ path('casper_bounty_targets_targetid',{'targetId':target.id,'projectId':projectId}) }}">{{ target.hostName }}</a></td>#}
+                {#<td>{{ target.type }}</td>#}
+                {#<td>-</td>#}
+                {#<td>#}
+                    {#<button type="button" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"#}
+                                                                              {#aria-hidden="true"></span></button>#}
+                {#</td>#}
+            {#</tr>#}
+        {#{% endfor %}#}
+        {#</tbody>#}
+    {#</table>#}
 
 {% endblock %}

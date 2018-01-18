@@ -2,27 +2,111 @@
 
 {% block body %}
 
+    <div class="container">
 
-    <div class="row">
-        <div class="col-2">
-            <div class="list-group" id="list-tab" role="tablist">
-                {% for service in services %}
-
-                    <a class="list-group-item list-group-item-action {% if loop.index0==0 %} active {% endif %}" id="list-home-list" data-toggle="list" href="#port-{{ service.port }}" role="tab" aria-controls="home">{{ service.service}} {{ service.port}}
-                        <i class="pull-right far fa-circle {% if service.state==1 %}text-success{% else %}danger{% endif %}" aria-hidden="true"></i>
+        <div class="row">
+            <div class="col-2">
+                {#{{ dump(target.taskid[0]) }}#}
+                <div class="list-group" id="list-tab" role="tablist">
+                    <a class="list-group-item list-group-item-action active"
+                       id="list-home-list" data-toggle="list" href="#port-0" role="tab"
+                       aria-controls="home">domain
+                        <i class="pull-right far fa-circle {% if target.state=='up' %}text-success{% else %}text-danger{% endif %}"
+                           aria-hidden="true"></i>
                     </a>
-                {% endfor %}
+                    {#{{ dump(target.ipid[0].serviceid[2].taskid[0]) }}#}
+                    {% set myArray = {} %}
+                    {% for ip in target.ipid %}
 
+                        <a class="list-group-item list-group-item-action listelem"
+                           id="list-home-list" data-toggle="list" href="#port-{{ ip.targetid }}-0" role="tab"
+                           aria-controls="home"> {{ ip.host }}
+                            <i class="pull-right far fa-circle {% if ip.state=='up' %}text-success{% else %}text-danger{% endif %}"
+                               aria-hidden="true"></i>
+                        </a>
+
+                        {% for service in ip.serviceid %}
+
+                            {% if service.taskid is not empty %}
+                                {% for task in service.taskid %}
+                                    {#{{ dump(task.results.result) }}#}
+                                    {% set myArray=myArray|merge([task]) %}
+                                {% endfor %}
+                            {% else %}
+                                {% set myArray=myArray|merge([service]) %}
+
+                            {% endif %}
+
+
+                            <a class="list-group-item list-group-item-action porttext {% if loop.index0==0 %} activee {% endif %}"
+                               id="list-home-list" data-toggle="list" href="#port-{{ service.serviceid }}" role="tab"
+                               aria-controls="home">{{ service.service }} {{ service.port }}
+                                <i class="pull-right far fa-circle {% if service.state==1 %}text-success{% else %}danger{% endif %}"
+                                   aria-hidden="true"></i>
+                            </a>
+                        {% endfor %}
+                    {% endfor %}
+                    {{ dump(myArray) }}
+                </div>
             </div>
-        </div>
-        <div class="col-10">
-            <div class="tab-content" id="nav-tabContent">
-        {% for service in services %}
-                    <div class="tab-pane fade show {% if loop.index0==0 %} active {% endif %}" id="port-{{ service.port }}" role="tabpanel" aria-labelledby="list-home-list">
-                        {{ dump(service.taskid) }}
-                    </div>
-        {% endfor %}
+            <div class="col-10">
 
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active"
+                         id="port-0" role="tabpanel" aria-labelledby="list-home-list">
+
+                        {% for task in target.taskid %}
+
+                            {% if task.serviceid is null and task.status==true %}
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-1">{{ task.taskid }}</div>
+                                        <div class="col-md-1">{{ task.profileid.name }}</div>
+                                        <div class="col-md-6 resultss">{{ task.results.result|raw }}</div>
+                                        <div class="col-md-2">{{ task.timestart|date('Y-m-d H:i:s') }}</div>
+                                        <div class="col-md-2">{{ task.timeend|date('Y-m-d H:i:s') }}</div>
+
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    {% for task in myArray %}
+                        {% if task.serviceid.serviceid is not defined %}
+                            <div class="tab-pane fade show {% if loop.index0==0 %} activee {% endif %}"
+                                 id="port-{{ task.serviceid }}" role="tabpanel"
+                                 aria-labelledby="list-home-list">
+                                {#{{ dump(task) }}#}
+                                none content
+                            </div>
+                        {% else %}
+                            <div class="tab-pane fade show {% if loop.index0==0 %} activee {% endif %}"
+                                 id="port-{{ task.serviceid.serviceid }}" role="tabpanel"
+                                 aria-labelledby="list-home-list">
+
+                                <div class="container">
+                                    {%  for taskres in task.serviceid.taskid %}
+                                    <div class="row">
+                                        <div class="col-md-1">{{ taskres.taskid }}</div>
+                                        <div class="col-md-2">{{ taskres.profileid.name }}</div>
+                                        <div class="col-md-5 resultss">{{ taskres.results.result }}</div>
+                                        <div class="col-md-1">{{ taskres.timestart|date('Y-m-d H:i:s') }}</div>
+                                        <div class="col-md-1">{{ taskres.timeend|date('Y-m-d H:i:s') }}</div>
+
+                                    </div>
+                                    {% endfor %}
+                                </div>
+
+
+
+
+                            </div>
+
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
             </div>
         </div>
     </div>

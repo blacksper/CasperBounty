@@ -88,4 +88,14 @@ CasperBounty\TargetsBundle\Entity\Targets:
             inversedBy: null
             joinTable: null
             orderBy: null
+    oneToMany:
+        taskid:
+            targetEntity: CasperBounty\TasksBundle\Entity\Tasks
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: targetid
+        serviceid:
+            targetEntity: CasperBounty\ServicesBundle\Entity\Services
+            mappedBy: targetid
+
     lifecycleCallbacks: {  }

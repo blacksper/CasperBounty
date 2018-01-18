@@ -263,7 +263,7 @@ class Tasks
     /**
      * @var \CasperBounty\ServicesBundle\Entity\Services
      */
-    private $services;
+    //private $services;
 
 
     /**
@@ -273,26 +273,26 @@ class Tasks
      *
      * @return Tasks
      */
-    public function setServices(\CasperBounty\ServicesBundle\Entity\Services $services = null)
-    {
-        $this->services = $services;
-
-        return $this;
-    }
+//    public function setServices(\CasperBounty\ServicesBundle\Entity\Services $services = null)
+//    {
+//        $this->services = $services;
+//
+//        return $this;
+//    }
 
     /**
      * Get services
      *
      * @return \CasperBounty\ServicesBundle\Entity\Services
      */
-    public function getServices()
-    {
-        return $this->services;
-    }
+//    public function getServices()
+//    {
+//        return $this->services;
+//    }
     /**
      * @var integer
      */
-    private $tasks;
+    //private $tasks;
 
 
     /**
@@ -300,8 +300,61 @@ class Tasks
      *
      * @return integer
      */
-    public function getTasks()
+//    public function getTasks()
+//    {
+//        return $this->tasks;
+//    }
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $results;
+
+
+    /**
+     * Add result
+     *
+     * @param \CasperBounty\ResultsBundle\Entity\Results $result
+     *
+     * @return Tasks
+     */
+    public function addResult(\CasperBounty\ResultsBundle\Entity\Results $result)
     {
-        return $this->tasks;
+        $this->results[] = $result;
+
+        return $this;
+    }
+
+    /**
+     * Remove result
+     *
+     * @param \CasperBounty\ResultsBundle\Entity\Results $result
+     */
+    public function removeResult(\CasperBounty\ResultsBundle\Entity\Results $result)
+    {
+        $this->results->removeElement($result);
+    }
+
+    /**
+     * Get results
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getResults()
+    {
+        return $this->results;
+    }
+
+    /**
+     * Set results
+     *
+     * @param \CasperBounty\ResultsBundle\Entity\Results $results
+     *
+     * @return Tasks
+     */
+    public function setResults(\CasperBounty\ResultsBundle\Entity\Results $results = null)
+    {
+        $this->results = $results;
+
+        return $this;
     }
 }

@@ -157,3 +157,15 @@ table.toolsTable {
 .trest{
     overflow-y: scroll; height:200px
 }
+.resultss{
+    max-height: 200px;
+    overflow: scroll;
+    margin-bottom: 20px;
+}
+
+.listelem{
+    font-size: 15px;
+}
+.porttext{
+    font-size: 12px;
+}

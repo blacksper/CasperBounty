@@ -44,10 +44,9 @@ CasperBounty\ServicesBundle\Entity\Services:
             targetEntity: CasperBounty\TargetsBundle\Entity\Targets
             cascade: {  }
             fetch: LAZY
-            mappedBy: null
-            inversedBy: null
+            inversedBy: serviceid
             joinColumns:
-                targetId:
+                targetid:
                     referencedColumnName: targetId
             orphanRemoval: false
     oneToMany:
