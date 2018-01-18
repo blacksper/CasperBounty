@@ -365,6 +365,7 @@ class TargetsService
                 $target=$targetsRepo->findBy(array('host'=>$address))[0];
                 //dump($target);
                 $target->setState('up');
+
             }
         }
 

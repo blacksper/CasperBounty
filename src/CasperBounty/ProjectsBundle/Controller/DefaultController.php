@@ -3,19 +3,32 @@
 namespace CasperBounty\ProjectsBundle\Controller;
 
 
+use CasperBounty\ProjectsBundle\Entity\Projects;
 use CasperBounty\ProjectsBundle\Form\AddProject;
 use CasperBounty\TargetsBundle\Entity\Targets;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+//use Symfony\Component\Form\Tests\Extension\Core\Type\TextTypeTest;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
     public function indexAction(Request $request)
     {
-        $form = $this->createForm(AddProject::class);
+        $project=new Projects();
+        $form = $this->createForm(AddProject::class,null,array(
+            'action'=>$this->generateUrl('casper_bounty_projects_homepage'),'method'=>'POST'
+        ));
+//        $form = $this->createFormBuilder($project)
+//            ->add('name',TextType::class, array('label'  => 'Enter project name '))
+//            ->add('save',SubmitType::class,array(
+//                    'label'  => 'Create project',
+//                    'attr'=>array('class'=>'btn btn-success btn-sm'))
+//            )->
+//            getForm();
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

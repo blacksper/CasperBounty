@@ -3,7 +3,7 @@
 namespace CasperBounty\ProjectsBundle\Form;
 
 use CasperBounty\ProjectsBundle\Entity\Projects;
-//use CasperBounty\TargetsBundle\Entity\Targets;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -20,7 +20,7 @@ class AddProject extends AbstractType
             )
             ->add('save',SubmitType::class,array(
                 'label'  => 'Create project',
-                    'attr'=>array('class'=>'btn btn-success')
+                    'attr'=>array('class'=>'btn btn-success btn-sm')
                     )
 
             );
