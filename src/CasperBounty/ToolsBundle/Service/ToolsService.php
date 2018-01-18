@@ -195,30 +195,34 @@ class ToolsService
         dump($commands);
         //die();
         $this->runToolv2($commands);
-        die();
-
-
-        $interprPath = "G:\\nodejs\\node.exe";
-        $execscriptPath = "G:\\nodeprojects\\njs\\nn\\executtest.js";
-        foreach ($targetsObjArr as $task) {
-            $commandpart = $this->buildCommand($profileId, $task);
-            if (!$commandpart)
-                break;
-            $cmd = $interprPath . ' ' . $execscriptPath . ' ' . $commandpart . ' ';
-            echo $cmd . "\r\n\r\n";
-            //die();
-            $ooo = new \COM('WScript.Shell');
-            $ooo->Run($cmd, 7, 0);
-            //usleep(100000);
-        }
+//        die();
+//
+//
+//        //$interprPath = "G:\\nodejs\\node.exe";
+//        $interprPath = "D:\\nodejs\\node.exe";
+//        //$execscriptPath = "G:\\nodeprojects\\njs\\nn\\executtest.js";
+//        $execscriptPath = "D:\\njs\\nn\\executtest.js";
+//        foreach ($targetsObjArr as $task) {
+//            $commandpart = $this->buildCommand($profileId, $task);
+//            if (!$commandpart)
+//                break;
+//            $cmd = $interprPath . ' ' . $execscriptPath . ' ' . $commandpart . ' ';
+//            echo $cmd . "\r\n\r\n";
+//            //die();
+//            $ooo = new \COM('WScript.Shell');
+//            $ooo->Run($cmd, 7, 0);
+//            //usleep(100000);
+//        }
         return 0;
     }
 
     public function runToolv2(array $cmdArr)
     {
 
+        //$interprPath = "D:\\nodejs\\node.exe";
+        //$execscriptPath = "G:\\nodeprojects\\njs\\nn\\executtest.js";
         $interprPath = "D:\\nodejs\\node.exe";
-        $execscriptPath = "G:\\nodeprojects\\njs\\nn\\executtest.js";
+        $execscriptPath = "D:\\njs\\nn\\executtest.js";
         foreach ($cmdArr as $cmd) {
 
             $cmd =

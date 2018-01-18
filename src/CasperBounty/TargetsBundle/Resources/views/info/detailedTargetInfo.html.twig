@@ -6,11 +6,15 @@
 
         <div class="row">
             <div class="col-2">
+
+
                 {#{{ dump(target.taskid[0]) }}#}
                 <div class="list-group" id="list-tab" role="tablist">
+
+
                     <a class="list-group-item list-group-item-action active"
                        id="list-home-list" data-toggle="list" href="#port-0" role="tab"
-                       aria-controls="home">domain
+                       aria-controls="home">{{ target.host }}
                         <i class="pull-right far fa-circle {% if target.state=='up' %}text-success{% else %}text-danger{% endif %}"
                            aria-hidden="true"></i>
                     </a>

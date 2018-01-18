@@ -17,6 +17,7 @@
             });
 
         }
+
         $(function () {
             $('[data-toggle="tooltip"]').tooltip()
         })
@@ -84,7 +85,23 @@
                                 <td><input type="checkbox" id="targets" name="targetsArr[]"
                                            value="{{ maintarget.targetid }}"></td>
                                 <td class="col-md-4">
-                                    <a href="{{ path('casper_bounty_targets_targetid',{'targetId':maintarget.targetid,'projectId':projectId}) }}">{{ maintarget.host }}</a>
+                                    <a href="{{ path('casper_bounty_targets_targetid',{'targetId':maintarget.targetid,'projectId':projectId}) }}"
+                                       data-toggle="tooltip" data-placement="right" data-html="true"
+                                       title="
+                                            {% if maintarget.serviceid[0] is defined%}
+
+                                                {% for service in maintarget.serviceid %}{{ service.port }} {{ service.service }}
+                                                    {% if service.state==1 %}
+                                                    <span class='text-success'>open</span>
+                                                    {% else %}
+                                                    <span class='text-danger'>close</span>
+                                                    {% endif %}<br>
+                                                {% endfor %}
+                                                {% else %}
+                                                <span class='text-warning'>????</span>
+                                            {% endif %}">{{ maintarget.host }}
+
+                                    </a>
 
                                     <a href="{{ path('casper_bounty_detTargetAction',{'targetId':maintarget.targetid,'projectId':projectId}) }}">
                                         info
@@ -92,7 +109,21 @@
                                     {% for ip in maintarget.getIpId() %}
                                         <br>
                                         <em>
-                                            <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}">
+                                            <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}"
+                                               data-toggle="tooltip" data-html="true" data-placement="right"
+                                               title="
+                                            {% if ip.serviceid is not empty %}
+                                                {% for service in ip.serviceid %}{{ service.port }} {{ service.service }}
+                                                    {% if service.state==1 %}
+                                                    <span class='text-success'>open</span>
+                                                    {% else %}
+                                                    <span class='text-danger'>close</span>
+                                                    {% endif %}<br>
+                                                {% endfor %}
+                                                {% else %}
+                                                <span class='text-warning'>close</span>
+                                            {% endif %}"
+                                            >
                                                 {{ ip.host }}
                                             </a>
                                             <a href="{{ path('casper_bounty_detTargetAction',{'targetId':ip.targetid,'projectId':projectId}) }}">
@@ -129,16 +160,46 @@
                                     <td><input type="checkbox" id="targets" name="targetsArr[]"
                                                value="{{ target.targetid }}"></td>
                                     <td class="col-md-4">
-                                        <!--<a href="{{ path('casper_bounty_targets_targetid',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a>-->
+                                        <!--<a href="{{ path('casper_bounty_targets_targetid',{'targetId':target.targetid,'projectId':projectId}) }}" >{{ target.host }}</a>-->
 
-                                        <a href="{{ path('casper_bounty_detTargetAction',{'targetId':target.targetid,'projectId':projectId}) }}">{{ target.host }}</a>
+                                        <a href="{{ path('casper_bounty_detTargetAction',{'targetId':target.targetid,'projectId':projectId}) }}"
+                                           data-toggle="tooltip" data-placement="right"
+                                           data-html="true"
+                                           title="
+                                            {% if target.serviceid[0] is defined%}
+
+                                                {% for service in target.serviceid %}{{ service.port }} {{ service.service }}
+                                                    {% if service.state==1 %}
+                                                    <span class='text-success'>open</span>
+                                                    {% else %}
+                                                    <span class='text-danger'>close</span>
+                                                    {% endif %}<br>
+                                                {% endfor %}
+                                                {% else %}
+                                                <span class='text-warning'>????</span>
+                                            {% endif %}">{{ target.host }}</a>
                                         <a href="{{ path('casper_bounty_detTargetAction',{'targetId':target.targetid,'projectId':projectId}) }}">
                                             info
                                         </a>
                                         {% for ip in target.getIpid() %}
                                             <br>
                                             <em>
-                                                <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}">
+                                                <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ip.targetid,'projectId':projectId}) }}"
+                                                   data-toggle="tooltip" data-placement="right"
+                                                   data-html="true"
+                                                   title="
+                                            {% if ip.serviceid[0] is defined%}
+
+                                                {% for service in ip.serviceid %}{{ service.port }} {{ service.service }}
+                                                    {% if service.state==1 %}
+                                                    <span class='text-success'>open</span>
+                                                    {% else %}
+                                                    <span class='text-danger'>close</span>
+                                                    {% endif %}<br>
+                                                {% endfor %}
+                                                {% else %}
+                                                <span class='text-warning'>????</span>
+                                            {% endif %}">
                                                     {{ ip.host }}
                                                 </a>
                                                 <a href="{{ path('casper_bounty_detTargetAction',{'targetId':ip.targetid,'projectId':projectId}) }}">
@@ -150,7 +211,7 @@
                                     <td>{{ target.type }}</td>
                                     <td>
                                         <i class="state {% if target.state== "not_resolve" or target.state=="down" %}fas fa-desktop text-danger{% elseif target.state=="up" %}fas fa-desktop text-success{% else %}fa fa-question text-info{% endif %}"
-                                              aria-hidden="true"></i>
+                                           aria-hidden="true"></i>
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-xs btn-default">
@@ -175,15 +236,15 @@
             </div>
             <div class="col-lg-4">
 
-                <ul>
-                    {% if group is defined %}
-                        {% for ipgr in group %}
-                            <li>{{ ipgr.cnt }} |
-                                <a href="{{ path('casper_bounty_domainsByIp',{'targetId':ipgr.targetid,'projectId':projectId}) }}">{{ ipgr.host }}</a>
-                            </li>
-                        {% endfor %}
-                    {% endif %}
-                </ul>
+                {#<ul>#}
+                    {#{% if group is defined %}#}
+                        {#{% for ipgr in group %}#}
+                            {#<li>{{ ipgr.cnt }} |#}
+                                {#<a href="{{ path('casper_bounty_domainsByIp',{'targetId':ipgr.targetid,'projectId':projectId}) }}">{{ ipgr.host }}</a>#}
+                            {#</li>#}
+                        {#{% endfor %}#}
+                    {#{% endif %}#}
+                {#</ul>#}
             </div>
         </div>
 
