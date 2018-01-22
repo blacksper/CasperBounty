@@ -159,8 +159,9 @@ table.toolsTable {
 }
 .resultss{
     max-height: 200px;
-    overflow: scroll;
+    overflow: auto;
     margin-bottom: 20px;
+    font-size: 10px;
 }
 
 .listelem{

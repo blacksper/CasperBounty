@@ -58,7 +58,8 @@ class ResultsService
             $xml = simplexml_load_string($resultData);
         } else {
 
-            $resultDatatext = file_get_contents(trim($fileOutput));
+            //$resultDatatext = file_get_contents(trim($fileOutput));
+            $resultDatatext = trim($fileOutput);
         }
 
         $results = new Results();
@@ -85,6 +86,8 @@ class ResultsService
 
                 break;
             case 'wappalyzer':
+                break;
+            case 'fast':
                 break;
             default:
                 $this->target = $task->getTargetid();

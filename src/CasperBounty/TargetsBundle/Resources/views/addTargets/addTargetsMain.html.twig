@@ -7,27 +7,34 @@
 
 
     <div class="container">
-        <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#targetsFromExists">add</a></li>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-targetsFromExists-tab" data-toggle="tab" href="#targetsFromExists" role="tab" aria-controls="nav-home" aria-selected="true">add</a>
+            <a class="nav-item nav-link " id="nav-targetsFromFile-tab" data-toggle="tab" href="#targetsFromFile" role="tab" aria-controls="nav-home" aria-selected="true">Targets from file</a>
+            <a class="nav-item nav-link " id="nav-targetsFromExists-tab" data-toggle="tab" href="#targetsFromExists" role="tab" aria-controls="nav-home" aria-selected="true">Aquatone</a>
+            <a class="nav-item nav-link " id="nav-targetsFromList-tab" data-toggle="tab" href="#targetsFromList" role="tab" aria-controls="nav-home" aria-selected="true">Massdns+altdns</a>
 
-            <li><a data-toggle="tab" href="#targetsFromFile">Targets from file</a></li>
-            <li ><a data-toggle="tab" href="#targetsFromExists">Aquatone</a></li>
-            <li><a data-toggle="tab" href="#targetsFromList">Massdns+altdns</a></li>
-        </ul>
+
+            {#<a class="active"><a data-toggle="tab" href="#targetsFromExists">add</a></a>#}
+
+            {#<a><a data-toggle="tab" href="#targetsFromFile">Targets from file</a></a>#}
+            {#<a ><a data-toggle="tab" href="#targetsFromExists">Aquatone</a></a>#}
+            {#<a><a data-toggle="tab" href="#targetsFromList">Massdns+altdns</a></a>#}
+        </div>
 
         <div class="tab-content">
-            <div id="targetsFromExists" class="tab-pane fade in active ">
+            {#<div id="targetsFromExists" class="tab-pane fade in active ">#}
+                <div class="tab-pane fade show active" id="targetsFromExists" role="tabpanel" aria-labelledby="nav-home-tab">
 
                 {% if newTargetsCount is defined %}
                 <div class="alert alert-success" role="alert">
                     <strong>Well done!</strong> {{ newTargetsCount }} added.
                 </div>
                     {% endif %}
-                <h3>Parse from aquatone</h3>
+                <h3>Parse from aquatone12</h3>
                     <form name="" method="post" action="{{ path('casper_bounty_targets_addTargets_post',{'projectId':projectId}) }}" class="form-group" label="test1">
 
-                        <textarea placeholder="domains" name="targets"></textarea><br>
-                        <button type="submit" id="" name="[save]" class="btn btn-primary">Add targets</button>
+                        <textarea placeholder="domains" name="targets" style="width: 300px;"></textarea><br>
+                        <button type="submit" id="" name="[save]" class="btn btn-primary btn-sm">Add targets</button>
                     </form>
 
 
