@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManager;
 use function PHPSTORM_META\elementType;
 use function PHPSTORM_META\type;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use function Symfony\Component\HttpKernel\Tests\controller_func;
 
 class TargetsService
 {
@@ -43,9 +44,14 @@ class TargetsService
             } elseif (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
                 $type = 'ipv6';
             } elseif ($this->validateDomain($host)) {
+                $host=$this->validateDomain($host);
+                if($host===false)
+                    continue;
+                //dump($host);
                 $type = 'domain';
                 preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#", $host, $m);
-                //dump($m);
+                dump($m);
+                $host=$m[0];
                 if (empty($m[2]) && empty($m[1])) {
                     $type = "maindomain";
                 }
@@ -69,6 +75,9 @@ class TargetsService
     public function validateDomain($domain)
     {
 
+        preg_match("#(http(s)?://)?(((.*)\.)?([\w\d\-]*\.\w{2,10}))+#", $domain, $m);
+        dump($m);
+        $domain=$m[3];
         ///Not even a single . this will eliminate things like abcd, since http://abcd is reported valid
         if (!substr_count($domain, '.')) {
             return false;
@@ -79,8 +88,15 @@ class TargetsService
         }
 
         $again = 'http://' . $domain;
-        //echo filter_var($again, FILTER_VALIDATE_URL);
-        return filter_var($again, FILTER_VALIDATE_URL);
+        //echo
+        //dump($again);
+        //dump(filter_var($again, FILTER_VALIDATE_URL));
+        if(filter_var($again, FILTER_VALIDATE_URL)){
+            return $domain;
+        }else{
+            return false;
+        }
+
     }
 
 
