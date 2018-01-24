@@ -44,14 +44,14 @@ class TargetsService
             } elseif (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
                 $type = 'ipv6';
             } elseif ($this->validateDomain($host)) {
-                $host=$this->validateDomain($host);
-                if($host===false)
+                $host = $this->validateDomain($host);
+                if ($host === false)
                     continue;
                 //dump($host);
                 $type = 'domain';
                 preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#", $host, $m);
                 dump($m);
-                $host=$m[0];
+                $host = $m[0];
                 if (empty($m[2]) && empty($m[1])) {
                     $type = "maindomain";
                 }
@@ -77,7 +77,7 @@ class TargetsService
 
         preg_match("#(http(s)?://)?(((.*)\.)?([\w\d\-]*\.\w{2,10}))+#", $domain, $m);
         dump($m);
-        $domain=$m[3];
+        $domain = $m[3];
         ///Not even a single . this will eliminate things like abcd, since http://abcd is reported valid
         if (!substr_count($domain, '.')) {
             return false;
@@ -91,9 +91,9 @@ class TargetsService
         //echo
         //dump($again);
         //dump(filter_var($again, FILTER_VALIDATE_URL));
-        if(filter_var($again, FILTER_VALIDATE_URL)){
+        if (filter_var($again, FILTER_VALIDATE_URL)) {
             return $domain;
-        }else{
+        } else {
             return false;
         }
 
@@ -204,6 +204,9 @@ class TargetsService
         if (empty($uniqueHosts))
             return 0;
         $successAdded = array();
+
+        $targetsRepo = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+
         //add maindomains, add to projects, delete from array maindomain
         //потому что первым делом нужно добавить maindomains чтобы остальные цеплялись к нему
         if (isset($uniqueHosts['maindomain']))
@@ -221,6 +224,19 @@ class TargetsService
                 //оно тут для получения id
                 $this->em->flush();
                 $this->em->refresh($target);
+                $subdomains = $targetsRepo->createQueryBuilder('t')
+                    ->where('t.host LIKE :mainhost')
+                    ->andWhere('t.type = :type')
+                    ->setParameters(array("mainhost", '%' . $host, 'type'=>'domain'))
+                    ->getQuery()
+                    ->getResult();
+                dump($subdomains);
+                if(!empty($subdomains)){
+                    foreach ($subdomains as $subdomain){
+                        $subdomain->setParentid($target);
+                        $this->em->flush();
+                    }
+                }
                 //$this->em->refresh($project); //возможно если убрать это то будут проблемы с дубликатами
 
                 unset($uniqueHosts['maindomain'][$key]);
@@ -306,7 +322,7 @@ class TargetsService
 
         $targetObj->setState('up');
         dump($targetObj);
-        if(empty($uniq)){
+        if (empty($uniq)) {
             dump("im updaaate it");
             return $this->updateState($hostsArr);
         }
@@ -373,12 +389,13 @@ class TargetsService
         return 1;
     }
 
-    public function updateState(array $hostsArr){
-        $targetsRepo=$this->em->getRepository('CasperBountyTargetsBundle:Targets');
+    public function updateState(array $hostsArr)
+    {
+        $targetsRepo = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
 
-        foreach ($hostsArr as $host){
-            foreach ($host['address'] as $address){
-                $target=$targetsRepo->findBy(array('host'=>$address))[0];
+        foreach ($hostsArr as $host) {
+            foreach ($host['address'] as $address) {
+                $target = $targetsRepo->findBy(array('host' => $address))[0];
                 //dump($target);
                 $target->setState('up');
 
