@@ -66,6 +66,7 @@ class TargetsService
             if ($type != "")
                 $hostWithType[$type][] = $host;
         }
+        //dump($hostWithType);
         //die();
         //print_r($hostWithType);
         return $hostWithType;
@@ -77,6 +78,8 @@ class TargetsService
 
         preg_match("#(http(s)?://)?(((.*)\.)?([\w\d\-]*\.\w{2,10}))+#", $domain, $m);
         dump($m);
+        if(!isset($m[3]))
+            return false;
         $domain = $m[3];
         ///Not even a single . this will eliminate things like abcd, since http://abcd is reported valid
         if (!substr_count($domain, '.')) {
@@ -181,17 +184,17 @@ class TargetsService
 
         //$this->projectId=$projectId;
         //если не указан тип значит добавление идёт с заранее указаннымb типами хостов
-
+        $successAdded = array();
         if (is_null($type)) {
             $hostsArr = explode("\r\n", $hosts);
             //print_r($hostsArr);
             if (empty($hostsArr))
-                return 0;
+                return "empty hosts";
             //echo $this->projectId;
             $hostTypeArr = $this->setHostType($hostsArr);//array ('domain'=>array(hosts),'maindomain'=>array(hosts))
 
             if (empty($hostTypeArr))
-                return 0;
+                return $successAdded;
         } else if (!empty($hosts)) {
             $hostTypeArr = $hosts;
         } else {
@@ -202,8 +205,8 @@ class TargetsService
         //dump($uniqueHosts);
         //die();
         if (empty($uniqueHosts))
-            return 0;
-        $successAdded = array();
+            return $successAdded;
+
 
         $targetsRepo = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
 
@@ -276,6 +279,7 @@ class TargetsService
 
         //$repository->clear();
         //die();
+        dump($successAdded);
         return $successAdded;
     }
 
@@ -393,12 +397,19 @@ class TargetsService
     {
         $targetsRepo = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
 
-        foreach ($hostsArr as $host) {
-            foreach ($host['address'] as $address) {
-                $target = $targetsRepo->findBy(array('host' => $address))[0];
-                //dump($target);
-                $target->setState('up');
 
+        foreach ($hostsArr as $host) {
+
+            foreach ($host['address'] as $address) {
+
+                $targetIp = $targetsRepo->findBy(array('host' => $address))[0];
+
+                if(!empty($host['target'])) {
+                    $targetDomain = $targetsRepo->findBy(array('host' => $host['target']))[0];
+                    $targetDomain->addIpid($targetIp);
+                }
+                //dump($target);
+                $targetIp->setState('up');
             }
         }
 
@@ -455,8 +466,8 @@ class TargetsService
                 select t from CasperBountyTargetsBundle:Targets t
                 JOIN t.projectid pid
                 
-                WHERE t.parentid=:parentId and pid=:projectId')
-                ->setMaxResults(20)//limit
+                WHERE t.parentid=:parentId and pid=:projectId ORDER BY t.state DESC')
+                ->setMaxResults(100)//limit
                 ->setParameters(array('parentId' => $targetId, 'projectId' => $this->project));
 
 
@@ -516,7 +527,7 @@ class TargetsService
             }
             $ipObj = new Targets();
             $ipObj->setHost($ip);
-            $ipObj->setType('ip');
+            $ipObj->setType('ipv4');
 
             //$ipObj->addProjectid($project);//не работает
 

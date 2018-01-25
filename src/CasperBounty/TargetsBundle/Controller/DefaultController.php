@@ -68,11 +68,7 @@ class DefaultController extends Controller
 
        // $messageGenerator->checkIpExist('199.16.156.9',1);
         dump($subTargets);
-       // if(!empty($subTargets))
-//        foreach ($subTargets as $target){
-//            $tarhost[]['target']=$target;
-//            $tarhost[]['ips']=$target->getIpid();
-//        }
+
 
         $targetsRepo=$doctr->getRepository('CasperBountyTargetsBundle:Targets');
 
@@ -135,34 +131,12 @@ class DefaultController extends Controller
         //$target=$repos->find($targetId);
         //$target=$repos->findBy(array('targetid'=>$targetId,'projectid'=>$projectId));
 
-//        $target=$repos->createQueryBuilder('t')
-//            ->select('t')
-//            ->innerJoin('t.projectid','p')
-//            ->where('t.targetid=:targetid')
-//            ->andWhere('p.projectid=:projectid')
-//            ->setParameters(array('targetid'=>$targetId,'projectid'=>$projectId))
-//        ->getQuery()->getResult();
 
         $target=$repos->find($targetId);
         $domains=$target->getDomainid();
         //$domains[0]->
         dump($domains[0]->getServiceid());
-        //if(empty($target))
-        //    return $this->redirectToRoute('casper_bounty_projectTargets',array('projectId'=>$projectId));
-        //dump($target);
-        //die();
 
-//        if($target[0]->getType()!='ip'){
-//            return $this->redirectToRoute('casper_bounty_projectTargets',array('projectId'=>$projectId));
-//        }
-
-        //$ips=$repos->createQueryBuilder('d');
-        //$query=$ips->innerJoin('d.ipid','ipid')->where('ipid.targetid=:tarid')
-        //    ->getDQL();
-        //dump($query);
-        //$res=$doctrine->getManager()->createQuery($query)->setParameter('tarid',$targetId)->getResult();
-        //dump($res);
-        //die();
         return $this->render('@CasperBountyTargets/ipView/domainByIp.html.twig',array('domains'=>$domains,'projectId'=>$projectId));
     }
 

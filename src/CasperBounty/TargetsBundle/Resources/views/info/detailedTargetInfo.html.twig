@@ -59,16 +59,18 @@
                     <div class="tab-pane fade show active"
                          id="port-0" role="tabpanel" aria-labelledby="list-home-list">
 
-                        {% for task in target.taskid %}
 
-                            {% if task.serviceid is null and task.status==true %}
+                        {% for task in target.taskid %}
+                            {#{{ dump(task) }}#}
+                            {#{{ dump(task.results) }}#}
+                            {% if (task.serviceid is null) and (task.status==true) %}
                                 <div class="container">
                                     <div class="row">
-                                        <div class="col-md-1">{{ task.taskid }}</div>
-                                        <div class="col-md-1">{{ task.profileid.name }}</div>
+                                        <div class="col-md-1 dateinfo">{{ task.taskid }}</div>
+                                        <div class="col-md-1 dateinfo">{{ task.profileid.name }}</div>
                                         <div class="col-md-6 resultss"><pre>{{ task.results.result|raw }}</pre></div>
-                                        <div class="col-md-2">{{ task.timestart|date('Y-m-d H:i:s') }}</div>
-                                        <div class="col-md-2">{{ task.timeend|date('Y-m-d H:i:s') }}</div>
+                                        <div class="col-md-1 dateinfo">{{ task.timestart|date('Y-m-d H:i:s') }}</div>
+                                        <div class="col-md-1 dateinfo">{{ task.timeend|date('Y-m-d H:i:s') }}</div>
 
                                     </div>
                                 </div>

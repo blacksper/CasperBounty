@@ -157,10 +157,15 @@ table.toolsTable {
 .trest{
     overflow-y: scroll; height:200px
 }
+.hostRusultsTable{
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
 .resultss{
     max-height: 200px;
     overflow: auto;
     margin-bottom: 20px;
+    margin-left: 10px;
     font-size: 10px;
 }
 
@@ -168,5 +173,8 @@ table.toolsTable {
     font-size: 15px;
 }
 .porttext{
+    font-size: 12px;
+}
+.dateinfo{
     font-size: 12px;
 }

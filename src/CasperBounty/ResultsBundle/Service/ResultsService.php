@@ -95,10 +95,11 @@ class ResultsService
                 dump($xml);
                 break;
         }
+
         $task->setStatus(1);
         $this->em->flush();
 
-        die();
+        die('this is die');
     }
 
     public function handlePingResult($xml)
@@ -189,7 +190,7 @@ class ResultsService
 
         //dump($this->target->addServiceid());
 
-        die();
+        //die();
         return 0;
     }
 
