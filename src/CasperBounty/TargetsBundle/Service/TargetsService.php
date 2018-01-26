@@ -77,7 +77,7 @@ class TargetsService
     {
 
         preg_match("#(http(s)?://)?(((.*)\.)?([\w\d\-]*\.\w{2,10}))+#", $domain, $m);
-        dump($m);
+        //dump($m);
         if(!isset($m[3]))
             return false;
         $domain = $m[3];
@@ -86,7 +86,7 @@ class TargetsService
             return false;
         }
 
-        if (stripos($domain, 'www.') === 0) {
+        if ((stripos($domain, 'www.') === 0) && (substr_count($domain, '.')===2)){//TODO switch to regexp
             $domain = substr($domain, 4);
         }
 
@@ -115,7 +115,7 @@ class TargetsService
 
             }
         }
-
+        dump($allHostsForCheck);
         $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');//TODO уточнить необходимость создания репозитория второй раз
 
         $existsTargets = $repository
@@ -123,14 +123,19 @@ class TargetsService
             ->select('t.host')
             ->where('t.host in(:allDomains)')
             ->setParameters(array('allDomains' => $allHostsForCheck))
-            ->getQuery()
-            ->getArrayResult();
+            ->getQuery();
+        //dump($existsTargets);
+        $existsTargets=$existsTargets->getArrayResult();
+
 
 
         $existsTargetsArr = array();
         foreach ($existsTargets as $exTarget)
             $existsTargetsArr[] = $exTarget['host'];
+        //dump($existsTargetsArr);
+        dump(array_diff($allHostsForCheck, $existsTargetsArr));
 
+        //die();
         $uniqHostsArray = array_unique(array_diff($allHostsForCheck, $existsTargetsArr));
         //dump($allHostsForCheck);
         if (empty($uniqHostsArray))
@@ -200,9 +205,10 @@ class TargetsService
         } else {
             return "something wrong with type";
         }
+        dump($hostTypeArr);
 
         $uniqueHosts = $this->checkHostExists($hostTypeArr);
-        //dump($uniqueHosts);
+
         //die();
         if (empty($uniqueHosts))
             return $successAdded;
