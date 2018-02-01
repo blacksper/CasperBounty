@@ -220,10 +220,10 @@ class ToolsService
     public function runToolv2(array $cmdArr)
     {
 
-//        $interprPath = "D:\\nodejs\\node.exe";
-//        $execscriptPath = "G:\\nodeprojects\\njs\\nn\\executtest.js";
         $interprPath = "D:\\nodejs\\node.exe";
-        $execscriptPath = "D:\\njs\\nn\\executtest.js";
+        $execscriptPath = "G:\\nodeprojects\\njs\\nn\\executtest.js";
+        //$interprPath = "D:\\nodejs\\node.exe";
+        //$execscriptPath = "D:\\njs\\nn\\executtest.js";
         foreach ($cmdArr as $cmd) {
 
             $cmd =
@@ -241,7 +241,7 @@ class ToolsService
             //die();
             $ooo = new \COM('WScript.Shell');
             $ooo->Run($cmd, 7, 0);
-            //usleep(100000);
+            usleep(100000);
             //break;
         }
 

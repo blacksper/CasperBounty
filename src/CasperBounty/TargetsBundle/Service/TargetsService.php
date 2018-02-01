@@ -5,6 +5,7 @@ namespace CasperBounty\TargetsBundle\Service;
 
 use CasperBounty\ProjectsBundle\Entity\Projects;
 use CasperBounty\TargetsBundle\Entity\Targets;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\ORM\EntityManager;
 use function PHPSTORM_META\elementType;
@@ -236,7 +237,7 @@ class TargetsService
                 $subdomains = $targetsRepo->createQueryBuilder('t')
                     ->where('t.host LIKE :mainhost')
                     ->andWhere('t.type = :type')
-                    ->setParameters(array("mainhost", '%' . $host, 'type'=>'domain'))
+                    ->setParameters(array("mainhost"=> '%' . $host, 'type'=>'domain'))
                     ->getQuery()
                     ->getResult();
                 dump($subdomains);
@@ -322,6 +323,7 @@ class TargetsService
         //if target is set, get target object by host, else return from function
         if ($target) {
             $targetObj = $repoT->findBy(array('host' => $target));
+            dump($targetObj);
             if (count($targetObj) > 1)
                 return 'error, duplicate targets if db!';
             else if (count($targetObj) < 0)
@@ -338,11 +340,11 @@ class TargetsService
         }
 
         $allreadyIpsInTarget = $targetObj->getIpid()->toArray();
-
+        dump($allreadyIpsInTarget);
 
         foreach ($hostsArr as $host) {
             foreach ($host['address'] as $type => $addr) {
-                //if ip exists, find it in db
+                //if ip exists, find it in db and it will added to now target
                 if (array_search($addr, $uniq) === false) {
                     $ipObject = $repoT->findBy(array('host' => $addr));
                     if (count($ipObject) > 1)
@@ -403,23 +405,38 @@ class TargetsService
     {
         $targetsRepo = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
 
-
         foreach ($hostsArr as $host) {
-
             foreach ($host['address'] as $address) {
-
                 $targetIp = $targetsRepo->findBy(array('host' => $address))[0];
-
-                if(!empty($host['target'])) {
+                dump($targetIp);
+                if(!empty($host['target'])&&$targetIp) {
                     $targetDomain = $targetsRepo->findBy(array('host' => $host['target']))[0];
-                    $targetDomain->addIpid($targetIp);
+
+                    $allreadyIpsOnDomain=$targetDomain->getIpid();
+                    $allreadyIpsOnDomainTmp=array();
+                    //all exists ip owned by domain to array
+                    foreach ($allreadyIpsOnDomain as $ip){
+                        $allreadyIpsOnDomainTmp[]=$ip->getHost();
+                    }
+                    //if array search found same ip => duplicate
+                    if(array_search($targetIp->getHost(),$allreadyIpsOnDomainTmp)===false)
+                        $targetDomain->addIpid($targetIp);
                 }
                 //dump($target);
                 $targetIp->setState('up');
             }
         }
-
-        $this->em->flush();
+        try {
+            // ...
+            $this->em->flush();
+        }
+        catch( UniqueConstraintViolationException $e )
+        {
+                echo $e->getMessage();
+                echo $e->getErrorCode();
+                //$this->em=;
+        }
+        //$this->em->flush();
 
         return 0;
     }

@@ -91,22 +91,22 @@ class DefaultController extends Controller
         $profiles=$doctr->getRepository('CasperBountyProfilesBundle:Profiles')->findAll();
 
 
-        $group=$targetsRepo->createQueryBuilder('t')
-            ->select('count(t.targetid) cnt,ipid.host,ipid.targetid')
-            ->innerJoin('t.ipid','ipid')
-            ->innerJoin('t.projectid','proj')
-            ->where('proj.projectid=:projectid')
-            ->groupBy('ipid.host')
-            ->orderBy('cnt','DESC')
-            ->setParameters(array('projectid'=>$projectId))
-            ->getQuery()
-            ->getResult();
+//        $group=$targetsRepo->createQueryBuilder('t')
+//            ->select('count(t.targetid) cnt,ipid.host,ipid.targetid')
+//            ->innerJoin('t.ipid','ipid')
+//            ->innerJoin('t.projectid','proj')
+//            ->where('proj.projectid=:projectid')
+//            ->groupBy('ipid.host')
+//            ->orderBy('cnt','DESC')
+//            ->setParameters(array('projectid'=>$projectId))
+//            ->getQuery()
+//            ->getResult();
         //dump($heh);
         //die();
 
 //        $query=$ips->innerJoin('d.ipid','ipid')->where('ipid.targetid=:tarid')
 //            ->getDQL();
-        //dump()
+        //dump($group);
         //dump($results);
         return $this->render('@CasperBountyTargets/targetInfo.html.twig',
             array(
@@ -116,7 +116,7 @@ class DefaultController extends Controller
                 'maintarget'=>$maintarget,
                 'profiles'=>$profiles,
                 //'results'=>$results,
-                'group'=>$group
+                //'group'=>$group
             ));
 
     }

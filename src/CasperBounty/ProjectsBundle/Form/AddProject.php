@@ -20,7 +20,7 @@ class AddProject extends AbstractType
             )
             ->add('save',SubmitType::class,array(
                 'label'  => 'Create project',
-                    'attr'=>array('class'=>'btn btn-success btn-sm')
+                    'attr'=>array('class'=>'btn btn-outline-success btn-sm')
                     )
 
             );

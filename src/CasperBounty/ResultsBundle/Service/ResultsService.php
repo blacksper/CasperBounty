@@ -81,7 +81,6 @@ class ResultsService
                 if (!$res) {
                     $target = $task->getTargetid();
                     $target->setState('not_resolve');
-
                 }
 
                 break;
