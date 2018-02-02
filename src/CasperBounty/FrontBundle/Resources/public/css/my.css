@@ -145,8 +145,8 @@ table.toolsTable {
 }
 .profilename{
     white-space: nowrap;
-    width: 120px;
-    max-width:120px;
+    width: 220px;
+    max-width:220px;
     overflow: hidden;
     text-overflow: ellipsis;
 }

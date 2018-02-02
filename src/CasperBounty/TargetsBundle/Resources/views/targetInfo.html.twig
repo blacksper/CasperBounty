@@ -23,7 +23,6 @@
         })
 
 
-
     </script>
     <div class="container">
 
@@ -242,19 +241,49 @@
                             </div>
                         {% endfor %}
                     </div>
-                </div>
 
-                {#<ul>#}
-                {#{% if group is defined %}#}
-                {#{% for ipgr in group %}#}
-                {#<li>{{ ipgr.cnt }} |#}
-                {#<a href="{{ path('casper_bounty_domainsByIp',{'targetId':ipgr.targetid,'projectId':projectId}) }}">{{ ipgr.host }}</a>#}
-                {#</li>#}
-                {#{% endfor %}#}
-                {#{% endif %}#}
-                {#</ul>#}
+                    <div class="dropdown show position-fixed">
+                        <a class="btn btn-info dropdown-toggle" style="width: 300px" href="#" role="button"
+                           id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Run profile
+                        </a>
+
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item bg-success"
+                               href="{{ path('casper_bounty_tools_homepage') }}"><span
+                                        class="glyphicon glyphicon-pencil"></span> Create new profile
+                            </a>
+                            {% for profile in profiles %}
+                            <div class="row" style="width: 300px">
+                                <div class="col-md-10 profilename">
+                                    <a class="dropdown-item" href="#"
+                                       onclick="runTool({{ profile.profileId }})">{{ profile.name }}</a>
+
+                                </div>
+                                <div class="col-md-2">
+                                    <i class="fa fa-exclamation-circle text-right" aria-hidden="true"
+                                       data-toggle="tooltip"
+                                       data-placement="right" title="{{ profile.cmd }}"></i>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </div>
+
+
+            {#<ul>#}
+            {#{% if group is defined %}#}
+            {#{% for ipgr in group %}#}
+            {#<li>{{ ipgr.cnt }} |#}
+            {#<a href="{{ path('casper_bounty_domainsByIp',{'targetId':ipgr.targetid,'projectId':projectId}) }}">{{ ipgr.host }}</a>#}
+            {#</li>#}
+            {#{% endfor %}#}
+            {#{% endif %}#}
+            {#</ul>#}
         </div>
+    </div>
 
 
     </div>
@@ -265,8 +294,8 @@
             $(".dinax").prop('checked', $(this).prop('checked'));
         });
 
-//        $("#checkAll").click(function () {
-//            $('#targets').not(this).checkbox({checked: this.checked});
-//        });
+        //        $("#checkAll").click(function () {
+        //            $('#targets').not(this).checkbox({checked: this.checked});
+        //        });
     </script>
 {% endblock %}

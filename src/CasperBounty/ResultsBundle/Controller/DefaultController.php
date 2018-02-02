@@ -71,7 +71,8 @@ class DefaultController extends Controller
         dump($request->get('regexp'));
         $repoR = $this->getDoctrine()->getRepository('CasperBountyResultsBundle:Results');
         $res = $repoR->findBy(array('taskid' => $taskid));
-        preg_match_all('#([0-9]{1,6})\/(tcp|udp)\s+(open|close|filtred)\s+([^\r\n]+)#', $res[0]->getResult(), $m);
+        //preg_match_all('#([0-9]{1,6})\/(tcp|udp)\s+(open|close|filtred)\s+([^\r\n]+)#', $res[0]->getResult(), $m);
+        preg_match_all('#Content-Length.*#', $res[0]->getResult(), $m);
         dump($res);
         dump($m);
         die();
