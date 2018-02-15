@@ -37,49 +37,126 @@ class TargetsService
     /** set hosts type */
     public function setHostType($hosts)
     {
-        $hostWithType = array();
+        $hostWithType = array('ipv4'=>array(),
+            'ipv6'=>array(),
+            'domain'=>array(),
+            'maindomain'=>array()
+        );
         foreach ($hosts as $host) {
             $type = "";
-            if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
-                $type = 'ipv4';
-            } elseif (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-                $type = 'ipv6';
-            } elseif ($this->validateDomain($host)) {
-                $host = $this->validateDomain($host);
-                if ($host === false)
-                    continue;
-                //dump($host);
-                $type = 'domain';
-                preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#", $host, $m);
-                dump($m);
-                $host = $m[0];
-                if (empty($m[2]) && empty($m[1])) {
-                    $type = "maindomain";
-                }
-            } else {
-                $type = "";
-                continue;
+//            if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+//                $type = 'ipv4';
+//            } elseif (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+//                $type = 'ipv6';
+//            } elseif ($this->validateDomain($host)) {
+//                $host = $this->validateDomain($host);
+//                if ($host === false)
+//                    continue;
+//
+//                $type = 'domain';
+//                preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#", $host, $m);
+//                dump($m);
+//                $host = $m[0];
+//                if (empty($m[2]) && empty($m[1])) {
+//                    $type = "maindomain";
+//                }
+//            }elseif(){
+//
+//            }
+//            else {
+//                $type = "";
+//                continue;
+//            }
+            $hostType = $this->identifyType($host);
+            switch ($hostType) {
+                case 'ipv4':
+                    $type = "ipv4";
+                    break;
+                case 'ipv6':
+                    $type = "ipv6";
+                    break;
+                case 'CIDR':
+                    $type='CIDR';
+                    $ips=$this->CIDRtoIpv4Range($host);
+                    //echo 'delimiter';
+                    //print_r($ips);
+                    break;
+                case 'domain':
+                    $type="domain";
+                    preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#", $host, $m);
+                    dump($m);
+                    $host = $m[0];
+                    if (empty($m[2]) && empty($m[1])) {
+                        $type = "maindomain";
+                    }
+                    break;
+                default:
+                    echo "nuuu  hz che tut skazat";
+                    break;
             }
-            //echo $type;
             //TODO проверку на дубликаты входных доменов
-//            echo $type."   ";
-//            echo $host."<br>";
-            if ($type != "")
+
+            if ($type=='CIDR')
+                $hostWithType['ipv4']=array_merge($hostWithType['ipv4'],$ips);
+            elseif ($type != "")
                 $hostWithType[$type][] = $host;
+            //echo $hostType;
+            //echo "<br>1".$type."type";
+            //echo $host;
         }
-        //dump($hostWithType);
+        dump($hostWithType);
         //die();
-        //print_r($hostWithType);
+
         return $hostWithType;
     }
 
+    public function identifyType($host)
+    {
+        $type = "";
+        if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            $type = 'ipv4';
+        } elseif (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            $type = 'ipv6';
+        } elseif ($this->validateDomain($host)) {
+            $host = $this->validateDomain($host);
+            if ($host === false)
+                $type = 0;
+            $type = 'domain';
+        } elseif (count(explode('/', $host)) == 2) {
+            $type = "CIDR";
+        } else {
+            $type = 0;
+            //return 0;
+        }
+        return $type;
+    }
+
+    public function CIDRtoIpv4Range($cidrv4)
+    {
+        $resultsIps=array();
+        $cidrv4 = explode('/', $cidrv4);
+        $ip=$cidrv4[0];
+        $mask=$cidrv4[1];
+
+        $start_ip = long2ip((ip2long($ip)) & ((-1 << (32 - (int)$mask))));;
+        $prefix = $mask;
+        $ip_count = (1 << (32 - $prefix)) - 1;
+        $start = ip2long($start_ip);
+
+        for ($i = 0; $i < $ip_count; $i++) {
+            $resultsIps[]=long2ip($start + $i);
+            // do stuff with $ip...
+        }
+
+        return $resultsIps;
+    }
 
     public function validateDomain($domain)
     {
-
-        preg_match("#(http(s)?://)?(((.*)\.)?([\w\d\-]*\.\w{2,10}))+#", $domain, $m);
-        //dump($m);
-        if(!isset($m[3]))
+        //preg_match("#(http(s)?:\/\/)?(((.*)\.)?([\w\d\-]*\.\w{2,10}))+#", $domain, $m);
+        preg_match("#^(http(s)?:\/\/)?((([\w\d\-]*)\.)?([\w\d\-]*\.\w{2,10}))+$#", $domain, $m);
+        dump($m);
+        if (!isset($m[3]))
             return false;
         $domain = $m[3];
         ///Not even a single . this will eliminate things like abcd, since http://abcd is reported valid
@@ -87,7 +164,7 @@ class TargetsService
             return false;
         }
 
-        if ((stripos($domain, 'www.') === 0) && (substr_count($domain, '.')===2)){//TODO switch to regexp
+        if ((stripos($domain, 'www.') === 0) && (substr_count($domain, '.') === 2)) {//TODO switch to regexp
             $domain = substr($domain, 4);
         }
 
@@ -108,7 +185,7 @@ class TargetsService
 
     public function checkHostExists($hostsArray)
     {
-        //dump($hostsArray);
+        dump($hostsArray);
         $allHostsForCheck = array();
         foreach ($hostsArray as $type) {
             foreach ($type as $host) {
@@ -126,8 +203,7 @@ class TargetsService
             ->setParameters(array('allDomains' => $allHostsForCheck))
             ->getQuery();
         //dump($existsTargets);
-        $existsTargets=$existsTargets->getArrayResult();
-
+        $existsTargets = $existsTargets->getArrayResult();
 
 
         $existsTargetsArr = array();
@@ -237,12 +313,12 @@ class TargetsService
                 $subdomains = $targetsRepo->createQueryBuilder('t')
                     ->where('t.host LIKE :mainhost')
                     ->andWhere('t.type = :type')
-                    ->setParameters(array("mainhost"=> '%' . $host, 'type'=>'domain'))
+                    ->setParameters(array("mainhost" => '%' . $host, 'type' => 'domain'))
                     ->getQuery()
                     ->getResult();
                 dump($subdomains);
-                if(!empty($subdomains)){
-                    foreach ($subdomains as $subdomain){
+                if (!empty($subdomains)) {
+                    foreach ($subdomains as $subdomain) {
                         $subdomain->setParentid($target);
                         $this->em->flush();
                     }
@@ -409,17 +485,17 @@ class TargetsService
             foreach ($host['address'] as $address) {
                 $targetIp = $targetsRepo->findBy(array('host' => $address))[0];
                 dump($targetIp);
-                if(!empty($host['target'])&&$targetIp) {
+                if (!empty($host['target']) && $targetIp) {
                     $targetDomain = $targetsRepo->findBy(array('host' => $host['target']))[0];
 
-                    $allreadyIpsOnDomain=$targetDomain->getIpid();
-                    $allreadyIpsOnDomainTmp=array();
+                    $allreadyIpsOnDomain = $targetDomain->getIpid();
+                    $allreadyIpsOnDomainTmp = array();
                     //all exists ip owned by domain to array
-                    foreach ($allreadyIpsOnDomain as $ip){
-                        $allreadyIpsOnDomainTmp[]=$ip->getHost();
+                    foreach ($allreadyIpsOnDomain as $ip) {
+                        $allreadyIpsOnDomainTmp[] = $ip->getHost();
                     }
                     //if array search found same ip => duplicate
-                    if(array_search($targetIp->getHost(),$allreadyIpsOnDomainTmp)===false)
+                    if (array_search($targetIp->getHost(), $allreadyIpsOnDomainTmp) === false)
                         $targetDomain->addIpid($targetIp);
                 }
                 //dump($target);
@@ -429,12 +505,10 @@ class TargetsService
         try {
             // ...
             $this->em->flush();
-        }
-        catch( UniqueConstraintViolationException $e )
-        {
-                echo $e->getMessage();
-                echo $e->getErrorCode();
-                //$this->em=;
+        } catch (UniqueConstraintViolationException $e) {
+            echo $e->getMessage();
+            echo $e->getErrorCode();
+            //$this->em=;
         }
         //$this->em->flush();
 

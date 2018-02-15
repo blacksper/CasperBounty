@@ -20,6 +20,8 @@
                     </a>
                     {#{{ dump(target.ipid[0].serviceid[2].taskid[0]) }}#}
                     {% set myArray = {} %}
+                    {% set http = {} %}
+
                     {% for ip in target.ipid %}
 
                         <a class="list-group-item list-group-item-action listelem"
@@ -32,14 +34,22 @@
                         {% for service in ip.serviceid %}
 
                             {% if service.taskid is not empty %}
+                                qweqwe
+
+
                                 {% for task in service.taskid %}
                                     {#{{ dump(task.results.result) }}#}
                                     {% set myArray=myArray|merge([task]) %}
                                 {% endfor %}
                             {% else %}
                                 {% set myArray=myArray|merge([service]) %}
-
+                                {% if (service.port ==80) %}
+                                    {% set http=http|merge(["http://" ~ target.host]) %}
+                                {% elseif service.port ==443 %}
+                                    {% set http=http|merge(["https://" ~ target.host]) %}
+                                {% endif %}
                             {% endif %}
+
 
 
                             <a class="list-group-item list-group-item-action porttext {% if loop.index0==0 %} activee {% endif %}"
@@ -50,7 +60,7 @@
                             </a>
                         {% endfor %}
                     {% endfor %}
-                    {{ dump(myArray) }}
+                    {#{{ dump(myArray) }}#}
                 </div>
             </div>
             <div class="col-10">
@@ -59,23 +69,33 @@
                     <div class="tab-pane fade show active"
                          id="port-0" role="tabpanel" aria-labelledby="list-home-list">
 
+                        <div class="container">
+tut
+                            {% if http is not empty %}
+                                {% for link in http %}
+                                <a href="{{ link }}">{{ link }}</a>
+                                    {% endfor %}
+                            {% endif %}
 
-                        {% for task in target.taskid %}
-                            {#{{ dump(task) }}#}
-                            {#{{ dump(task.results) }}#}
-                            {% if (task.serviceid is null) and (task.status==true) %}
-                                <div class="container">
+                            {% for task in target.taskid %}
+                                {#{{ dump(task) }}#}
+                                {#{{ dump(task.results) }}#}
+                                {% if (task.serviceid is null) and (task.status==true) %}
+
                                     <div class="row">
                                         <div class="col-md-1 dateinfo">{{ task.taskid }}</div>
                                         <div class="col-md-1 dateinfo">{{ task.profileid.name }}</div>
-                                        <div class="col-md-6 resultss"><pre>{{ task.results.result|raw }}</pre></div>
+                                        <div class="col-md-6 resultss">
+                                            <pre>{{ task.results.result|raw }}</pre>
+                                        </div>
                                         <div class="col-md-1 dateinfo">{{ task.timestart|date('Y-m-d H:i:s') }}</div>
                                         <div class="col-md-1 dateinfo">{{ task.timeend|date('Y-m-d H:i:s') }}</div>
 
                                     </div>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
+
+                                {% endif %}
+                            {% endfor %}
+                        </div>
                     </div>
 
                     {% for task in myArray %}
@@ -83,7 +103,13 @@
                             <div class="tab-pane fade show {% if loop.index0==0 %} activee {% endif %}"
                                  id="port-{{ task.serviceid }}" role="tabpanel"
                                  aria-labelledby="list-home-list">
-                                {#{{ dump(task) }}#}
+                                {{ dump(task) }}
+                                {% if (task.port ==80) %}
+                                    <p><a href="http://{{ task.targetid.host }}">https://{{ task.targetid.host }}</a></p>
+                                {% elseif task.port ==443 %}
+                                   <p> <a href="https://{{ task.targetid.host }}">https://{{ task.targetid.host }}</a>
+                                    </p>
+                                {% endif %}
                                 none content
                             </div>
                         {% else %}
@@ -92,19 +118,17 @@
                                  aria-labelledby="list-home-list">
 
                                 <div class="container">
-                                    {%  for taskres in task.serviceid.taskid %}
-                                    <div class="row">
-                                        <div class="col-md-1">{{ taskres.taskid }}</div>
-                                        <div class="col-md-2">{{ taskres.profileid.name }}</div>
-                                        <div class="col-md-5 resultss">{{ taskres.results.result }}</div>
-                                        <div class="col-md-1">{{ taskres.timestart|date('Y-m-d H:i:s') }}</div>
-                                        <div class="col-md-1">{{ taskres.timeend|date('Y-m-d H:i:s') }}</div>
+                                    {% for taskres in task.serviceid.taskid %}
+                                        <div class="row">
+                                            <div class="col-md-1">{{ taskres.taskid }}</div>
+                                            <div class="col-md-2">{{ taskres.profileid.name }}</div>
+                                            <div class="col-md-5 resultss">{{ taskres.results.result }}</div>
+                                            <div class="col-md-1">{{ taskres.timestart|date('Y-m-d H:i:s') }}</div>
+                                            <div class="col-md-1">{{ taskres.timeend|date('Y-m-d H:i:s') }}</div>
 
-                                    </div>
+                                        </div>
                                     {% endfor %}
                                 </div>
-
-
 
 
                             </div>
