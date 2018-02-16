@@ -37,10 +37,10 @@ class TargetsService
     /** set hosts type */
     public function setHostType($hosts)
     {
-        $hostWithType = array('ipv4'=>array(),
-            'ipv6'=>array(),
-            'domain'=>array(),
-            'maindomain'=>array()
+        $hostWithType = array('ipv4' => array(),
+            'ipv6' => array(),
+            'domain' => array(),
+            'maindomain' => array()
         );
         foreach ($hosts as $host) {
             $type = "";
@@ -76,13 +76,13 @@ class TargetsService
                     $type = "ipv6";
                     break;
                 case 'CIDR':
-                    $type='CIDR';
-                    $ips=$this->CIDRtoIpv4Range($host);
+                    $type = 'CIDR';
+                    $ips = $this->CIDRtoIpv4Range($host);
                     //echo 'delimiter';
                     //print_r($ips);
                     break;
                 case 'domain':
-                    $type="domain";
+                    $type = "domain";
                     preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#", $host, $m);
                     //dump($m);
                     $host = $m[0];
@@ -96,8 +96,8 @@ class TargetsService
             }
             //TODO проверку на дубликаты входных доменов
 
-            if ($type=='CIDR')
-                $hostWithType['ipv4']=array_merge($hostWithType['ipv4'],$ips);
+            if ($type == 'CIDR')
+                $hostWithType['ipv4'] = array_merge($hostWithType['ipv4'], $ips);
             elseif ($type != "")
                 $hostWithType[$type][] = $host;
             //echo $hostType;
@@ -135,10 +135,10 @@ class TargetsService
 
     public function CIDRtoIpv4Range($cidrv4)
     {
-        $resultsIps=array();
+        $resultsIps = array();
         $cidrv4 = explode('/', $cidrv4);
-        $ip=$cidrv4[0];
-        $mask=$cidrv4[1];
+        $ip = $cidrv4[0];
+        $mask = $cidrv4[1];
 
         $start_ip = long2ip((ip2long($ip)) & ((-1 << (32 - (int)$mask))));;
         $prefix = $mask;
@@ -146,7 +146,7 @@ class TargetsService
         $start = ip2long($start_ip);
 
         for ($i = 0; $i < $ip_count; $i++) {
-            $resultsIps[]=long2ip($start + $i);
+            $resultsIps[] = long2ip($start + $i);
             // do stuff with $ip...
         }
 
@@ -334,15 +334,21 @@ class TargetsService
 
         //add other targets
         foreach ($uniqueHosts as $type => $val) {
+            $parent="";
             //dump($uniqueHosts);
             foreach ($val as $host) {
 
                 $target = new Targets();
 
                 if ($type == 'domain') {
-                    $parent = $this->searchMain($host);//this place make db queries x2...
-                    if ($parent)
+                    preg_match('#((.*)\.)?([\w\d\-]*\.\w{2,10})#', $host, $m);
+                    if (!empty($parent) && isset($m[3])&& ($m[3] === $parent->getHost())) {
                         $target->setParentid($parent);
+                    } else {
+                        $parent = $this->searchMain($host);
+                        if ($parent)
+                            $target->setParentid($parent);
+                    }
                 }
 
                 $target->setHost($host);
@@ -360,338 +366,347 @@ class TargetsService
                 //$successAdded[] = $target->getTargetid();
                 $successAdded++;
             }
-        }
-        $this->em->flush();
-        //$this->em->refresh($project);
+    }
+$this->em->flush();
+    //$this->em->refresh($project);
 
-        //$repository->clear();
-        //die();
-        dump($successAdded);
-        return $successAdded;
+    //$repository->clear();
+    //die();
+dump($successAdded);
+return $successAdded;
+}
+
+public
+function addHostIpsPtr($hostsArr)
+{//=array('target'=>"ert.com",'hostnames'=>array(),'address'=>array())
+    if (empty($hostsArr))
+        return 'hostsArr array is empty';
+
+    $hostsArrForCheck = array();
+    $repoT = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+    $target = false;
+    //die();
+
+    foreach ($hostsArr as $hosts) {
+        if (isset($hosts['target'])) {
+            $target = $hosts['target']; //set target that using as main in run tool
+        }
+        if (isset($hosts['hostnames']))
+            foreach ($hosts['hostnames'] as $hostname) {
+                $hostsArrForCheck[] = $hostname;
+            }
+
+        if (isset($hosts['address']))
+            foreach ($hosts['address'] as $address) {
+                $hostsArrForCheck[] = $address;
+            }
+    }
+    dump($hostsArrForCheck);
+    $uniq = $this->checkHostsForExists($hostsArrForCheck);
+    dump($hostsArr);
+    dump($uniq);
+    dump($target);
+
+    //if target is set, get target object by host, else return from function
+    if ($target) {
+        $targetObj = $repoT->findBy(array('host' => $target));
+        dump($targetObj);
+        if (count($targetObj) > 1)
+            return 'error, duplicate targets if db!';
+        else if (count($targetObj) < 0)
+            return 'error, target of the scan not found!';
+
+        $targetObj = $targetObj[0];
     }
 
-    public function addHostIpsPtr($hostsArr)
-    {//=array('target'=>"ert.com",'hostnames'=>array(),'address'=>array())
-        if (empty($hostsArr))
-            return 'hostsArr array is empty';
+    $targetObj->setState('up');
+    dump($targetObj);
+    if (empty($uniq)) {
+        dump("im updaaate it");
+        return $this->updateState($hostsArr);
+    }
 
-        $hostsArrForCheck = array();
-        $repoT = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
-        $target = false;
-        //die();
+    $allreadyIpsInTarget = $targetObj->getIpid()->toArray();
+    dump($allreadyIpsInTarget);
 
-        foreach ($hostsArr as $hosts) {
-            if (isset($hosts['target'])) {
-                $target = $hosts['target']; //set target that using as main in run tool
+    foreach ($hostsArr as $host) {
+        foreach ($host['address'] as $type => $addr) {
+            //if ip exists, find it in db and it will added to now target
+            if (array_search($addr, $uniq) === false) {
+                $ipObject = $repoT->findBy(array('host' => $addr));
+                if (count($ipObject) > 1)
+                    return 'error, duplicate targets if db!';
+                else if (count($ipObject) < 0)
+                    return 'error, target of the scan not found!';
+                else
+                    $ip = $ipObject[0];
+            } else {
+                //creating new target object for ip
+                $ip = new Targets();
+                $ip->setHost($addr);
+                $ip->setType($type);
+                $ip->setState('up');
+                //$ip->setDateadded(new \DateTime("now"));
             }
-            if (isset($hosts['hostnames']))
-                foreach ($hosts['hostnames'] as $hostname) {
-                    $hostsArrForCheck[] = $hostname;
-                }
 
-            if (isset($hosts['address']))
-                foreach ($hosts['address'] as $address) {
-                    $hostsArrForCheck[] = $address;
-                }
-        }
-        dump($hostsArrForCheck);
-        $uniq = $this->checkHostsForExists($hostsArrForCheck);
-        dump($hostsArr);
-        dump($uniq);
-        dump($target);
+            if (array_search($ip, $allreadyIpsInTarget) === false) {
+                //adding new ips to scan target
+                $targetObj->addIpId($ip);
+            }
 
-        //if target is set, get target object by host, else return from function
-        if ($target) {
-            $targetObj = $repoT->findBy(array('host' => $target));
-            dump($targetObj);
-            if (count($targetObj) > 1)
-                return 'error, duplicate targets if db!';
-            else if (count($targetObj) < 0)
-                return 'error, target of the scan not found!';
-
-            $targetObj = $targetObj[0];
-        }
-
-        $targetObj->setState('up');
-        dump($targetObj);
-        if (empty($uniq)) {
-            dump("im updaaate it");
-            return $this->updateState($hostsArr);
-        }
-
-        $allreadyIpsInTarget = $targetObj->getIpid()->toArray();
-        dump($allreadyIpsInTarget);
-
-        foreach ($hostsArr as $host) {
-            foreach ($host['address'] as $type => $addr) {
-                //if ip exists, find it in db and it will added to now target
-                if (array_search($addr, $uniq) === false) {
-                    $ipObject = $repoT->findBy(array('host' => $addr));
-                    if (count($ipObject) > 1)
+            //if ptr exists
+            if (isset($host['hostnames']['PTR'])) {
+                $ptrStr = $host['hostnames']['PTR'];
+                //end if ptr is uniq, create new target obj for ptr
+                if (array_search($ptrStr, $uniq) === false) {
+                    $ptrObj = $repoT->findBy(array('host' => $ptrStr));
+                    if (count($ptrObj) > 1)
                         return 'error, duplicate targets if db!';
-                    else if (count($ipObject) < 0)
+                    else if (count($ptrObj) < 0)
                         return 'error, target of the scan not found!';
                     else
-                        $ip = $ipObject[0];
+                        $ptr = $ptrObj[0];
                 } else {
-                    //creating new target object for ip
-                    $ip = new Targets();
-                    $ip->setHost($addr);
-                    $ip->setType($type);
-                    $ip->setState('up');
-                    //$ip->setDateadded(new \DateTime("now"));
+                    $ptr = new Targets();
+                    $ptr->setHost($host['hostnames']['PTR']);
+                    $ptr->setType(key($host['hostnames']));
                 }
-
-                if (array_search($ip, $allreadyIpsInTarget) === false) {
-                    //adding new ips to scan target
-                    $targetObj->addIpId($ip);
+                if (array_search($ip, $ptr->getIpid()->toArray()) === false) {
+                    $ptr->addIpid($ip);
                 }
+                $this->em->persist($ptr);
 
-                //if ptr exists
-                if (isset($host['hostnames']['PTR'])) {
-                    $ptrStr = $host['hostnames']['PTR'];
-                    //end if ptr is uniq, create new target obj for ptr
-                    if (array_search($ptrStr, $uniq) === false) {
-                        $ptrObj = $repoT->findBy(array('host' => $ptrStr));
-                        if (count($ptrObj) > 1)
-                            return 'error, duplicate targets if db!';
-                        else if (count($ptrObj) < 0)
-                            return 'error, target of the scan not found!';
-                        else
-                            $ptr = $ptrObj[0];
-                    } else {
-                        $ptr = new Targets();
-                        $ptr->setHost($host['hostnames']['PTR']);
-                        $ptr->setType(key($host['hostnames']));
-                    }
-                    if (array_search($ip, $ptr->getIpid()->toArray()) === false) {
-                        $ptr->addIpid($ip);
-                    }
-                    $this->em->persist($ptr);
-
-                }
-
-                $this->em->persist($ip);
-                $this->em->persist($targetObj);
             }
-        }
-        $this->em->flush();
 
-        //dump($host);
-        return 1;
+            $this->em->persist($ip);
+            $this->em->persist($targetObj);
+        }
     }
+    $this->em->flush();
 
-    public function updateState(array $hostsArr)
-    {
-        $targetsRepo = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+    //dump($host);
+    return 1;
+}
 
-        foreach ($hostsArr as $host) {
-            foreach ($host['address'] as $address) {
-                $targetIp = $targetsRepo->findBy(array('host' => $address))[0];
-                dump($targetIp);
-                if (!empty($host['target']) && $targetIp) {
-                    $targetDomain = $targetsRepo->findBy(array('host' => $host['target']))[0];
+public
+function updateState(array $hostsArr)
+{
+    $targetsRepo = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
 
-                    $allreadyIpsOnDomain = $targetDomain->getIpid();
-                    $allreadyIpsOnDomainTmp = array();
-                    //all exists ip owned by domain to array
-                    foreach ($allreadyIpsOnDomain as $ip) {
-                        $allreadyIpsOnDomainTmp[] = $ip->getHost();
-                    }
-                    //if array search found same ip => duplicate
-                    if (array_search($targetIp->getHost(), $allreadyIpsOnDomainTmp) === false)
-                        $targetDomain->addIpid($targetIp);
+    foreach ($hostsArr as $host) {
+        foreach ($host['address'] as $address) {
+            $targetIp = $targetsRepo->findBy(array('host' => $address))[0];
+            dump($targetIp);
+            if (!empty($host['target']) && $targetIp) {
+                $targetDomain = $targetsRepo->findBy(array('host' => $host['target']))[0];
+
+                $allreadyIpsOnDomain = $targetDomain->getIpid();
+                $allreadyIpsOnDomainTmp = array();
+                //all exists ip owned by domain to array
+                foreach ($allreadyIpsOnDomain as $ip) {
+                    $allreadyIpsOnDomainTmp[] = $ip->getHost();
                 }
-                //dump($target);
-                $targetIp->setState('up');
+                //if array search found same ip => duplicate
+                if (array_search($targetIp->getHost(), $allreadyIpsOnDomainTmp) === false)
+                    $targetDomain->addIpid($targetIp);
             }
+            //dump($target);
+            $targetIp->setState('up');
         }
-        try {
-            // ...
-            $this->em->flush();
-        } catch (UniqueConstraintViolationException $e) {
-            echo $e->getMessage();
-            echo $e->getErrorCode();
-            //$this->em=;
-        }
-        //$this->em->flush();
+    }
+    try {
+        // ...
+        $this->em->flush();
+    } catch (UniqueConstraintViolationException $e) {
+        echo $e->getMessage();
+        echo $e->getErrorCode();
+        //$this->em=;
+    }
+    //$this->em->flush();
 
+    return 0;
+}
+
+public
+function addHost($prepareHosts)
+{
+    $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+    //return uniq hosts
+    $uniqHosts = $this->checkHostExists($prepareHosts);
+
+    dump($uniqHosts);
+    die();
+    $target = new Targets();
+    $target->setHost($targetHost);
+    $target->setType($type);
+
+    //$target->set
+    $this->em->persist($target);
+    $this->em->flush();
+
+    return $target;
+}
+
+public
+function addHostsFromFile($files)
+{
+    $hostsStr = "";
+    foreach ($files as $file) {
+        //dump($file);
+        $hostsStr .= file_get_contents($file->getRealPath()) . "\r\n";
+    }
+    //dump($hostsStr);
+    $newTargets = $this->addHosts($hostsStr);
+    if (!empty($newTargets))
+        return $newTargets;
+    else
         return 0;
-    }
+}
 
-    public function addHost($prepareHosts)
-    {
-        $this->em->getRepository('CasperBountyTargetsBundle:Targets');
-        //return uniq hosts
-        $uniqHosts = $this->checkHostExists($prepareHosts);
+//get subdomains of domain
+public
+function getSubtargets($targetId)
+{
+    $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+    $targetInfotest = $repository->find($targetId);
+    //dump($targetInfotest);
+    //$projectId = $targetInfotest->getProjectid(); //maindomain projectid
+    dump($this->project);
+    if ($targetInfotest->getType() == 'maindomain') {
 
-        dump($uniqHosts);
-        die();
-        $target = new Targets();
-        $target->setHost($targetHost);
-        $target->setType($type);
-
-        //$target->set
-        $this->em->persist($target);
-        $this->em->flush();
-
-        return $target;
-    }
-
-    public function addHostsFromFile($files)
-    {
-        $hostsStr = "";
-        foreach ($files as $file) {
-            //dump($file);
-            $hostsStr .= file_get_contents($file->getRealPath()) . "\r\n";
-        }
-        //dump($hostsStr);
-        $newTargets = $this->addHosts($hostsStr);
-        if (!empty($newTargets))
-            return $newTargets;
-        else
-            return 0;
-    }
-
-    //get subdomains of domain
-    public function getSubtargets($targetId)
-    {
-        $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
-        $targetInfotest = $repository->find($targetId);
-        //dump($targetInfotest);
-        //$projectId = $targetInfotest->getProjectid(); //maindomain projectid
-        dump($this->project);
-        if ($targetInfotest->getType() == 'maindomain') {
-
-            $query = $this->em->createQuery('
+        $query = $this->em->createQuery('
                 select t from CasperBountyTargetsBundle:Targets t
                 JOIN t.projectid pid
                 
                 WHERE t.parentid=:parentId and pid=:projectId ORDER BY t.state DESC')
-                ->setMaxResults(100)//limit
-                ->setParameters(array('parentId' => $targetId, 'projectId' => $this->project));
+            ->setMaxResults(100)//limit
+            ->setParameters(array('parentId' => $targetId, 'projectId' => $this->project));
 
 
-            $subTargets = $query->getResult();
+        $subTargets = $query->getResult();
 
-        } else {
-            $subTargets = 0;
-        }
-
-        return $subTargets;
+    } else {
+        $subTargets = 0;
     }
 
-    //return id of parent domain
-    public function searchMain($host)
-    {
-        $parent = null;
-        preg_match('#((.*)\.)?([\w\d\-]*\.\w{2,10})#', $host, $m);
-        //dump($m[3]);
-        if (isset($m[3])) { //m[3] contain hostname
-            $mainDomain = $m[3];
+    return $subTargets;
+}
 
-            $query = $this->em->createQuery('
+//return id of parent domain
+public
+function searchMain($host)
+{
+    $parent = null;
+    preg_match('#((.*)\.)?([\w\d\-]*\.\w{2,10})#', $host, $m);
+    //dump($m[3]);
+    if (isset($m[3])) { //m[3] contain hostname
+        $mainDomain = $m[3];
+
+        $query = $this->em->createQuery('
                 select t from CasperBountyTargetsBundle:Targets t
                 JOIN t.projectid pid
                 WHERE t.host=:maindomainHost and pid=:projectId')
-                ->setParameters(array('maindomainHost' => $mainDomain,
-                    'projectId' => $this->project));
-            $result = $query->getResult();
-            if (count($result) == 1) {//if result is finded and count is 1
-                $parent = $result[0];
-            }
+            ->setParameters(array('maindomainHost' => $mainDomain,
+                'projectId' => $this->project));
+        $result = $query->getResult();
+        if (count($result) == 1) {//if result is finded and count is 1
+            $parent = $result[0];
         }
-        return $parent;
     }
+    return $parent;
+}
 
-    public function addIps(int $targetId, array $ipsArr, $projectId)
-    {
-        //dump($ipsArr);
-        $rept = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+public
+function addIps(int $targetId, array $ipsArr, $projectId)
+{
+    //dump($ipsArr);
+    $rept = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
 
-        $target = $rept->find($targetId);
-        //$projectId=$target->getProjectid()[0];//или править архитектуру чтоб цель использовадась только в 1 проекте или делать получение проджектид подругому
-        //dump($projectId[0]);
-        $addedIpsArr = array();
-        //$project=$this->em->find('CasperBountyProjectsBundle:Projects',1);
-        $repP = $this->em->getRepository('CasperBountyProjectsBundle:Projects');
+    $target = $rept->find($targetId);
+    //$projectId=$target->getProjectid()[0];//или править архитектуру чтоб цель использовадась только в 1 проекте или делать получение проджектид подругому
+    //dump($projectId[0]);
+    $addedIpsArr = array();
+    //$project=$this->em->find('CasperBountyProjectsBundle:Projects',1);
+    $repP = $this->em->getRepository('CasperBountyProjectsBundle:Projects');
 
-        $project = $repP->find($projectId);
-        //die();
-        echo "projectid $projectId";
-        foreach ($ipsArr as $ip) {
-            //echo 'helo2';
-            $ipExists = $this->checkIpExist($ip, $projectId);
-            if ($ipExists != 0) {
-                $addedIpsArr[] = $ipExists[0];
-                continue;
-            }
-            $ipObj = new Targets();
-            $ipObj->setHost($ip);
-            $ipObj->setType('ipv4');
-
-            //$ipObj->addProjectid($project);//не работает
-
-            $this->em->persist($ipObj);
-            $this->em->flush();
-            $this->em->refresh($ipObj);
-            $project->addTargetid($ipObj);
-            $addedIpsArr[] = $ipObj;
+    $project = $repP->find($projectId);
+    //die();
+    echo "projectid $projectId";
+    foreach ($ipsArr as $ip) {
+        //echo 'helo2';
+        $ipExists = $this->checkIpExist($ip, $projectId);
+        if ($ipExists != 0) {
+            $addedIpsArr[] = $ipExists[0];
+            continue;
         }
+        $ipObj = new Targets();
+        $ipObj->setHost($ip);
+        $ipObj->setType('ipv4');
 
-        //dump($addedIpsArr);
-        $exstIps = $target->getIpid();
-        foreach ($addedIpsArr as $ip) {
+        //$ipObj->addProjectid($project);//не работает
 
-            foreach ($exstIps as $eip) {//cheching for exist relation
-                if ($ip->getTargetid() == $eip->getTargetid())
-                    continue 2;
-            }
-
-            //$exst=$target->;
-            //$exst=$target->getIpid($ip)[0];
-            //$tid=$exst->getTargetId();
-            //dump($exst);
-            //if($exst) {
-            //     echo "exists<br>";
-            //    continue;
-            //}
-            $target->addIpid($ip);
-        }
-
-        $this->em->persist($target);
+        $this->em->persist($ipObj);
         $this->em->flush();
-
+        $this->em->refresh($ipObj);
+        $project->addTargetid($ipObj);
+        $addedIpsArr[] = $ipObj;
     }
 
-    public function getTargetIps($targetId)
-    {
-        $rept = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
-        $target = $rept->find(79);
-        $ips = $target->getIpid();
-        //echo count($ips[0]);
-        echo $ips[0]->getHost();
-        die();
+    //dump($addedIpsArr);
+    $exstIps = $target->getIpid();
+    foreach ($addedIpsArr as $ip) {
+
+        foreach ($exstIps as $eip) {//cheching for exist relation
+            if ($ip->getTargetid() == $eip->getTargetid())
+                continue 2;
+        }
+
+        //$exst=$target->;
+        //$exst=$target->getIpid($ip)[0];
+        //$tid=$exst->getTargetId();
+        //dump($exst);
+        //if($exst) {
+        //     echo "exists<br>";
+        //    continue;
+        //}
+        $target->addIpid($ip);
     }
 
-    public function checkIpExist($ip, $projectId)
-    {
-        $repT = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
-        $ipExistDql = $repT->createQueryBuilder('t')
-            ->leftJoin('t.projectid', 'targetproject')
-            ->where('t.type=\'ip\'')
-            ->andWhere('t.host=:ip')
-            ->andWhere('targetproject.projectid=:projectid')
-            ->getDQL();
+    $this->em->persist($target);
+    $this->em->flush();
 
-        $ips = $this->em->createQuery($ipExistDql)->setParameters(array('projectid' => $projectId, 'ip' => $ip))->getResult();
-        //$ipExist = $repT->findBy(array('host' => $ip, 'type' => 'ip'));
-        //dump($ipExistDql);
-        //dump($ips);
-        //die();
-        if (!empty($ips) && (count($ips) == 1))
-            return $ips;
-        else
-            return 0;
-    }
+}
+
+public
+function getTargetIps($targetId)
+{
+    $rept = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+    $target = $rept->find(79);
+    $ips = $target->getIpid();
+    //echo count($ips[0]);
+    echo $ips[0]->getHost();
+    die();
+}
+
+public
+function checkIpExist($ip, $projectId)
+{
+    $repT = $this->em->getRepository('CasperBountyTargetsBundle:Targets');
+    $ipExistDql = $repT->createQueryBuilder('t')
+        ->leftJoin('t.projectid', 'targetproject')
+        ->where('t.type=\'ip\'')
+        ->andWhere('t.host=:ip')
+        ->andWhere('targetproject.projectid=:projectid')
+        ->getDQL();
+
+    $ips = $this->em->createQuery($ipExistDql)->setParameters(array('projectid' => $projectId, 'ip' => $ip))->getResult();
+    //$ipExist = $repT->findBy(array('host' => $ip, 'type' => 'ip'));
+    //dump($ipExistDql);
+    //dump($ips);
+    //die();
+    if (!empty($ips) && (count($ips) == 1))
+        return $ips;
+    else
+        return 0;
+}
 }
