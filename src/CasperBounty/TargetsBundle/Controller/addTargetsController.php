@@ -36,7 +36,7 @@ class addTargetsController extends Controller
         $newTargetsCount=$targetsService->addHosts($targetsText);
         //die();
 
-        return $this->render('@CasperBountyTargets/addTargets/addTargetsMain.html.twig',array('projectId'=>$projectId,'newTargetsCount'=>count($newTargetsCount)));
+        return $this->render('@CasperBountyTargets/addTargets/addTargetsMain.html.twig',array('projectId'=>$projectId,'newTargetsCount'=>$newTargetsCount));
     }
 
     /**

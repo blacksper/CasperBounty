@@ -84,7 +84,7 @@ class TargetsService
                 case 'domain':
                     $type="domain";
                     preg_match("#((.*)\.)?([\w\d\-]*\.\w{2,10})#", $host, $m);
-                    dump($m);
+                    //dump($m);
                     $host = $m[0];
                     if (empty($m[2]) && empty($m[1])) {
                         $type = "maindomain";
@@ -104,7 +104,7 @@ class TargetsService
             //echo "<br>1".$type."type";
             //echo $host;
         }
-        dump($hostWithType);
+        //dump($hostWithType);
         //die();
 
         return $hostWithType;
@@ -112,6 +112,7 @@ class TargetsService
 
     public function identifyType($host)
     {
+        //echo $host;
         $type = "";
         if (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             $type = 'ipv4';
@@ -128,6 +129,7 @@ class TargetsService
             $type = 0;
             //return 0;
         }
+        //echo $type;
         return $type;
     }
 
@@ -154,8 +156,8 @@ class TargetsService
     public function validateDomain($domain)
     {
         //preg_match("#(http(s)?:\/\/)?(((.*)\.)?([\w\d\-]*\.\w{2,10}))+#", $domain, $m);
-        preg_match("#^(http(s)?:\/\/)?((([\w\d\-]*)\.)?([\w\d\-]*\.\w{2,10}))+$#", $domain, $m);
-        dump($m);
+        preg_match("#^(http(s)?:\/\/)?((([\w\d\-]*)\.){0,}([\w\d\-]*\.\w{2,10}))+$#", $domain, $m);
+        //dump($m);
         if (!isset($m[3]))
             return false;
         $domain = $m[3];
@@ -185,7 +187,7 @@ class TargetsService
 
     public function checkHostExists($hostsArray)
     {
-        dump($hostsArray);
+        //dump($hostsArray);
         $allHostsForCheck = array();
         foreach ($hostsArray as $type) {
             foreach ($type as $host) {
@@ -193,7 +195,7 @@ class TargetsService
 
             }
         }
-        dump($allHostsForCheck);
+        //dump($allHostsForCheck);
         $repository = $this->em->getRepository('CasperBountyTargetsBundle:Targets');//TODO уточнить необходимость создания репозитория второй раз
 
         $existsTargets = $repository
@@ -210,7 +212,7 @@ class TargetsService
         foreach ($existsTargets as $exTarget)
             $existsTargetsArr[] = $exTarget['host'];
         //dump($existsTargetsArr);
-        dump(array_diff($allHostsForCheck, $existsTargetsArr));
+        //dump(array_diff($allHostsForCheck, $existsTargetsArr));
 
         //die();
         $uniqHostsArray = array_unique(array_diff($allHostsForCheck, $existsTargetsArr));
@@ -266,7 +268,7 @@ class TargetsService
 
         //$this->projectId=$projectId;
         //если не указан тип значит добавление идёт с заранее указаннымb типами хостов
-        $successAdded = array();
+        $successAdded = 0;
         if (is_null($type)) {
             $hostsArr = explode("\r\n", $hosts);
             //print_r($hostsArr);
@@ -304,7 +306,7 @@ class TargetsService
 
                 $this->project->addTargetid($target);//добавление цели к проекту
 
-                $this->em->persist($this->project);
+                $this->em->merge($this->project);
                 $this->em->persist($target);
 
                 //оно тут для получения id
@@ -320,15 +322,15 @@ class TargetsService
                 if (!empty($subdomains)) {
                     foreach ($subdomains as $subdomain) {
                         $subdomain->setParentid($target);
-                        $this->em->flush();
+
                     }
                 }
                 //$this->em->refresh($project); //возможно если убрать это то будут проблемы с дубликатами
 
                 unset($uniqueHosts['maindomain'][$key]);
-                $successAdded[] = $target->getTargetid();
+                $successAdded++;
             }
-
+        $this->em->flush();
 
         //add other targets
         foreach ($uniqueHosts as $type => $val) {
@@ -338,7 +340,7 @@ class TargetsService
                 $target = new Targets();
 
                 if ($type == 'domain') {
-                    $parent = $this->searchMain($host);
+                    $parent = $this->searchMain($host);//this place make db queries x2...
                     if ($parent)
                         $target->setParentid($parent);
                 }
@@ -347,17 +349,19 @@ class TargetsService
                 $target->setType($type);
                 $this->project->addTargetid($target);//добавление цели к проекту
 
-                $this->em->persist($this->project);
+                //$this->em->persist($this->project);
+                $this->em->merge($this->project);
                 $this->em->persist($target);
 
                 //оно тут для получения id
-                $this->em->flush();
-                $this->em->refresh($target);
 
-                $successAdded[] = $target->getTargetid();
+                //$this->em->refresh($target);
+
+                //$successAdded[] = $target->getTargetid();
+                $successAdded++;
             }
         }
-
+        $this->em->flush();
         //$this->em->refresh($project);
 
         //$repository->clear();
