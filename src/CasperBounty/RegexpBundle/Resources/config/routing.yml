@@ -1,3 +1,0 @@
-regexp_homepage:
-    path:     /
-    defaults: { _controller: CasperBountyRegexpBundle:Default:index}

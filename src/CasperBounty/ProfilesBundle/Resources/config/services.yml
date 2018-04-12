@@ -1,4 +1,0 @@
-services:
-  casper_bounty_profiles.profileservice:
-    class: CasperBounty\ProfilesBundle\Service\ProfileService
-    arguments: ["@doctrine.orm.entity_manager"]

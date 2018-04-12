@@ -1,4 +1,0 @@
-services:
-#    casper_bounty_groups.example:
-#        class: CasperBounty\GroupsBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]

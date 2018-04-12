@@ -1,3 +1,0 @@
-tasklist_homepage:
-    path:     /
-    defaults: { _controller: TasklistBundle:Default:index }

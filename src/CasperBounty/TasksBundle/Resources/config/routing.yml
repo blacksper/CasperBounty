@@ -1,4 +1,0 @@
-casper_bounty_tasks_addresult:
-    path:     /{taskId}/addResult
-    defaults: { _controller: CasperBountyTasksBundle:Default:addResult }
-    methods:  [POST]
